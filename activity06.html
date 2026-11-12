@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A6 Identity and Access | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A6',
+  title: 'Identity and Access',
+  accent: 'Access',
+  domain: 'Domain 5 (13.6%)',
+  time: '35 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson05.html#s2',
+  lessonLabel: 'Lesson 5, Authentication Strategy',
+  lede: 'Identity is the new perimeter, and the exam tests it from three angles: what counts as a factor, which model decides access, and how a sign-in travels between organizations. Practice all three at Wrenfield College, where a phishing wave has pushed the college toward passkeys and a federated sign-in for its partners.',
+  concepts: [
+    { key: 'factors', name: 'Factor types', review: 'Lesson 5, Authentication Strategy' },
+    { key: 'passwordless', name: 'Passwordless and phishing resistance', review: 'Lesson 5, Authentication Strategy (passwordless authentication)' },
+    { key: 'models', name: 'Authorization models', review: 'Lesson 5, Authorization Models' },
+    { key: 'federation', name: 'Federation flows', review: 'Lesson 5, Federation with Third Parties' }
+  ],
+  stations: [
+    {
+      type: 'sort', short: 'Factor types', title: 'Know, have, are, or only context?', concept: 'factors',
+      instr: 'Wrenfield College is redesigning sign-in for students, faculty, and staff. Sort each item by the factor type it represents. Some items are signals a risk engine uses but are <b>not authentication factors</b> at all. Then select <b>Check answers</b>.',
+      hint: 'Ask what an attacker would need to steal. A secret in someone’s head is something you know. A device or key is something you have. A body trait is something you are. Location, time, and device health describe the request; they do not prove who is making it.',
+      buckets: ['Know (Type 1)', 'Have (Type 2)', 'Are (Type 3)', 'Context, not a factor'],
+      review: { href: 'lesson05.html#s2', label: 'Lesson 5, Authentication Strategy' },
+      items: [
+        { text: 'The PIN a staff member types to unlock a smart card', answer: 0, why: 'A PIN is a memorized secret. It unlocks the card, and the card is a separate possession factor, so the pair is two factors.' },
+        { text: 'A FIDO2 hardware security key that a dean taps over NFC', answer: 1, concept: 'passwordless', why: 'A roaming authenticator is a physical device that holds private keys. It proves possession, and the keys never leave it.' },
+        { text: 'The face scan a student uses to unlock the passkey on their phone', answer: 2, concept: 'passwordless', why: 'The face scan is an inherence factor. It stays on the phone and unlocks the private key, which is the possession factor, so the passkey sign-in is multifactor.' },
+        { text: 'The answer to “What was the name of your first pet?”', answer: 0, why: 'A security question is a weak memorized secret. The answer is often public on social media.' },
+        { text: 'The request comes from the campus IP address range', answer: 3, why: 'Location describes the request. A risk engine can weigh it, but an attacker on campus Wi-Fi shares the same address.' },
+        { text: 'A six-digit code from an authenticator app on the user’s phone', answer: 1, why: 'The code proves the user holds the phone where the seed is stored. It is possession, though it can still be phished in real time.' },
+        { text: 'An iris scan at the door of the data center', answer: 2, why: 'An iris pattern is a physical trait. Biometrics are something you are.' },
+        { text: 'A 20-character passphrase for the learning management system', answer: 0, why: 'Length makes it stronger, but a passphrase is still a memorized secret that can be phished.' },
+        { text: 'The sign-in arrives at 3:40 a.m. local time', answer: 3, why: 'Time of day is an environmental attribute. It can trigger step-up authentication, but it proves nothing about identity.' },
+        { text: 'A badge with an embedded certificate, inserted into a reader', answer: 1, why: 'A smart card holds a certificate and private key. Holding the card is the possession factor.' },
+        { text: 'A voiceprint match when an employee calls the help desk', answer: 2, why: 'A voiceprint is a biometric. Deepfake audio now makes it weaker as a sole factor for resets.' },
+        { text: 'The laptop reports that disk encryption is on and patches are current', answer: 3, why: 'Device health is a posture signal that a risk-adaptable or zero trust engine uses. It is not a factor the user presents.' }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Passwordless and models', title: 'Passwordless sign-in and the model that decides', concept: 'passwordless',
+      instr: 'You are Wrenfield’s identity architect, Odalys Brennan-Okafor. For each case, choose the <b>BEST</b> answer.',
+      hint: 'Phishing resistance comes from binding a key to the site’s origin, not from adding another code. For models, look for the clue word: owner means DAC, labels mean MAC, job function means RBAC, global rules mean rule-based, attributes mean ABAC, and a real-time weighing of risk against need means risk-adaptable access.',
+      review: { href: 'lesson05.html#s2', label: 'Lesson 5, Authentication Strategy' },
+      items: [
+        {
+          title: 'Case 1: Phished despite MFA', text: 'Wrenfield uses passwords plus push approvals on a phone app. In one week, 14 faculty accounts were taken over. Attackers used a look-alike sign-in page that relayed passwords in real time and then flooded users with push prompts until someone approved.',
+          parts: [
+            { q: 'Which change BEST stops this attack?', options: ['Require a longer password with a 60-day expiration', 'Replace push approvals with SMS codes to the phone', 'Adopt FIDO2 passkeys or hardware security keys', 'Add a second push prompt for every faculty sign-in'], answer: 2, why: 'Real-time relays and push fatigue defeat passwords, codes, and prompts. FIDO2 credentials are bound to the real site’s origin, so a look-alike page receives nothing it can replay.' },
+            { q: 'Why does a passkey resist the look-alike page?', options: ['The private key signs only for the origin it was registered to', 'The passkey changes its value every 30 seconds', 'The browser blocks every site that lacks a certificate', 'The user’s fingerprint is checked by the college server'], answer: 0, why: 'At registration the authenticator creates a key pair for that origin alone. A different domain cannot ask for a signature from that credential.' },
+            { q: 'An auditor asks what a breach of the sign-in database would expose after the move. What is the answer?', options: ['Hashed passwords that attackers could still crack', 'Biometric templates for every enrolled user', 'The private keys of each registered authenticator', 'Public keys only, which cannot be used to sign in'], answer: 3, why: 'The server stores only public keys. The private keys stay on the authenticators, and the biometric data never leaves the device.' },
+            { q: 'What should Odalys plan FIRST so the rollout does not create a new weakness?', options: ['A help desk reset that accepts the user’s birth date', 'A strong recovery path and two authenticators per person', 'A policy that disables the old password on day one', 'A rule that passkeys may never sync between devices'], answer: 1, why: 'A weak recovery path undoes a strong login. Enrolling two authenticators and designing recovery with identity proofing keeps attackers from simply resetting their way in.' }
+          ]
+        },
+        {
+          title: 'Case 2: Privileged accounts', text: 'Students and most staff will use synced passkeys stored in their phone or laptop platform account. The infrastructure team asks whether domain administrators should do the same.',
+          parts: [
+            { q: 'What is the BEST requirement for domain administrators?', options: ['Synced passkeys, because recovery is easier', 'Device-bound keys on hardware security keys', 'A password vault with a shared admin password', 'Push approvals with number matching on a phone'], answer: 1, why: 'Device-bound passkeys never leave the hardware key, which gives the highest assurance. A synced credential is only as strong as the platform account that syncs it.' }
+          ]
+        },
+        {
+          title: 'Case 3: Name the model', text: 'Wrenfield’s access rules come from several systems. Identify the authorization model each one describes.',
+          parts: [
+            { q: 'In the registrar system, anyone given the Records Clerk role gets the same set of permissions.', concept: 'models', options: ['Discretionary (DAC)', 'Mandatory (MAC)', 'Role-based (RBAC)', 'Rule-based (RuBAC)'], answer: 2, why: 'Permissions attach to the role, and people receive roles by job function. That is RBAC.' },
+            { q: 'A professor decides which colleagues may open a research folder on the shared drive she created.', concept: 'models', options: ['Discretionary (DAC)', 'Attribute-based (ABAC)', 'Mandatory (MAC)', 'Role-based (RBAC)'], answer: 0, why: 'The owner grants access at her discretion through the folder’s ACL. That is DAC.' },
+            { q: 'Advisors may view a student record only if the student is their advisee, the term is active, and the request comes from a managed device.', concept: 'models', options: ['Rule-based (RuBAC)', 'Role-based (RBAC)', 'Discretionary (DAC)', 'Attribute-based (ABAC)'], answer: 3, why: 'The decision combines subject, object, and environment attributes in a policy. That is ABAC.' },
+            { q: 'A grant project labels its files Controlled, and only researchers with a matching clearance and need to know can read them. Users cannot change the labels.', concept: 'models', options: ['Mandatory (MAC)', 'Discretionary (DAC)', 'Attribute-based (ABAC)', 'Rule-based (RuBAC)'], answer: 0, why: 'Labels on objects, clearances on subjects, and labels that users cannot change are the marks of MAC.' }
+          ]
+        },
+        {
+          title: 'Case 4: The emergency', text: 'During a severe storm, the campus safety director needs live feeds from building cameras that normal policy limits to the police dispatch office. The director’s laptop is healthy, the sign-in used a passkey, and the threat level is low.',
+          parts: [
+            { q: 'Which model is designed to grant this access when policy alone would refuse it?', concept: 'models', options: ['Rule-based access control', 'Discretionary access control', 'Risk-adaptable access control', 'Mandatory access control'], answer: 2, why: 'Risk-adaptable access weighs operational need against computed risk in real time. A pressing mission need with low risk can justify access that fixed policy would deny.' },
+            { q: 'What should come with the emergency grant?', concept: 'models', options: ['Permanent membership in the dispatch role', 'Extra logging and review after the event', 'A shared account for the safety office', 'A rule that bypasses all future checks'], answer: 1, why: 'Emergency access is granted narrowly and recorded. Enhanced logging and an after-action review keep the exception accountable.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'order', short: 'Federation flows', title: 'Put the federated sign-ins in order', concept: 'federation',
+      instr: 'Wrenfield shares a library portal with a partner university through SAML, and its new student app uses OpenID Connect. Use the arrows to put each sign-in in order, from the first step to the last.',
+      hint: 'Both flows start at the application the user wants, send the browser to the identity provider, authenticate there, and come back with something signed. In the OpenID Connect authorization code flow, the browser carries only a short-lived code; the app trades it for tokens on a direct back-channel call.',
+      topLabel: 'First step',
+      bottomLabel: 'Last step',
+      review: { href: 'lesson05.html#s3', label: 'Lesson 5, Federation with Third Parties' },
+      groups: [
+        {
+          title: 'SAML 2.0 sign-in to the partner library portal', concept: 'federation',
+          items: [
+            { text: 'The identity provider returns a signed assertion through the browser to the portal', rank: 3, why: 'The IdP posts a signed XML assertion back through the user’s browser to the service provider.' },
+            { text: 'The student authenticates at Wrenfield’s identity provider with a passkey', rank: 2, why: 'Authentication happens at the home organization, never at the partner’s portal.' },
+            { text: 'The student opens the partner library portal', rank: 0, why: 'This is a service-provider-initiated flow. It starts when the user asks for the resource.' },
+            { text: 'The portal checks the signature and audience, then creates a session', rank: 4, why: 'The service provider trusts the assertion only after validating the signature, the audience, and the time window.' },
+            { text: 'The portal redirects the browser to Wrenfield’s identity provider with an authentication request', rank: 1, why: 'The service provider does not know the user, so it sends an authentication request to the identity provider.' }
+          ]
+        },
+        {
+          title: 'OpenID Connect sign-in to the student app', concept: 'federation',
+          items: [
+            { text: 'The app exchanges the code on a back channel for an ID token and an access token', rank: 4, why: 'The relying party trades the code directly with the provider. Tokens never pass through the browser’s address bar.' },
+            { text: 'The student selects Sign in with Wrenfield in the app', rank: 0, why: 'The flow starts at the relying party, the app the user wants to use.' },
+            { text: 'The OpenID provider redirects back to the app with a short-lived authorization code', rank: 3, why: 'In the authorization code flow, the browser carries only a one-time code.' },
+            { text: 'The app validates the ID token’s signature, issuer, audience, and nonce, then starts a session', rank: 5, why: 'The ID token is a signed JSON Web Token. The app checks it before trusting who the user is.' },
+            { text: 'The app redirects the browser to the OpenID provider, asking for the openid scope', rank: 1, why: 'Requesting the openid scope is what turns an OAuth 2.0 authorization request into an OpenID Connect sign-in.' },
+            { text: 'The student authenticates at the OpenID provider and approves the request', rank: 2, why: 'The provider authenticates the user and records consent for the app.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'campus', label: 'How do people sign in at your own college today? Which factor types are in use, and where would phishing-resistant authentication help most?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the next lesson, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

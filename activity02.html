@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A2 Governance, Law, and Risk | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A2',
+  title: 'Governance, Law, and Risk',
+  accent: 'Law, and Risk',
+  domain: 'Domain 1 (13.6%)',
+  time: '35 min',
+  level: 'Foundational',
+  lessonHref: 'lesson01.html#s1',
+  lessonLabel: 'Lesson 1, Security Concepts and Governance',
+  lede: 'Governance sets direction, law sets the floor, and risk analysis tells leaders what a threat is worth. Practice telling due care from due diligence, matching each need at an insurer to the law or framework that answers it, and running the numbers that justify, or reject, a safeguard.',
+  concepts: [
+    { key: 'care', name: 'Due care and due diligence', review: 'Lesson 1, Security Concepts and Governance' },
+    { key: 'law', name: 'Laws and regulations by need', review: 'Lesson 1, Law, AI Ethics, and Investigations' },
+    { key: 'frameworks', name: 'Frameworks and AI ethics', review: 'Lesson 1, Law, AI Ethics, and Investigations' },
+    { key: 'risk', name: 'Quantitative risk analysis', review: 'Lesson 1, Risk Management' }
+  ],
+  stations: [
+    {
+      type: 'sort', short: 'Care or diligence?', title: 'Due diligence or due care?', concept: 'care',
+      instr: 'Pellham Mutual is a mid-sized insurer that sells auto, home, life, and health coverage. Sort each activity: is it <b>due diligence</b> (finding out, assessing, and planning before acting) or <b>due care</b> (doing what a reasonable organization would do, and keeping it done)? Then select <b>Check answers</b>.',
+      hint: 'Due diligence is the homework: research, assess, verify, and plan. Due care is the follow-through: implement, operate, enforce, and maintain the controls a prudent organization would have. Ask whether the activity learns about the risk or acts on it.',
+      buckets: ['Due diligence', 'Due care'],
+      review: { href: 'lesson01.html#s1', label: 'Lesson 1, Security Concepts and Governance' },
+      items: [
+        { text: 'Reviewing a claims-processing vendor’s SOC 2 Type II report before signing the contract', answer: 0, why: 'Investigating the vendor before you commit is diligence. It tells you what risk you would accept.' },
+        { text: 'Running the monthly patch cycle on every server, as the standard requires', answer: 1, why: 'Operating a control consistently is due care. It is what a prudent insurer does every month.' },
+        { text: 'Assessing the security posture of a small insurer Pellham plans to acquire', answer: 0, why: 'Pre-acquisition assessment is the classic diligence step. Unknown systems bring unknown risk.' },
+        { text: 'Enforcing full-disk encryption on every adjuster laptop', answer: 1, why: 'Implementing and enforcing a reasonable safeguard is due care.' },
+        { text: 'Researching which state privacy laws apply before selling policies in three new states', answer: 0, why: 'Learning what obligations apply is diligence. Acting on them afterward is care.' },
+        { text: 'Delivering annual security awareness training and tracking completion', answer: 1, why: 'Training people and keeping records of it is an ongoing reasonable practice, which is due care.' },
+        { text: 'Performing a risk assessment before launching a new online claims portal', answer: 0, why: 'Assessing before you build or launch is diligence. It informs which controls the portal needs.' },
+        { text: 'Disabling a departing employee’s accounts on their last day', answer: 1, why: 'Removing access promptly is a reasonable control carried out as a routine, which is due care.' },
+        { text: 'Checking references and breach history for a new cloud backup provider', answer: 0, why: 'Background research on a supplier is diligence.' },
+        { text: 'Remediating last quarter’s penetration test findings by their due dates', answer: 1, why: 'Fixing what you found, on schedule, is acting on knowledge. That is due care.' }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Laws and frameworks', title: 'Which law or framework answers the need?', concept: 'law',
+      instr: 'Each case is a real kind of question that lands on Pellham Mutual’s security leader. Choose the law, framework, or protection that <b>BEST</b> fits.',
+      hint: 'Match the data and the industry first. Health information held by a health plan points one way, customer financial information at an insurer another, financial reporting at a public company a third. Frameworks differ by purpose: certification, outcomes, controls, or AI risk.',
+      review: { href: 'lesson01.html#s2', label: 'Lesson 1, Law, AI Ethics, and Investigations' },
+      items: [
+        {
+          title: 'Case 1: The health plan', text: 'Pellham’s health insurance line processes claims that include diagnoses, procedure codes, and member identifiers.',
+          parts: [
+            { q: 'Which U.S. law sets the privacy and security rules for this information?', options: ['GLBA', 'SOX', 'HIPAA', 'FERPA'], answer: 2, why: 'A health plan is a HIPAA covered entity. Its Privacy and Security Rules govern protected health information.' },
+            { q: 'A claims clearinghouse processes this data for Pellham. What must Pellham have in place?', options: ['A business associate agreement', 'A data processing addendum under SOX', 'A nondisclosure agreement only', 'A PCI DSS attestation of compliance'], answer: 0, why: 'A vendor that handles protected health information for a covered entity is a business associate and must sign a business associate agreement.' }
+          ]
+        },
+        {
+          title: 'Case 2: Auto and home customers', text: 'The auto and home lines keep customers’ bank account numbers, income, and credit-based insurance scores.',
+          parts: [
+            { q: 'Which law requires Pellham to protect this nonpublic personal information and explain its sharing practices?', options: ['HIPAA', 'GLBA', 'SOX', 'The Computer Fraud and Abuse Act'], answer: 1, why: 'Insurers are financial institutions under the Gramm-Leach-Bliley Act. Its Safeguards and privacy provisions cover customer financial information.' }
+          ]
+        },
+        {
+          title: 'Case 3: The stock listing', text: 'Pellham is publicly traded. The external auditor asks how the security team protects the integrity of the general ledger and the systems that feed it.',
+          parts: [
+            { q: 'Which law drives this question?', options: ['GDPR', 'GLBA', 'HIPAA', 'SOX'], answer: 3, why: 'The Sarbanes-Oxley Act requires public companies to maintain and attest to internal controls over financial reporting, including the IT controls behind them.' }
+          ]
+        },
+        {
+          title: 'Case 4: Travel insurance for Europe', text: 'Pellham launches travel insurance sold directly to residents of France and Germany, with policy data stored in a U.S. cloud region.',
+          parts: [
+            { q: 'Which regulation governs this personal data?', options: ['GDPR', 'GLBA', 'HIPAA', 'The Privacy Shield'], answer: 0, why: 'The GDPR applies to organizations that offer goods or services to people in the EU, wherever the data is stored.' },
+            { q: 'What must Pellham address because the data leaves the EU?', options: ['A HIPAA business associate agreement', 'A legal mechanism for transborder data transfer', 'Export control licensing for encryption', 'A SOC 1 report from the cloud provider'], answer: 1, why: 'The GDPR restricts transfers outside the EU. A lawful transfer mechanism, such as an adequacy decision or standard contractual clauses, is required.' }
+          ]
+        },
+        {
+          title: 'Case 5: The pricing model', text: 'Pellham’s actuaries built a pricing algorithm that competitors would pay to see. It is not published, and access is limited to a small team under confidentiality agreements.',
+          parts: [
+            { q: 'Which form of intellectual property protection fits BEST?', options: ['Copyright', 'Trademark', 'Trade secret', 'Patent'], answer: 2, why: 'A trade secret is protected as long as the owner keeps it secret through reasonable measures. A patent would require publishing the method.' }
+          ]
+        },
+        {
+          title: 'Case 6: Frameworks and AI ethics', text: 'The board asks for three things: a program profile it can track by outcome, a certifiable information security management system, and a way to govern the new AI model that recommends claim denials.',
+          parts: [
+            { q: 'Which framework gives an outcome-based profile with Govern, Identify, Protect, Detect, Respond, and Recover?', concept: 'frameworks', options: ['ISO/IEC 27001', 'NIST CSF 2.0', 'COBIT 2019', 'PCI DSS'], answer: 1, why: 'NIST CSF 2.0 organizes outcomes into six functions, with Govern added in version 2.0, and supports current and target profiles.' },
+            { q: 'Which standard can an external body certify Pellham against?', concept: 'frameworks', options: ['NIST CSF 2.0', 'NIST SP 800-53', 'ISO/IEC 27001', 'NIST AI RMF'], answer: 2, why: 'ISO/IEC 27001 defines ISMS requirements and is the one here an accredited body can certify.' },
+            { q: 'Before the claim-denial model goes live, what is the BEST ethical safeguard?', concept: 'frameworks', options: ['Publish the model’s source code on the website', 'Let the model decide alone, since it is more consistent than people', 'Test it only for accuracy against last year’s claims', 'Assess it for bias, assign an accountable owner, and require human review of denials'], answer: 3, why: 'Ethics in AI calls for fairness, accountability, transparency, and human oversight. Frameworks such as the NIST AI RMF help structure that governance. Accuracy alone does not reveal unfair impact.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'calc', short: 'Run the numbers', title: 'SLE, ALE, and safeguard value', concept: 'risk',
+      instr: 'Pellham’s risk committee wants numbers. Use the table and the formulas: <b>SLE = AV × EF</b>, <b>ALE = SLE × ARO</b>, and <b>safeguard value = ALE before − ALE after − annual cost of the safeguard</b>. Enter whole dollars with no $ sign or commas. A negative value is allowed.',
+      hint: 'Convert the exposure factor to a decimal first (40% = 0.40). An ARO of 0.25 means once every four years. For ALE after the safeguard, keep the same SLE and use the new ARO. A negative safeguard value means the control costs more than the risk it removes.',
+      table: {
+        caption: 'Pellham Mutual risk scenarios',
+        head: ['Asset and threat', 'Asset value (AV)', 'Exposure factor (EF)', 'ARO today', 'Proposed safeguard', 'Safeguard cost per year', 'ARO with safeguard'],
+        rows: [
+          ['Claims database: ransomware', '$2,000,000', '40%', '0.25', 'Immutable backups and EDR', '$90,000', '0.05'],
+          ['Branch office: flood', '$500,000', '60%', '0.1', 'Flood barrier service contract', '$45,000', '0.02'],
+          ['Adjuster laptops: theft', '$3,000 each', '100%', '12', 'Not yet evaluated', 'n/a', 'n/a']
+        ]
+      },
+      review: { href: 'lesson01.html#s4', label: 'Lesson 1, Risk Management' },
+      items: [
+        { title: 'Claims database', label: 'SLE', answer: 800000, unit: 'dollars', why: '$2,000,000 × 0.40 = $800,000 for one ransomware event.' },
+        { title: 'Claims database', label: 'ALE today', answer: 200000, unit: 'dollars', why: '$800,000 × 0.25 = $200,000 a year.' },
+        { title: 'Claims database', label: 'ALE with the safeguard', answer: 40000, unit: 'dollars', why: 'The SLE stays $800,000, and the ARO drops to 0.05: $800,000 × 0.05 = $40,000.' },
+        { title: 'Claims database', label: 'Safeguard value', answer: 70000, unit: 'dollars', why: '$200,000 − $40,000 − $90,000 = $70,000. The safeguard pays for itself and saves $70,000 a year, so it is worth recommending.' },
+        { title: 'Branch office flood', label: 'SLE', answer: 300000, unit: 'dollars', why: '$500,000 × 0.60 = $300,000.' },
+        { title: 'Branch office flood', label: 'ALE today', answer: 30000, unit: 'dollars', why: '$300,000 × 0.1 = $30,000 a year.' },
+        { title: 'Branch office flood', label: 'Safeguard value', answer: -21000, unit: 'dollars', why: 'ALE after is $300,000 × 0.02 = $6,000. Value = $30,000 − $6,000 − $45,000 = −$21,000. The contract costs more than the risk it removes, so the leader would advise another treatment, such as insurance, or acceptance by the owner.' },
+        { title: 'Adjuster laptops', label: 'ALE today', answer: 36000, unit: 'dollars', why: 'SLE = $3,000 × 1.00 = $3,000. With 12 thefts a year, ALE = $3,000 × 12 = $36,000.' }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'shift', label: 'Pick one law or framework from this activity that applies to your own college. Who on campus owns compliance with it, and how would you find out?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the next lesson, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>B4 Network Segmentation and Firewall Design | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+<style>
+/* B4: zoning board, ordered rule editor, packet tester (light only) */
+.b4-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+.b4-col { flex: 1 1 260px; min-width: 0; }
+.b4-col.wide { flex: 1.4 1 320px; }
+.b4-note { font: .84rem/1.55 Arial, sans-serif; color: var(--text-secondary); margin: 0 0 .8rem; }
+.b4-assets { list-style: none; margin: 0; padding: 0; }
+.b4-assets li { display: flex; flex-wrap: wrap; gap: .3rem .6rem; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding: .45rem 0; font: .84rem/1.4 Arial, sans-serif; color: var(--text-secondary); }
+.b4-assets li > span { flex: 1 1 160px; min-width: 0; }
+.b4-assets b { color: var(--text-primary); }
+.b4-assets code, .b4-pk code { font: .78rem 'Courier New', monospace; color: var(--navy); }
+.b4-sel { font: .82rem Arial, sans-serif; padding: .3rem .35rem; border: 1px solid var(--border); border-radius: 3px; background: #fff; color: var(--text-primary); max-width: 100%; }
+.b4-map { display: flex; flex-wrap: wrap; gap: .55rem; }
+.b4-zone { flex: 1 1 150px; min-width: 0; border: 1px solid var(--border); border-top: 4px solid var(--zc, var(--navy)); border-radius: 4px; background: #fff; padding: .5rem .6rem; min-height: 72px; }
+.b4-zone h5 { font: 700 .72rem Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--text-primary); margin: 0 0 .1rem; }
+.b4-zone p { font: .7rem Arial, sans-serif; color: var(--text-muted); margin: 0 0 .35rem; }
+.b4-chip { display: inline-block; font: 700 .72rem 'Courier New', monospace; background: var(--blue-pale); border: 1px solid var(--blue-pale-border); border-radius: 3px; padding: .1rem .35rem; margin: 0 .25rem .25rem 0; color: var(--navy); }
+.b4-rules table.data, .b4-pk table.data { font-size: .8rem; }
+.b4-rules table.data { min-width: 620px; }
+.b4-rules th, .b4-pk th { padding: .5rem .45rem !important; }
+.b4-rules td .b4-sel { width: 100%; font-size: .78rem; padding: .25rem .2rem; }
+.b4-rules td:nth-child(4), .b4-rules td:nth-child(5) { width: 24%; }
+.b4-rules td:nth-child(6) { width: 16%; }
+.b4-rules td:nth-child(3) .b4-sel { min-width: 4.6rem; }
+.b4-pk table.data { min-width: 660px; }
+.b4-rules td, .b4-pk td { padding: .35rem .45rem; vertical-align: middle; }
+.b4-rules td.rid { font: 700 .82rem 'Courier New', monospace; color: var(--navy); white-space: nowrap; }
+.b4-mv { display: inline-flex; gap: .2rem; }
+.b4-mv button { border: 1px solid var(--border); background: #fff; border-radius: 3px; min-width: 1.8rem; height: 1.7rem; cursor: pointer; font: 700 .78rem Arial, sans-serif; color: var(--navy); }
+.b4-mv button:disabled { opacity: .35; cursor: default; }
+.b4-mv button.del { color: var(--wrong); }
+tr.b4-implicit td { color: var(--text-muted); font-style: italic; background: var(--section-alt); }
+.b4-act-allow { color: var(--correct); font-weight: 700; }
+.b4-act-deny { color: var(--wrong); font-weight: 700; }
+.b4-res { font-weight: 700; white-space: nowrap; }
+.b4-res.ok { color: var(--correct); }
+.b4-res.bad { color: var(--wrong); }
+tr.b4-fail td { background: var(--wrong-bg); }
+.b4-sum { display: flex; flex-wrap: wrap; gap: .4rem .6rem; margin: 0 0 .7rem; font: .82rem Arial, sans-serif; }
+.b4-sum span { border: 1px solid var(--border); border-radius: 3px; padding: .25rem .55rem; background: var(--blue-pale); color: var(--text-secondary); }
+.b4-sum span.ok { background: var(--correct-bg); border-color: var(--correct); color: #14532d; }
+.b4-sum b { color: var(--text-primary); }
+.b4-btns { display: flex; flex-wrap: wrap; gap: .45rem; margin: .7rem 0; }
+.b4-btns .btn { padding: .45rem .85rem; font-size: .8rem; }
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This lab needs JavaScript enabled.</p></noscript></div>
+
+<script>
+(function () {
+var ZONES = [
+  ['inet', 'Internet', 'Untrusted. Fixed.', '#56647f'],
+  ['dmz', 'DMZ', 'Public-facing services', '#b45309'],
+  ['corp', 'Corporate', 'Business users and servers', '#1e3a8a'],
+  ['idmz', 'Industrial DMZ', 'Brokers data between IT and OT', '#7c3aed'],
+  ['ot', 'OT/ICS', 'Plant control: PLCs and HMIs', '#b91c1c'],
+  ['mgmt', 'Management', 'Admin access and logging', '#047857'],
+  ['guest', 'Guest', 'Visitors, internet only', '#0e7490']
+];
+var ZN = {}; ZONES.forEach(function (z) { ZN[z[0]] = z[1]; });
+var ASSETS = [
+  ['A1', 'web01', 'Public website and order tracking', 'dmz'],
+  ['A2', 'mx01', 'Inbound mail relay', 'dmz'],
+  ['A3', 'erp01', 'ERP and order database server', 'corp'],
+  ['A4', 'ws-office', 'Staff workstations', 'corp'],
+  ['A5', 'plc-l3', 'Line 3 programmable logic controller', 'ot'],
+  ['A6', 'hmi-l3', 'Line 3 operator HMI', 'ot'],
+  ['A7', 'hist-rep', 'Historian replica for business reporting', 'idmz'],
+  ['A8', 'jump01', 'Administrator jump host', 'mgmt'],
+  ['A9', 'wifi-visitor', 'Visitor Wi-Fi clients', 'guest'],
+  ['A10', 'log01', 'Syslog and SIEM collector', 'mgmt']
+];
+var FIXED = { INET: ['Internet host', 'inet'], SITE: ['Internet website', 'inet'] };
+var AN = {}; ASSETS.forEach(function (a) { AN[a[0]] = a; });
+var SVC = [['any', 'Any'], ['443', 'HTTPS 443'], ['25', 'SMTP 25'], ['22', 'SSH 22'], ['3389', 'RDP 3389'], ['1433', 'SQL 1433'], ['502', 'Modbus 502'], ['4840', 'OPC UA 4840'], ['514', 'Syslog 514'], ['53', 'DNS 53']];
+var SN = {}; SVC.forEach(function (s) { SN[s[0]] = s[1]; });
+var PACKETS = [
+  ['P1', 'INET', 'A1', '443', 'allow', 'Customer opens the order tracking site'],
+  ['P2', 'INET', 'A3', '3389', 'deny', 'Remote desktop attempt on the ERP server from the internet'],
+  ['P3', 'A4', 'A7', '443', 'allow', 'Planner opens the production report on the historian replica'],
+  ['P4', 'A4', 'A5', '502', 'deny', 'Workstation sends Modbus commands to the Line 3 PLC'],
+  ['P5', 'A6', 'A7', '4840', 'allow', 'HMI publishes line data to the historian replica'],
+  ['P6', 'A9', 'SITE', '443', 'allow', 'Visitor browses a website'],
+  ['P7', 'A9', 'A3', '1433', 'deny', 'Visitor device connects to the ERP database'],
+  ['P8', 'A8', 'A6', '3389', 'allow', 'Administrator reaches the HMI through the jump host'],
+  ['P9', 'INET', 'A8', '22', 'deny', 'SSH to the jump host from the internet'],
+  ['P10', 'A1', 'A3', '1433', 'deny', 'Web server connects straight to the ERP database']
+];
+var STARTER = [
+  { id: 'R1', act: 'allow', src: 'z:inet', dst: 'a:A1', svc: '443' },
+  { id: 'R2', act: 'allow', src: 'z:inet', dst: 'a:A2', svc: '25' },
+  { id: 'R3', act: 'allow', src: 'z:corp', dst: 'any', svc: 'any' },
+  { id: 'R4', act: 'deny', src: 'z:corp', dst: 'z:ot', svc: 'any' },
+  { id: 'R5', act: 'allow', src: 'z:guest', dst: 'any', svc: 'any' },
+  { id: 'R6', act: 'allow', src: 'any', dst: 'a:A8', svc: '22' },
+  { id: 'R7', act: 'allow', src: 'z:mgmt', dst: 'z:ot', svc: '3389' }
+];
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function correctZones() { var z = {}; ASSETS.forEach(function (a) { z[a[0]] = a[3]; }); return z; }
+function zoneOf(id, zones) { if (FIXED[id]) return FIXED[id][1]; return zones[id] || ''; }
+function ep(v, id, zones) { if (v === 'any') return true; if (v.slice(0, 2) === 'z:') return zoneOf(id, zones) === v.slice(2); return v.slice(2) === id; }
+function evaluate(rules, zones) {
+  return PACKETS.map(function (p) {
+    var unz = [p[1], p[2]].filter(function (id) { return !zoneOf(id, zones); });
+    var hit = null;
+    for (var i = 0; i < rules.length && !hit; i++) { var r = rules[i]; if (ep(r.src, p[1], zones) && ep(r.dst, p[2], zones) && (r.svc === 'any' || r.svc === p[3])) hit = r; }
+    var act = hit ? hit.act : 'deny';
+    return { p: p, rule: hit ? hit.id : 'Implicit deny', act: act, ok: !unz.length && act === p[4], unz: unz };
+  });
+}
+function curRules() { var a = window.LAB_API; return (a && a.note('rules')) || clone(STARTER); }
+function curZones() { var a = window.LAB_API; return (a && a.note('zones')) || {}; }
+function zonesOk(z) { return ASSETS.every(function (a) { return z[a[0]] === a[3]; }); }
+function solved() { var z = curZones(); return zonesOk(z) && evaluate(curRules(), z).every(function (r) { return r.ok; }); }
+window.B4 = { ZONES: ZONES, ASSETS: ASSETS, PACKETS: PACKETS, STARTER: STARTER, evaluate: evaluate, correctZones: correctZones, solved: solved };
+
+window.LAB = {
+  id: 'B4',
+  title: 'Network Segmentation and Firewall Design',
+  accent: 'Firewall Design',
+  domain: 'Domain 4 (12.8%)',
+  time: '60 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson04.html#s3',
+  lessonLabel: 'Lesson 4, Architecture and Segmentation',
+  kus: ['Basic Networking (BNW)', 'Network Defense (NDF)'],
+  lede: 'Zone a manufacturing network so the plant floor is never one hop from a visitor’s phone. Place each asset, find the flaws in an inherited rule set where the first match wins, fix the order and scope, and prove the design with ten test packets.',
+  workbenchTitle: 'Segmentation workbench',
+  ticket: {
+    number: 'NET-2027-208',
+    priority: 'High priority',
+    from: 'Delphine Okafor-Reyes, Plant IT Manager, Fallowmere Manufacturing',
+    to: 'Security architect (you)',
+    subject: 'Redesign the plant firewall before the Line 3 audit',
+    due: 'Change request to the change advisory board by Thursday, July 8, 2027',
+    body: '<p>Fallowmere Manufacturing makes pump housings on three lines. Line 3 is new and its controllers went in last spring with a rule set the integrator left behind. Our insurer&rsquo;s auditor arrives next month, and their first question will be whether a compromised office laptop or a visitor&rsquo;s phone can reach the plant floor.</p>' +
+      '<p>I need three things from you:</p>' +
+      '<ul><li><b>Zones:</b> place each of the ten assets in the right security zone. We now have an industrial DMZ between the office network and the plant, so plant data reaches business users without anyone touching a controller.</li>' +
+      '<li><b>Rules:</b> the core firewall evaluates rules from the top, <b>first match wins</b>, and anything that matches no rule is denied. Find what the inherited rules get wrong, then fix them.</li>' +
+      '<li><b>Proof:</b> the ten test packets in the workbench describe the traffic the business needs and the traffic it must never allow. All ten have to produce the expected result.</li></ul>' +
+      '<p>Write it up as a change request I can take to the change advisory board.</p>'
+  },
+  howTo: 'Step 2 opens a workbench with three tabs. <b>Zones</b> lists the ten assets; choose a zone for each and watch the zone map fill in. <b>Rule set</b> holds the inherited rules in order. Edit any field, move rules up and down, delete rules, or add new ones; the implicit deny always sits at the bottom. <b>Packet tests</b> runs the ten test packets through your zones and rules live and shows which rule each packet matched. Your work saves in this browser.',
+  workIntro: 'The firewall and traffic are simulated. Rules are matched top down on source, destination, and service; a zone in a rule matches every asset you placed in that zone. All company data is fictional.',
+  checklist: [
+    { id: 'otzone', type: 'set', points: 8, short: 'OT/ICS assets', title: 'Which assets belong on the plant floor',
+      task: 'In <b>Zones</b>, place every asset. Enter the asset IDs that belong in the <b>OT/ICS</b> zone.',
+      label: 'Asset IDs for OT/ICS', placeholder: 'e.g., A1, A2',
+      answer: ['A5', 'A6'],
+      hint: 'OT/ICS holds the devices that control the physical process and the screens operators use to run it. Systems that only read or report plant data belong elsewhere.',
+      debrief: '<p>Only the Line 3 PLC (A5) and the operator HMI (A6) belong in OT/ICS. They run the physical process, so every packet that reaches them must be justified. The historian replica reads plant data but serves business users, so it goes in the industrial DMZ. The jump host administers the plant but must not live in it, so it goes in the management zone.</p>',
+      reviewNote: 'OT/ICS holds only the devices that control or operate the physical process.' },
+    { id: 'hist', type: 'choice', points: 10, short: 'Historian replica', title: 'Where the historian replica goes',
+      task: 'Planners need daily production data from Line 3. Where should the historian replica (A7) sit, and why?',
+      options: ['In the public DMZ beside the website, so it can share the hardened web tier', 'In the industrial DMZ, so the plant pushes data out and office users read it without any path into OT', 'In the OT/ICS zone beside the PLC, so it collects data with the fewest hops', 'In the corporate zone with the ERP server, so planners reach it directly'],
+      answer: 1,
+      hint: 'The goal is that no connection from the office network ever terminates inside OT. Which zone exists for that broker role?',
+      debrief: '<p>The industrial DMZ is a buffer between IT and OT. The HMI publishes data out to the replica (P5), and planners read the replica (P3); no office device ever opens a session into the plant. Putting the replica in OT forces office traffic into the plant zone. The corporate zone would need a hole from OT into the office network. The public DMZ mixes plant data with internet-facing services, which widens the exposure instead of narrowing it.</p>',
+      reviewNote: 'An industrial DMZ brokers data between IT and OT so no session crosses directly.' },
+    { id: 'jump', type: 'choice', points: 8, short: 'Jump host zone', title: 'Where the jump host goes',
+      task: 'Administrators use jump01 (A8) to reach the HMI and network devices. Which placement fits the design?',
+      options: ['The corporate zone, so administrators can reach it from any office workstation', 'The public DMZ, so the integrator can reach it from the internet', 'The OT/ICS zone, so it sits next to the devices it administers', 'The management zone, reachable only on approved admin paths, as the single controlled route to plant and device administration'],
+      answer: 3,
+      hint: 'A jump host concentrates privileged access. Where can you control, log, and monitor it best?',
+      debrief: '<p>A jump host is a choke point for privileged access. In its own management zone it can be reached only on approved paths, it can enforce MFA and session recording, and it is the only source the firewall allows into the HMI (P8). In the corporate zone any infected workstation sits next to it. In the DMZ it is internet-facing. Inside OT it is no longer a separate control point.</p>',
+      reviewNote: 'Jump hosts live in a management zone and are the single, monitored path for administration.' },
+    { id: 'starter', type: 'set', points: 12, short: 'Starter rule failures', title: 'Test the inherited rule set',
+      task: 'Place every asset in its correct zone, then run the packet tests against the <b>inherited rules, unchanged</b>. Enter the IDs of the packets that produce the wrong result.',
+      label: 'Packet IDs that fail', placeholder: 'e.g., P1, P2',
+      answer: function () { return window.B4.evaluate(window.B4.STARTER, window.B4.correctZones()).filter(function (r) { return !r.ok; }).map(function (r) { return r.p[0]; }); },
+      hint: 'Use <b>Restore inherited rules</b> if you have already started editing. A packet fails when the result differs from the expected column.',
+      debrief: '<p>Four packets fail. <b>P4</b>: a workstation reaches the PLC because R3 allows everything from Corporate before R4 can deny it. <b>P5</b>: no rule lets the HMI publish to the historian replica, so the implicit deny blocks a needed flow. <b>P7</b>: R5 lets guests go anywhere, including the ERP database. <b>P9</b>: R6 allows SSH to the jump host from any source, the internet included.</p><p>Two kinds of error show up: rules that are too broad (R3, R5, R6) and a missing rule for legitimate traffic (P5).</p>',
+      reviewNote: 'Test a rule set with both the traffic that must pass and the traffic that must be blocked.' },
+    { id: 'shadow', type: 'choice', points: 10, short: 'Shadowed rule', title: 'Find the rule that can never fire',
+      task: 'With first-match processing, one inherited rule can never match any traffic because an earlier rule always matches first. Which one?',
+      options: ['R4, deny Corporate to OT/ICS, because R3 already allows Corporate to anything', 'R2, allow SMTP to the mail relay, because R1 already allows the internet in', 'R6, allow SSH to the jump host, because R5 already allows guests out', 'R7, allow RDP from Management to OT/ICS, because R4 denies OT/ICS'],
+      answer: 0,
+      hint: 'Look for a narrow rule below a broader rule with the same source. Every packet the narrow rule would match is caught first by the broad one.',
+      debrief: '<p>R4 is shadowed. Every packet from Corporate to OT/ICS also matches R3 (Corporate to anything), and R3 is evaluated first, so the deny never fires. The fix is order: specific denies go above broad allows. Moving R4 above R3 makes P4 pass. Better still, replace R3 with the specific flows the office actually needs, which is least privilege.</p>',
+      reviewNote: 'A specific rule below a broader rule that covers it is shadowed and never fires.' },
+    { id: 'r6', type: 'choice', points: 10, short: 'Jump host exposure', title: 'Fix the internet path to the jump host',
+      task: 'R6 lets P9 through: SSH to jump01 from anywhere. What is the best fix?',
+      options: ['Move R6 to the bottom of the rule set, below the guest rule', 'Change SSH on the jump host to a high, unusual port number', 'Limit R6 to approved admin sources, such as the corporate zone or a VPN, and require MFA on the jump host', 'Delete R6 and allow administrators to RDP into the HMI directly'],
+      answer: 2,
+      hint: 'The rule is too broad in one field. Which field, and what compensating control belongs on a privileged access point?',
+      debrief: '<p>The problem is the source <b>Any</b>. Restricting it to approved admin sources closes the internet path, and MFA plus session logging on the jump host protects what remains. Moving the rule down does not change what it matches. A different port is obscurity, not control. Direct RDP to the HMI removes the choke point the jump host exists to provide.</p>',
+      reviewNote: 'Fix a broad rule by narrowing the field that is too wide, then add controls on the target.' },
+    { id: 'final', type: 'choice', points: 12, short: 'Design passes', title: 'Your design passes all ten tests',
+      locked: function () { return window.B4.solved() ? false : 'Unlocks when every asset is in its correct zone and all ten packet tests pass in your rule set.'; },
+      task: 'All ten packets now produce the expected result. Several flows you did not write a rule for are blocked by the implicit deny at the bottom. Which principle does that implicit deny enforce?',
+      options: ['Fail open: traffic passes when the firewall cannot decide', 'Default deny: anything not explicitly allowed is blocked, which supports least privilege', 'Defense in depth: a second firewall checks every packet the first one allows', 'Separation of duties: a different administrator must approve each rule'],
+      answer: 1,
+      hint: 'Think about what happens to a packet that matches no rule at all.',
+      debrief: '<p>The implicit deny makes the firewall default deny: only flows the business justified and wrote down get through, and everything else is blocked without a rule for each threat. That is least privilege applied to the network. A strong final design usually has a short list of specific allows, specific denies above any broad allow, and the implicit deny doing the rest. Many teams also add an explicit deny-and-log rule at the bottom so blocked traffic shows up in the SIEM collector.</p>',
+      reviewNote: 'Firewalls should default deny: allow only what is explicitly justified.' },
+    { id: 'state', type: 'choice', points: 10, short: 'Return traffic', title: 'Why the reply to P1 gets back',
+      task: 'No rule allows traffic from web01 to the internet, yet the customer in P1 receives the web page. Why?',
+      options: ['The implicit deny only applies to inbound traffic', 'Rule R1 also allows the reverse direction because it names web01', 'HTTPS responses are encrypted, so the firewall cannot inspect them', 'The firewall is stateful: it tracks the session P1 opened and allows the replies that belong to it'],
+      answer: 3,
+      hint: 'Compare a stateful firewall with a stateless packet filter.',
+      debrief: '<p>A stateful firewall records each allowed connection in a state table and passes reply packets that match it, so rules only describe who may start a session. A stateless packet filter would need a second rule for return traffic, usually a wide one for high ports, which is easier to abuse. Rules are not bidirectional, and encryption does not change how the firewall tracks the session.</p>',
+      reviewNote: 'Stateful firewalls allow replies to sessions they permitted; rules describe who may initiate.' },
+    { id: 'guest', type: 'choice', points: 8, short: 'Guest isolation', title: 'Beyond the firewall rule for guests',
+      task: 'Your rules now keep visitors on the internet only. Which additional control best finishes the guest design?',
+      options: ['A shared Wi-Fi password printed at reception and changed every year', 'Let guests use the corporate SSID with a separate password', 'A separate guest SSID and VLAN with client isolation, internet-only egress, and no internal DNS', 'A rule that allows guests to the DMZ so they can reach the order tracking site faster'],
+      answer: 2,
+      hint: 'A firewall rule controls traffic between zones. What about traffic between two visitor devices on the same network?',
+      debrief: '<p>Segmentation starts at layer 2. A separate SSID mapped to its own VLAN keeps visitors off the corporate segment, client isolation stops one visitor device from attacking another, and internet-only egress with public DNS means internal names do not resolve. A shared corporate SSID puts visitors one misconfiguration away from the office network, and guests reach the public site from the internet like any customer.</p>',
+      reviewNote: 'Guest networks need their own VLAN and SSID, client isolation, and internet-only egress.' },
+    { id: 'cr', type: 'text', points: 12, short: 'Change request', title: 'Write the change request',
+      task: 'Write the change request Delphine will take to the change advisory board.',
+      fields: [
+        { key: 'chg', label: 'Changes (zones and rules)', min: 80, placeholder: 'Move R4 above R3 and narrow R3 to... Add allow OT/ICS to Industrial DMZ on OPC UA... Restrict R6 source to...' },
+        { key: 'why', label: 'Business justification and risk reduced', min: 50, placeholder: 'A compromised office device or visitor phone can no longer reach the PLC...' },
+        { key: 'test', label: 'Test and rollback plan', min: 40, placeholder: 'Run the ten test packets in a maintenance window... restore the saved rule set if...' }
+      ],
+      hint: 'A change request names each change, why the business needs it, how you will prove it works, and how you will back out.',
+      debrief: '<p><b>Model change request.</b> Place the historian replica in a new industrial DMZ and the jump host and log collector in the management zone. Move R4 (deny Corporate to OT/ICS) above R3, then replace R3 with the specific office flows needed, such as Corporate to the historian replica on HTTPS. Add an allow from OT/ICS to the industrial DMZ on OPC UA 4840 for P5. Narrow R5 to Guest to Internet on HTTPS and DNS. Limit R6 to approved admin sources with MFA on jump01. <b>Justification:</b> no office device, visitor, or internet host can open a session into the plant, which is the auditor&rsquo;s first question. <b>Test and rollback:</b> apply in the Saturday maintenance window, run the ten test packets plus a production check with the line supervisor, and restore the exported rule set if any line function fails.</p>',
+      reviewNote: 'Change requests state the change, the justification, the test, and the rollback.' }
+  ],
+  workbench: function (root, api) {
+    var esc = api.esc;
+    var zones = api.note('zones') || {};
+    var rules = api.note('rules') || clone(STARTER);
+    var nextN = api.note('nextN') || 1;
+    var wasSolved = solved();
+    function persist() {
+      api.note('zones', zones); api.note('rules', rules); api.note('nextN', nextN);
+      var s = solved(); if (s !== wasSolved) { wasSolved = s; api.refresh(); }
+    }
+    var EP = [['any', 'Any']].concat(ZONES.map(function (z) { return ['z:' + z[0], 'Zone: ' + z[1]]; })).concat(ASSETS.map(function (a) { return ['a:' + a[0], a[0] + ' ' + a[1]]; }));
+    function opts(list, v) { return list.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === v ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join(''); }
+    function epName(v) { for (var i = 0; i < EP.length; i++) if (EP[i][0] === v) return EP[i][1]; return v; }
+    function hostName(id) { return FIXED[id] ? FIXED[id][0] : id + ' ' + AN[id][1]; }
+
+    root.innerHTML =
+      '<div class="lb-tool">' +
+      '<div class="lb-tabs" role="tablist" aria-label="Workbench tools">' +
+        '<button role="tab" id="tb-zone" aria-controls="pn-zone" aria-selected="true">Zones</button>' +
+        '<button role="tab" id="tb-rule" aria-controls="pn-rule" aria-selected="false" tabindex="-1">Rule set</button>' +
+        '<button role="tab" id="tb-pk" aria-controls="pn-pk" aria-selected="false" tabindex="-1">Packet tests</button></div>' +
+      '<div class="lb-panel" role="tabpanel" id="pn-zone" aria-labelledby="tb-zone">' +
+        '<div class="b4-row"><div class="b4-col"><p class="b4-note">Choose a zone for each asset. The Internet zone is fixed and holds outside hosts only.</p><ul class="b4-assets" id="b4-assets"></ul></div>' +
+        '<div class="b4-col wide"><p class="eyebrow">Zone map</p><div class="b4-map" id="b4-map" aria-live="polite"></div></div></div>' +
+      '</div>' +
+      '<div class="lb-panel" role="tabpanel" id="pn-rule" aria-labelledby="tb-rule" hidden>' +
+        '<p class="b4-note">Rules are evaluated from the top. The first rule whose source, destination, and service all match decides the packet. A zone matches every asset you placed in it.</p>' +
+        '<div class="table-wrap b4-rules"><table class="data"><thead><tr><th scope="col">#</th><th scope="col">ID</th><th scope="col">Action</th><th scope="col">Source</th><th scope="col">Destination</th><th scope="col">Service</th><th scope="col">Order</th></tr></thead><tbody id="b4-rbody"></tbody></table></div>' +
+        '<div class="b4-btns"><button type="button" class="btn" id="b4-add">Add rule</button><button type="button" class="btn ghost" id="b4-restore">Restore inherited rules</button></div>' +
+      '</div>' +
+      '<div class="lb-panel" role="tabpanel" id="pn-pk" aria-labelledby="tb-pk" hidden>' +
+        '<div class="b4-sum" id="b4-sum" aria-live="polite"></div>' +
+        '<div class="table-wrap b4-pk"><table class="data"><thead><tr><th scope="col">ID</th><th scope="col">Traffic</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Service</th><th scope="col">Expected</th><th scope="col">Result</th><th scope="col">Matched rule</th></tr></thead><tbody id="b4-pbody"></tbody></table></div>' +
+      '</div></div>';
+
+    var tabs = [].slice.call(root.querySelectorAll('[role=tab]'));
+    function sel(t) { tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }); api.note('tab', t.id); }
+    tabs.forEach(function (t, i) { t.addEventListener('click', function () { sel(t); }); t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; sel(n); n.focus(); } }); });
+    if (api.note('tab')) { var tt = document.getElementById(api.note('tab')); if (tt) sel(tt); }
+
+    var ZSEL = [['', 'Choose a zone']].concat(ZONES.filter(function (z) { return z[0] !== 'inet'; }).map(function (z) { return [z[0], z[1]]; }));
+    function drawZones() {
+      document.getElementById('b4-assets').innerHTML = ASSETS.map(function (a) {
+        return '<li><span><b>' + a[0] + '</b> <code>' + esc(a[1]) + '</code><br>' + esc(a[2]) + '</span><label class="sr-only" for="z-' + a[0] + '">Zone for ' + esc(a[1]) + '</label><select class="b4-sel" id="z-' + a[0] + '" data-a="' + a[0] + '">' + opts(ZSEL, zones[a[0]] || '') + '</select></li>';
+      }).join('');
+      document.getElementById('b4-assets').querySelectorAll('select').forEach(function (s) { s.addEventListener('change', function () { if (s.value) zones[s.dataset.a] = s.value; else delete zones[s.dataset.a]; persist(); drawMap(); drawPk(); }); });
+      drawMap();
+    }
+    function drawMap() {
+      var un = ASSETS.filter(function (a) { return !zones[a[0]]; });
+      document.getElementById('b4-map').innerHTML = ZONES.map(function (z) {
+        var chips = z[0] === 'inet' ? '<span class="b4-chip">Internet host</span><span class="b4-chip">Internet website</span>' : ASSETS.filter(function (a) { return zones[a[0]] === z[0]; }).map(function (a) { return '<span class="b4-chip">' + a[0] + ' ' + esc(a[1]) + '</span>'; }).join('');
+        return '<div class="b4-zone" style="--zc:' + z[3] + '"><h5>' + esc(z[1]) + '</h5><p>' + esc(z[2]) + '</p>' + chips + '</div>';
+      }).join('') + (un.length ? '<div class="b4-zone" style="--zc:#c9d3e3"><h5>Not placed</h5><p>' + un.length + ' asset' + (un.length > 1 ? 's' : '') + '</p>' + un.map(function (a) { return '<span class="b4-chip">' + a[0] + '</span>'; }).join('') + '</div>' : '');
+    }
+    function drawRules() {
+      var ACT = [['allow', 'Allow'], ['deny', 'Deny']];
+      document.getElementById('b4-rbody').innerHTML = rules.map(function (r, i) {
+        return '<tr><td>' + (i + 1) + '</td><td class="rid">' + esc(r.id) + '</td>' +
+          '<td><label class="sr-only" for="ra-' + i + '">Action for ' + esc(r.id) + '</label><select class="b4-sel" id="ra-' + i + '" data-i="' + i + '" data-k="act">' + opts(ACT, r.act) + '</select></td>' +
+          '<td><label class="sr-only" for="rs-' + i + '">Source for ' + esc(r.id) + '</label><select class="b4-sel" id="rs-' + i + '" data-i="' + i + '" data-k="src">' + opts(EP, r.src) + '</select></td>' +
+          '<td><label class="sr-only" for="rd-' + i + '">Destination for ' + esc(r.id) + '</label><select class="b4-sel" id="rd-' + i + '" data-i="' + i + '" data-k="dst">' + opts(EP, r.dst) + '</select></td>' +
+          '<td><label class="sr-only" for="rv-' + i + '">Service for ' + esc(r.id) + '</label><select class="b4-sel" id="rv-' + i + '" data-i="' + i + '" data-k="svc">' + opts(SVC, r.svc) + '</select></td>' +
+          '<td><span class="b4-mv"><button type="button" data-up="' + i + '" aria-label="Move ' + esc(r.id) + ' up"' + (i ? '' : ' disabled') + '>&#9650;</button><button type="button" data-dn="' + i + '" aria-label="Move ' + esc(r.id) + ' down"' + (i < rules.length - 1 ? '' : ' disabled') + '>&#9660;</button><button type="button" class="del" data-del="' + i + '" aria-label="Delete ' + esc(r.id) + '">&#10005;</button></span></td></tr>';
+      }).join('') + '<tr class="b4-implicit"><td>' + (rules.length + 1) + '</td><td class="rid">Implicit</td><td><span class="b4-act-deny">Deny</span></td><td>Any</td><td>Any</td><td>Any</td><td>Fixed</td></tr>';
+      var tb = document.getElementById('b4-rbody');
+      tb.querySelectorAll('select').forEach(function (s) { s.addEventListener('change', function () { rules[+s.dataset.i][s.dataset.k] = s.value; persist(); drawPk(); }); });
+      tb.querySelectorAll('[data-up]').forEach(function (b) { b.onclick = function () { var i = +b.dataset.up; var t = rules[i]; rules[i] = rules[i - 1]; rules[i - 1] = t; persist(); drawRules(); drawPk(); var f = document.querySelector('[data-up="' + (i - 1) + '"]') || document.querySelector('[data-dn="' + (i - 1) + '"]'); if (f) f.focus(); }; });
+      tb.querySelectorAll('[data-dn]').forEach(function (b) { b.onclick = function () { var i = +b.dataset.dn; var t = rules[i]; rules[i] = rules[i + 1]; rules[i + 1] = t; persist(); drawRules(); drawPk(); var f = document.querySelector('[data-dn="' + (i + 1) + '"]') || document.querySelector('[data-up="' + (i + 1) + '"]'); if (f) f.focus(); }; });
+      tb.querySelectorAll('[data-del]').forEach(function (b) { b.onclick = function () { var i = +b.dataset.del; if (!confirm('Delete rule ' + rules[i].id + '?')) return; rules.splice(i, 1); persist(); drawRules(); drawPk(); }; });
+    }
+    document.getElementById('b4-add').onclick = function () { rules.push({ id: 'N' + nextN, act: 'allow', src: 'any', dst: 'any', svc: 'any' }); nextN++; persist(); drawRules(); drawPk(); var s = document.getElementById('ra-' + (rules.length - 1)); if (s) s.focus(); };
+    document.getElementById('b4-restore').onclick = function () { if (!confirm('Restore the inherited rule set? Your rule edits will be replaced.')) return; rules = clone(STARTER); nextN = 1; persist(); drawRules(); drawPk(); };
+    function drawPk() {
+      var res = evaluate(rules, zones), pass = res.filter(function (r) { return r.ok; }).length;
+      var placed = ASSETS.filter(function (a) { return zones[a[0]]; }).length;
+      document.getElementById('b4-sum').innerHTML = '<span class="' + (pass === 10 ? 'ok' : '') + '">Tests passing: <b>' + pass + ' of 10</b></span><span>Assets placed: <b>' + placed + ' of 10</b></span><span>Rules: <b>' + rules.length + '</b> + implicit deny</span>';
+      document.getElementById('b4-pbody').innerHTML = res.map(function (r) {
+        var p = r.p, z1 = zoneOf(p[1], zones), z2 = zoneOf(p[2], zones);
+        var result = r.unz.length ? '<span class="b4-res bad">Place ' + r.unz.join(', ') + ' first</span>' : '<span class="b4-res ' + (r.ok ? 'ok' : 'bad') + '">' + (r.act === 'allow' ? 'Allowed' : 'Denied') + ' ' + (r.ok ? '&#10003;' : '&#10007;') + '</span>';
+        return '<tr' + (r.ok ? '' : ' class="b4-fail"') + '><td class="rid"><b>' + p[0] + '</b></td><td>' + esc(p[5]) + '</td><td>' + esc(hostName(p[1])) + '<br><small>' + esc(ZN[z1] || 'not placed') + '</small></td><td>' + esc(hostName(p[2])) + '<br><small>' + esc(ZN[z2] || 'not placed') + '</small></td><td>' + esc(SN[p[3]]) + '</td>' +
+          '<td><span class="b4-act-' + p[4] + '">' + (p[4] === 'allow' ? 'Allow' : 'Deny') + '</span></td><td>' + result + '</td><td>' + esc(r.unz.length ? '' : r.rule) + '</td></tr>';
+      }).join('');
+    }
+    drawZones(); drawRules(); drawPk();
+  },
+  onReset: function () { }
+};
+})();
+</script>
+<script src="lab.js"></script>
+</body>
+</html>

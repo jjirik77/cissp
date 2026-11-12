@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 3: Security Architecture and Engineering | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 3</span></p>
+    <span class="lesson-badge-lg">Day 2, Late Morning and Afternoon &bull; Domain 3</span>
+    <h1>Security Architecture <span>and Engineering</span></h1>
+    <p class="lesson-lede">Domain 3 is where security becomes design. It covers the principles that shape a system, the formal models that prove a rule holds, the weak points of every kind of architecture, the cryptography that protects data, and the buildings that house it all. Good design prevents problems. Bolted-on controls only chase them.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 2, 11:00 to 5:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~4.5 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>12.8%</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">Build it in, not on</h2>
+    <div class="rule"></div>
+    <p class="lead">Domain 3 is the broadest technical domain on the exam. It asks you to think like an architect: start from requirements, apply proven principles, pick controls that fit the system, and know where each design tends to fail. It also holds most of the exam&rsquo;s cryptography and all of its site and facility security.</p>
+    <p class="lead">This lesson covers secure design principles, security models, security capabilities and architecture vulnerabilities, cryptography and key management, cryptanalytic attacks, site and facility controls, and the information system life cycle. It is a long session. Pace it with the interactive and the eMates.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>The exam rarely asks you to configure a cipher. It asks you to choose the right control for a requirement. Read each question for the property it protects: confidentiality, integrity, availability, authenticity, or nonrepudiation. Then pick the mechanism that delivers that property.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Apply</strong> secure design principles such as least privilege, defense in depth, fail securely, and zero trust to a system design. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Determine</strong> whether Bell-LaPadula, Biba, Clark-Wilson, or Brewer-Nash rules allow a given access. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Identify</strong> the typical vulnerabilities of client, server, database, cloud, ICS, IoT, container, and virtualized systems. <em class="bloom-tag">Bloom: Understand</em></span></li>
+      <li><span><strong>Select</strong> a cryptographic method, mode, and key management practice that meets a stated requirement. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Classify</strong> cryptanalytic attacks and recommend site and facility controls for a data center. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Design</strong> a classroom lab that demonstrates a security model or a cryptographic property. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Trusted Computing Base (TCB)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">All the hardware, firmware, and software that enforce a system&rsquo;s security policy. If any part of it fails, security fails.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Reference Monitor</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The abstract concept that mediates every access by a subject to an object. It must be tamperproof, always invoked, and small enough to verify.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Bell-LaPadula</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A confidentiality model: no read up (simple security property) and no write down (star property).</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Biba</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">An integrity model: no read down (simple integrity property) and no write up (star integrity property).</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Brewer-Nash</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The Chinese Wall model. Access rights change with history, so a consultant who sees one client&rsquo;s data is blocked from a competitor&rsquo;s.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Two-Person Integrity</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A control that requires two authorized people to be present and act together for a critical operation, so neither can act alone.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Digital Signature</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A hash of a message encrypted with the sender&rsquo;s private key. It proves integrity, authenticity, and nonrepudiation, but not confidentiality.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Hardware Security Module (HSM)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A tamper-resistant device that generates, stores, and uses cryptographic keys so the keys never leave protected hardware.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Post-Quantum Cryptography</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Algorithms that run on ordinary computers but resist attack by quantum computers, such as ML-KEM for key establishment and ML-DSA for signatures.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Aggregation and Inference</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Aggregation combines low-sensitivity items into a sensitive whole. Inference deduces sensitive facts from data a user is allowed to see.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. Secure Design Principles</a></li>
+          <li><a href="#s2">2. Security Models and Evaluation</a></li>
+          <li><a href="#s3">3. Interactive: Model Rule Tester</a></li>
+          <li><a href="#s4">4. Capabilities and Architecture Weak Points</a></li>
+          <li><a href="#s5">5. Cryptography Fundamentals</a></li>
+          <li><a href="#s6">6. Signatures, PKI, and Key Management</a></li>
+          <li><a href="#s7">7. Cryptanalytic Attacks</a></li>
+          <li><a href="#s8">8. Site, Facility, and System Life Cycle</a></li>
+          <li><a href="#s9">9. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>Secure Design Principles</h3></div>
+          <p>Secure design principles are the rules of thumb architects use before any product is chosen. The exam expects you to recognize each principle in a scenario and to spot a design that breaks one.</p>
+          <ul class="detail">
+            <li><strong>Threat modeling:</strong> find threats during design, when fixes are cheapest. Lesson 1 covered STRIDE.</li>
+            <li><strong>Least privilege:</strong> give each user, process, and service only the access its task needs, for only as long as it needs it.</li>
+            <li><strong>Defense in depth:</strong> layer independent controls so that one failure does not expose the asset.</li>
+            <li><strong>Secure defaults:</strong> ship with the safest settings turned on. Users should have to opt out of security, not opt in.</li>
+            <li><strong>Fail securely:</strong> when a component fails, it should deny access rather than allow it. A firewall that crashes should block traffic, not pass it. Life safety is the exception: doors on an escape route fail open (fail safe) to protect people.</li>
+            <li><strong>Separation of duties:</strong> split a sensitive task so that no single person can complete it alone.</li>
+            <li><strong>Rotation of duties:</strong> move people through sensitive roles on a schedule. A successor reviews the work and finds fraud or errors a single long-term owner could hide. It also builds backup skills.</li>
+            <li><strong>Two-person integrity:</strong> a critical action, such as releasing a master key or entering a vault, requires two authorized people present at the same time, each able to stop the other. Separation of duties splits a task into parts; two-person integrity requires two people for the same act.</li>
+            <li><strong>Keep it simple and small:</strong> less code and fewer features mean fewer flaws and an easier review.</li>
+            <li><strong>Zero trust:</strong> never trust based on network location. Verify every request explicitly using identity, device, and context, grant least privilege per session, and assume breach. NIST SP 800-207 describes the architecture: a policy decision point evaluates each request and a policy enforcement point applies the decision.</li>
+            <li><strong>Privacy by design:</strong> build privacy into the system from the start, with data minimization and privacy as the default setting. <strong>Privacy-enhancing technologies</strong> put it into practice: pseudonymization and tokenization, differential privacy (adding calibrated noise to statistics), homomorphic encryption (computing on encrypted data), secure multiparty computation, and trusted execution environments.</li>
+            <li><strong>Shared responsibility:</strong> in the cloud, the provider and the customer each own part of security. The split depends on the service model.</li>
+            <li><strong>Secure access service edge (SASE):</strong> a cloud-delivered model that combines network functions, such as SD-WAN, with security services, such as secure web gateway, cloud access security broker, and zero trust network access.</li>
+            <li><strong>Well-architected framework:</strong> a structured design review published by a cloud provider (AWS, Microsoft Azure, and Google Cloud each have one). It checks a workload against pillars such as security, reliability, operational excellence, performance, cost, and sustainability, and it turns design principles into concrete questions an architect must answer.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>&ldquo;Fail secure&rdquo; and &ldquo;fail safe&rdquo; are not the same. Fail secure protects assets by locking down. Fail safe protects people by opening up. When human life is at stake, people come first on the exam, every time.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128208;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Cybersecurity Design Principles</strong>: work through the principles with examples of designs that follow and break them.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/design/cybersecuritydesignprinciples.html" target="_blank" rel="noopener noreferrer">Design Principles <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Security Models and Evaluation</h3></div>
+          <p>A security model describes a policy precisely enough to prove that a system enforces it. Models are tested as rules: given a subject, an object, and an action, is access allowed? The exam focuses on four models and the properties each protects.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Model</th><th>Protects</th><th>Core rules</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Bell-LaPadula</td><td>Confidentiality</td><td>Simple security property: no read up. Star (*) property: no write down. Strong star property: read and write only at your own level.</td></tr>
+              <tr><td class="term">Biba</td><td>Integrity</td><td>Simple integrity property: no read down. Star (*) integrity property: no write up. Invocation property: a subject cannot invoke a subject of higher integrity.</td></tr>
+              <tr><td class="term">Clark-Wilson</td><td>Integrity (commercial)</td><td>Users reach constrained data items only through well-formed transformation procedures. Enforces separation of duties and auditing through the access triple: user, program, data.</td></tr>
+              <tr><td class="term">Brewer-Nash</td><td>Conflict of interest</td><td>Access depends on what a subject has already accessed. Once you see one client in a conflict class, competitors in that class are walled off.</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Other models to recognize</h4>
+          <ul class="detail">
+            <li><strong>State machine:</strong> the system is secure if it starts in a secure state and every transition leads to another secure state. Bell-LaPadula and Biba are built on it.</li>
+            <li><strong>Information flow:</strong> controls how information moves between levels, which helps find covert channels.</li>
+            <li><strong>Noninterference:</strong> actions at a higher level must not affect what a lower level can observe.</li>
+            <li><strong>Take-Grant:</strong> a graph model of how rights are passed with take, grant, create, and remove operations.</li>
+            <li><strong>The &ldquo;Star Model&rdquo;:</strong> the outline lists it beside Biba and Bell-LaPadula. Study sources differ on its meaning, and most treat it as the star (*) properties those two models share. Know both star rules well and you are covered.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Bell-LaPadula and Biba are mirror images. If you remember that Bell-LaPadula protects secrets (&ldquo;no read up, no write down&rdquo;), flip both rules for Biba (&ldquo;no read down, no write up&rdquo;). The word <em>simple</em> always means read. The <em>star</em> always means write.</div>
+          <h4>Selecting controls and evaluating products</h4>
+          <p>Controls are selected from the system&rsquo;s security requirements, not from a vendor catalog. Requirements come from the risk assessment, data classification, and laws that apply. Product assurance can be checked against <strong>Common Criteria</strong> (ISO/IEC 15408). A vendor describes the product&rsquo;s security functions in a security target, often written against a protection profile, and an accredited lab evaluates it to an <strong>Evaluation Assurance Level</strong> from EAL1 (functionally tested) to EAL7 (formally verified design and tested). A higher EAL means more rigorous evaluation, not necessarily more security features.</p>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>Interactive: Security Model Rule Tester</h3></div>
+          <p>Pick a model, place the subject and the object on the ladder of levels, and choose an action. The tester applies the model&rsquo;s rules, draws the direction information would flow, and names the property that allows or denies the access. When you are ready, switch to Challenge mode for six scenarios.</p>
+
+          <style>
+            .smt-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem;}
+            .smt-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:1rem;align-items:start;}
+            .smt-row{margin-bottom:.75rem;}
+            .smt-row .smt-lab{display:block;font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.3rem;}
+            .smt-btns{display:flex;gap:.35rem;flex-wrap:wrap;}
+            .smt-row select{width:100%;}
+            .smt-strong{display:flex;gap:.45rem;align-items:center;font-size:.78rem;color:var(--text-secondary);cursor:pointer;}
+            .smt-strong input{accent-color:var(--gold);}
+            .smt-strong.off{opacity:.45;cursor:default;}
+            .smt-svg svg{width:100%;height:auto;display:block;max-height:320px;}
+            .smt-flow{font-family:Arial,sans-serif;font-size:.76rem;color:var(--text-muted);margin:.35rem 0 0;line-height:1.45;}
+            .smt-scen{font-family:Arial,sans-serif;font-size:.9rem;color:var(--text-primary);line-height:1.55;margin:.2rem 0 .7rem;font-weight:700;}
+            .smt-meta{font-family:Arial,sans-serif;font-size:.74rem;color:var(--text-muted);margin:0 0 .4rem;}
+            .smt-score{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;color:var(--gold);font-size:.95rem;}
+            .smt-hidden{display:none;}
+            #smt-root .iw-btn:disabled{opacity:.4;cursor:not-allowed;background:var(--card-bg);color:var(--text-muted);border-color:var(--border);}
+            @media (max-width:760px){.smt-grid{grid-template-columns:1fr;}}
+          </style>
+
+          <div class="iw" id="smt-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; test the rules</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="smt-tabs" role="group" aria-label="Mode">
+                <button type="button" class="iw-btn" id="smt-mode-ex" aria-pressed="true">Explore</button>
+                <button type="button" class="iw-btn" id="smt-mode-ch" aria-pressed="false">Challenge (6 scenarios)</button>
+              </div>
+
+              <div class="smt-grid">
+                <div class="iw-panel">
+                  <div id="smt-explore">
+                    <h5 class="iw-h5">Set up the access</h5>
+                    <div class="smt-row"><span class="smt-lab" id="smt-l-model">Model</span>
+                      <div class="smt-btns" role="group" aria-labelledby="smt-l-model">
+                        <button type="button" class="iw-btn" data-model="blp" aria-pressed="true">Bell-LaPadula</button>
+                        <button type="button" class="iw-btn" data-model="biba" aria-pressed="false">Biba</button>
+                      </div></div>
+                    <div class="smt-row"><label class="smt-lab" for="smt-s" id="smt-s-lab">Subject clearance</label><select id="smt-s"></select></div>
+                    <div class="smt-row"><label class="smt-lab" for="smt-o" id="smt-o-lab">Object classification</label><select id="smt-o"></select></div>
+                    <div class="smt-row"><span class="smt-lab" id="smt-l-act">Action</span>
+                      <div class="smt-btns" role="group" aria-labelledby="smt-l-act">
+                        <button type="button" class="iw-btn jade" data-act="read" aria-pressed="true">Read</button>
+                        <button type="button" class="iw-btn jade" data-act="write" aria-pressed="false">Write</button>
+                        <button type="button" class="iw-btn jade" data-act="invoke" aria-pressed="false" disabled title="Biba only">Invoke</button>
+                      </div></div>
+                    <div class="smt-row"><label class="smt-strong" id="smt-strong-wrap"><input type="checkbox" id="smt-strong"> Enforce the strong star property</label></div>
+                  </div>
+                  <div id="smt-challenge" class="smt-hidden">
+                    <h5 class="iw-h5">Allowed or denied?</h5>
+                    <p class="smt-meta" id="smt-c-meta">Scenario 1 of 6</p>
+                    <p class="smt-scen" id="smt-c-text"></p>
+                    <div class="smt-btns">
+                      <button type="button" class="iw-btn" id="smt-c-yes">Allowed</button>
+                      <button type="button" class="iw-btn" id="smt-c-no">Denied</button>
+                      <button type="button" class="iw-btn jade" id="smt-c-next" disabled>Next scenario</button>
+                    </div>
+                    <p class="smt-meta" style="margin-top:.7rem">Score: <span class="smt-score" id="smt-c-score">0 / 0</span></p>
+                  </div>
+                </div>
+                <div class="iw-panel" aria-live="polite">
+                  <h5 class="iw-h5" id="smt-vis-h">Levels</h5>
+                  <div class="smt-svg" id="smt-svg"></div>
+                  <p class="smt-flow" id="smt-flow"></p>
+                  <div class="iw-verdict" id="smt-verdict"><span class="iw-pill" id="smt-pill">Ready</span><span id="smt-why">Choose a model, two levels, and an action.</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>Watch the arrow, not the people. A read moves information from the object to the subject. A write moves it from the subject to the object. Bell-LaPadula blocks any flow that carries secrets downward. Biba blocks any flow that carries untrusted data upward. Once you see the flow, both models follow from one idea each.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('smt-root'); if(!root) return;
+            var $=function(id){return root.querySelector('#'+id);};
+            var LV={blp:['Unclassified','Confidential','Secret','Top Secret'],biba:['Low integrity','Medium integrity','High integrity']};
+            var st={model:'blp',s:2,o:3,act:'read',strong:false};
+            function decide(c){
+              var s=c.s,o=c.o;
+              if(c.model==='blp'){
+                if(c.act==='read') return {ok:s>=o,prop:'Simple security property (no read up)',why:s>=o?'The subject is cleared at or above the object, so reading cannot leak anything the subject is not allowed to know.':'Reading would move information from a higher level down to a subject who is not cleared for it.'};
+                if(c.strong) return {ok:s===o,prop:'Strong star property (write only at your own level)',why:s===o?'Subject and object are at the same level, the only place the strong star property allows a write.':'Under the strong star property a subject may write only at exactly its own level, neither up nor down.'};
+                return {ok:s<=o,prop:'Star (*) property (no write down)',why:s<=o?(s<o?'Writing up is allowed. The subject adds information to a higher level and cannot leak a secret downward. This is sometimes called a blind write, since the subject cannot read back what it wrote.':'Writing at your own level keeps information at that level.'):'Writing down could copy higher-level secrets into a lower-level object that less-cleared people can read.'};
+              }
+              if(c.act==='read') return {ok:s<=o,prop:'Simple integrity property (no read down)',why:s<=o?'The object is at or above the subject&rsquo;s integrity, so reading it cannot contaminate the subject.':'Reading lower-integrity data could contaminate a higher-integrity subject and the decisions it makes.'};
+              if(c.act==='write') return {ok:s>=o,prop:'Star (*) integrity property (no write up)',why:s>=o?'Writing at or below your own integrity level cannot corrupt more trusted data.':'A lower-integrity subject writing up could corrupt data that more trusted processes rely on.'};
+              return {ok:o<=s,prop:'Invocation property (no invoking a higher-integrity subject)',why:o<=s?'Calling a subject at or below your own integrity cannot be used to borrow trust you do not have.':'A lower-integrity subject may not request services from a higher-integrity subject, or it could act through it.'};
+            }
+            function draw(c,res){
+              var lv=LV[c.model], n=lv.length, rowH=58, W=340, H=n*rowH+20, top=10;
+              function y(i){return top+(n-1-i)*rowH;}
+              var cy=function(i){return y(i)+rowH/2;};
+              var out='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Ladder of levels showing subject at '+lv[c.s]+' and '+(c.act==='invoke'?'target subject':'object')+' at '+lv[c.o]+', access '+(res.ok?'allowed':'denied')+'">';
+              for(var i=0;i<n;i++){
+                out+='<rect x="8" y="'+(y(i)+3)+'" width="'+(W-16)+'" height="'+(rowH-6)+'" rx="5" fill="'+(i%2?'#eaf0fb':'#f3f5fa')+'" stroke="#c9d3e3"/>';
+                out+='<text x="'+(W/2)+'" y="'+(cy(i)+4)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#56647f">'+lv[i]+'</text>';
+              }
+              var sx=70,ox=W-70,sy=cy(c.s),oy=cy(c.o);
+              var col=res.ok?'#15803d':'#b91c1c';
+              var fromX,fromY,toX,toY;
+              if(c.act==='read'){fromX=ox;fromY=oy;toX=sx;toY=sy;} else {fromX=sx;fromY=sy;toX=ox;toY=oy;}
+              var dx=toX-fromX, dy=toY-fromY, len=Math.sqrt(dx*dx+dy*dy)||1, ux=dx/len, uy=dy/len;
+              var x1=fromX+ux*26,y1=fromY+uy*26,x2=toX-ux*30,y2=toY-uy*30;
+              if(c.s===c.o){y1-=13;y2-=13;}
+              out+='<defs><marker id="smt-ah-'+(res.ok?'g':'r')+'" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 Z" fill="'+col+'"/></marker></defs>';
+              out+='<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="3"'+(res.ok?'':' stroke-dasharray="7 5"')+' marker-end="url(#smt-ah-'+(res.ok?'g':'r')+')"/>';
+              if(!res.ok){var mx=(x1+x2)/2,my=(y1+y2)/2;out+='<circle cx="'+mx+'" cy="'+my+'" r="11" fill="#fff" stroke="#b91c1c" stroke-width="2"/><path d="M'+(mx-5)+' '+(my-5)+' L'+(mx+5)+' '+(my+5)+' M'+(mx+5)+' '+(my-5)+' L'+(mx-5)+' '+(my+5)+'" stroke="#b91c1c" stroke-width="2.4"/>';}
+              out+='<circle cx="'+sx+'" cy="'+sy+'" r="22" fill="#1e3a8a"/><text x="'+sx+'" y="'+(sy+5)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#fff">S</text>';
+              if(c.act==='invoke') out+='<circle cx="'+ox+'" cy="'+oy+'" r="22" fill="#047857"/><text x="'+ox+'" y="'+(oy+5)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#fff">S2</text>';
+              else out+='<rect x="'+(ox-22)+'" y="'+(oy-18)+'" width="44" height="36" rx="4" fill="#047857"/><text x="'+ox+'" y="'+(oy+5)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#fff">O</text>';
+              out+='</svg>';
+              $('smt-svg').innerHTML=out;
+              var a=c.act==='read'?'from the object to the subject':'from the subject to the '+(c.act==='invoke'?'target subject':'object');
+              $('smt-flow').innerHTML='<b>S</b> = subject at '+lv[c.s]+'. <b>'+(c.act==='invoke'?'S2</b> = target subject':'O</b> = object')+' at '+lv[c.o]+'. The arrow shows information (or control) flowing '+a+'.';
+              $('smt-vis-h').textContent=c.model==='blp'?'Bell-LaPadula: confidentiality levels':'Biba: integrity levels';
+            }
+            function verdict(cls,pill,html){$('smt-verdict').className='iw-verdict '+cls;var p=$('smt-pill');p.className='iw-pill '+cls;p.textContent=pill;$('smt-why').innerHTML=html;}
+            function fill(sel,lv,val){sel.innerHTML=lv.map(function(l,i){return '<option value="'+i+'"'+(i===val?' selected':'')+'>'+l+'</option>';}).join('');}
+            function syncControls(){
+              var lv=LV[st.model]; if(st.s>=lv.length) st.s=lv.length-1; if(st.o>=lv.length) st.o=lv.length-1;
+              fill($('smt-s'),lv,st.s); fill($('smt-o'),lv,st.o);
+              $('smt-s-lab').textContent=st.model==='blp'?'Subject clearance':'Subject integrity level';
+              $('smt-o-lab').textContent=st.act==='invoke'?'Target subject integrity level':(st.model==='blp'?'Object classification':'Object integrity level');
+              root.querySelectorAll('[data-model]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.model===st.model?'true':'false');});
+              var inv=root.querySelector('[data-act=invoke]'); inv.disabled=st.model!=='biba';
+              if(st.model!=='biba'&&st.act==='invoke') st.act='read';
+              root.querySelectorAll('[data-act]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.act===st.act?'true':'false');});
+              var sw=$('smt-strong-wrap'), sc=$('smt-strong'); sc.disabled=st.model!=='blp'; sw.classList.toggle('off',st.model!=='blp'); if(st.model!=='blp'){sc.checked=false;st.strong=false;}
+            }
+            function explore(){
+              syncControls();
+              var c={model:st.model,s:st.s,o:st.o,act:st.act,strong:st.strong}, r=decide(c);
+              draw(c,r); verdict(r.ok?'good':'bad',r.ok?'Allowed':'Denied','<b>'+r.prop+'.</b> '+r.why);
+            }
+            root.querySelectorAll('[data-model]').forEach(function(b){b.addEventListener('click',function(){st.model=b.dataset.model;explore();});});
+            root.querySelectorAll('[data-act]').forEach(function(b){b.addEventListener('click',function(){if(b.disabled)return;st.act=b.dataset.act;explore();});});
+            $('smt-s').addEventListener('change',function(){st.s=+this.value;explore();});
+            $('smt-o').addEventListener('change',function(){st.o=+this.value;explore();});
+            $('smt-strong').addEventListener('change',function(){st.strong=this.checked;explore();});
+
+            var SC=[
+              {model:'blp',s:2,o:3,act:'read',text:'Bell-LaPadula. An analyst cleared for Secret opens a Top Secret threat report.'},
+              {model:'blp',s:2,o:1,act:'write',text:'Bell-LaPadula. The same Secret analyst saves notes into a Confidential project file.'},
+              {model:'blp',s:1,o:2,act:'write',text:'Bell-LaPadula. A Confidential clerk appends an entry to a Secret activity log.'},
+              {model:'biba',s:2,o:0,act:'read',text:'Biba. A high-integrity payroll process reads raw, low-integrity data from a public web form.'},
+              {model:'biba',s:2,o:0,act:'write',text:'Biba. The high-integrity payroll process writes a status line to a low-integrity debug log.'},
+              {model:'blp',s:3,o:3,act:'write',strong:true,text:'Bell-LaPadula with the strong star property. A Top Secret subject updates a Top Secret file.'}
+            ];
+            var ci=0, score=0, done=0, answered=false, mode='ex';
+            function showScen(){
+              var c=SC[ci]; answered=false;
+              $('smt-c-meta').textContent='Scenario '+(ci+1)+' of '+SC.length;
+              $('smt-c-text').textContent=c.text;
+              $('smt-c-yes').disabled=false; $('smt-c-no').disabled=false; $('smt-c-next').disabled=true;
+              $('smt-svg').innerHTML=''; $('smt-flow').textContent='The ladder appears after you answer.';
+              $('smt-vis-h').textContent=c.model==='blp'?'Bell-LaPadula: confidentiality levels':'Biba: integrity levels';
+              verdict('','Your call','Decide whether the model allows this access, then check the diagram and the rule.');
+            }
+            function answer(sayOk){
+              if(answered) return; answered=true;
+              var c=SC[ci], r=decide(c), right=(sayOk===r.ok); done++; if(right) score++;
+              draw(c,r);
+              verdict(right?'good':'bad',(right?'Correct: ':'Not quite: ')+(r.ok?'allowed':'denied'),'<b>'+r.prop+'.</b> '+r.why);
+              $('smt-c-score').textContent=score+' / '+done;
+              $('smt-c-yes').disabled=true; $('smt-c-no').disabled=true;
+              var nx=$('smt-c-next'); nx.disabled=false;
+              nx.textContent=ci===SC.length-1?'Start over':'Next scenario';
+              if(ci===SC.length-1){ $('smt-why').innerHTML+=' <b>Final score: '+score+' of '+SC.length+'.</b>'; }
+            }
+            $('smt-c-yes').addEventListener('click',function(){answer(true);});
+            $('smt-c-no').addEventListener('click',function(){answer(false);});
+            $('smt-c-next').addEventListener('click',function(){ if(ci===SC.length-1){ci=0;score=0;done=0;$('smt-c-score').textContent='0 / 0';} else ci++; showScen(); });
+            function setMode(m){
+              mode=m; $('smt-mode-ex').setAttribute('aria-pressed',m==='ex'?'true':'false'); $('smt-mode-ch').setAttribute('aria-pressed',m==='ch'?'true':'false');
+              $('smt-explore').classList.toggle('smt-hidden',m!=='ex'); $('smt-challenge').classList.toggle('smt-hidden',m!=='ch');
+              if(m==='ex') explore(); else showScen();
+            }
+            $('smt-mode-ex').addEventListener('click',function(){setMode('ex');});
+            $('smt-mode-ch').addEventListener('click',function(){setMode('ch');});
+            explore();
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Security Capabilities and Architecture Weak Points</h3></div>
+          <h4>Security capabilities of information systems</h4>
+          <ul class="detail">
+            <li><strong>Memory protection:</strong> the operating system isolates each process&rsquo;s memory, using techniques such as virtual memory and paging, protection rings, address space layout randomization, and data execution prevention.</li>
+            <li><strong>Trusted Platform Module (TPM):</strong> a chip on the motherboard that stores keys, measures the boot process, and supports full-disk encryption tied to the device.</li>
+            <li><strong>Hardware Security Module (HSM):</strong> a dedicated, tamper-resistant device for high-volume key generation, storage, and signing, used by certificate authorities and payment systems.</li>
+            <li><strong>Encryption and decryption:</strong> built into processors (for example AES instruction sets), drives (self-encrypting drives), and platforms.</li>
+          </ul>
+          <h4>Where each architecture tends to fail</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>System</th><th>Typical weakness</th><th>Representative control</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Client-based</td><td>Malware, local data, untrusted applets and plug-ins</td><td>Endpoint protection, hardening, encryption</td></tr>
+              <tr><td class="term">Server-based</td><td>Unpatched services, data flow control failures</td><td>Patching, hardening, least functionality</td></tr>
+              <tr><td class="term">Database</td><td>Aggregation and inference, injection</td><td>Polyinstantiation, views, query controls, parameterized queries</td></tr>
+              <tr><td class="term">Cryptographic</td><td>Weak algorithms, poor key management, implementation flaws</td><td>Vetted libraries, HSMs, crypto agility</td></tr>
+              <tr><td class="term">Operational technology (OT) and ICS</td><td>Legacy protocols without authentication, long patch cycles, physical safety impact</td><td>Zones and conduits, one-way gateways, passive monitoring, compensating controls</td></tr>
+              <tr><td class="term">Cloud (SaaS, PaaS, IaaS, serverless, FaaS)</td><td>Misconfiguration, unclear shared responsibility, tenant isolation; for functions, over-permissive roles and event injection</td><td>Configuration management, contracts, posture monitoring, least-privilege role per function, input validation</td></tr>
+              <tr><td class="term">Distributed</td><td>Many trust relationships, inconsistent controls</td><td>Strong authentication between nodes, central policy</td></tr>
+              <tr><td class="term">Internet of Things</td><td>Default credentials, no update path, weak encryption</td><td>Network isolation, procurement standards, firmware updates</td></tr>
+              <tr><td class="term">Microservices and containerization</td><td>Broken authorization between services, exposed APIs, vulnerable images, shared kernel, excess privilege</td><td>API gateway, mutual TLS and token validation, image scanning, minimal non-root containers, orchestrator hardening</td></tr>
+              <tr><td class="term">Embedded</td><td>Hard-coded secrets, firmware that cannot be patched</td><td>Secure boot, signed firmware</td></tr>
+              <tr><td class="term">High-performance computing</td><td>Performance tuned ahead of security, shared users</td><td>Enclave segmentation, monitoring</td></tr>
+              <tr><td class="term">Edge</td><td>Physically exposed devices, intermittent connectivity</td><td>Tamper protection, local encryption</td></tr>
+              <tr><td class="term">Virtualized</td><td>VM escape, VM sprawl, hypervisor compromise</td><td>Hypervisor patching, inventory, isolation</td></tr>
+              <tr><td class="term">Supply chain</td><td>Tampered components, counterfeit parts, compromised updates and dependencies</td><td>Trusted suppliers, SBOM, signed firmware and code, hardware root of trust</td></tr>
+              <tr><td class="term">Autonomous systems</td><td>Manipulated sensors or models, unsafe actions without a human check</td><td>Sensor validation, fail-safe modes, human override, model testing</td></tr>
+              <tr><td class="term">Quantum computing</td><td>Future break of today&rsquo;s public key cryptography; scarce, shared access to quantum hardware</td><td>Post-quantum migration plan, crypto inventory, crypto agility</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Operational technology and industrial control systems</h4>
+          <p>Operational technology monitors and controls physical processes: power, water, manufacturing, and building systems such as HVAC and campus access control. Industrial control systems include SCADA systems that supervise wide areas, distributed control systems for plants, and programmable logic controllers (PLCs) that run the equipment. In OT the priorities flip. Safety and availability come first, then integrity, then confidentiality. A patch that reboots a controller can stop a production line, so systems often run for decades with long patch cycles.</p>
+          <ul class="detail">
+            <li><strong>Purdue model:</strong> a reference architecture of levels. Level 0 is the physical process (sensors and actuators), Level 1 basic control (PLCs), Level 2 supervisory control (HMI, SCADA), Level 3 site operations (historians), and Levels 4 and 5 the enterprise IT network. An industrial DMZ between Levels 3 and 4 brokers every connection between IT and OT.</li>
+            <li><strong>Legacy protocols:</strong> Modbus and DNP3 were built for closed networks and often lack authentication and encryption. Anyone who can reach the network can often send commands.</li>
+            <li><strong>IT and OT convergence:</strong> remote access, cloud analytics, and IoT sensors connect plants to business networks, which exposes OT to IT threats. Stuxnet showed that malware can cause physical damage.</li>
+            <li><strong>Controls:</strong> ISA/IEC 62443 organizes OT security into zones and conduits with target security levels. Common controls are strict segmentation, one-way (data diode) gateways, passive network monitoring that does not disturb the process, an accurate asset inventory, and compensating controls where patching is not possible. NIST SP 800-82 gives OT security guidance.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Polyinstantiation answers inference questions. It stores more than one version of a record at different classification levels, so a low-level user sees a cover story instead of a telling gap.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129504;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Meltdown and Spectre</strong>: how processor speculative execution broke memory isolation between processes.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/meltdown_spectre/meltdown_spectre.html" target="_blank" rel="noopener noreferrer">Meltdown and Spectre <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>Cryptography Fundamentals</h3></div>
+          <p>Cryptography delivers four of the five pillars. Encryption gives confidentiality. Hashing gives integrity. Signatures and certificates give authenticity and nonrepudiation. Availability is the one property cryptography does not provide, and lost keys can actually take it away.</p>
+          <div class="compare-2col">
+            <div><b>Symmetric</b>One shared secret key encrypts and decrypts. Fast, so it protects bulk data. The hard part is distributing keys. Examples: AES (128, 192, or 256-bit keys), ChaCha20, and legacy 3DES. <em>n</em> users need <em>n(n&minus;1)/2</em> keys: 10 users need 45.</div>
+            <div><b>Asymmetric</b>A public and private key pair. Slower, so it protects keys and signatures rather than bulk data. Solves key distribution. Examples: RSA, Diffie-Hellman, and elliptic curve cryptography (ECC). <em>n</em> users need <em>2n</em> keys: 10 users need 20.</div>
+          </div>
+          <p>Real systems are <strong>hybrid</strong>. TLS uses asymmetric cryptography to agree on a session key, then symmetric encryption for the data. ECC reaches the same strength as RSA with much shorter keys (a 256-bit ECC key is roughly equal to a 3072-bit RSA key), which suits mobile and IoT devices. Diffie-Hellman lets two parties agree on a shared secret over an open channel, but it does not authenticate them by itself, so it is vulnerable to an adversary in the middle unless the exchange is signed. Ephemeral Diffie-Hellman provides <strong>perfect forward secrecy</strong>: stealing a long-term key later does not unlock past sessions.</p>
+          <h4>Block cipher modes</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Mode</th><th>How it works</th><th>Exam point</th></tr></thead>
+            <tbody>
+              <tr><td class="term">ECB</td><td>Each block encrypted on its own</td><td>Identical plaintext blocks give identical ciphertext, so patterns show. Avoid it.</td></tr>
+              <tr><td class="term">CBC</td><td>Each block is XORed with the previous ciphertext block, starting with an IV</td><td>Hides patterns; errors carry to the next block; no built-in integrity.</td></tr>
+              <tr><td class="term">CTR</td><td>Encrypts a counter to create a key stream</td><td>Parallel and fast; never reuse a counter value with the same key.</td></tr>
+              <tr><td class="term">GCM</td><td>Counter mode plus an authentication tag</td><td>Authenticated encryption: confidentiality and integrity together.</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Hashing and message authentication</h4>
+          <p>A hash function turns any input into a fixed-length digest. It is one-way and should be collision resistant. SHA-256 and SHA-3 are current choices. MD5 and SHA-1 are broken for collision resistance. A hash alone proves integrity only if the hash itself is protected. An <strong>HMAC</strong> mixes a shared secret key into the hash, so it proves integrity and that the sender held the key. Because both parties share that key, an HMAC cannot provide nonrepudiation.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Key-length math appears often. Each added bit doubles the key space, so a 128-bit key has 2<sup>128</sup> possible values. Moving from 56-bit DES to 128-bit AES does not make the key space about twice as large. It makes it 2<sup>72</sup> times larger.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129521;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Block Mode</strong>: see why ECB leaks patterns and how chaining modes hide them.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/Block/Block.html" target="_blank" rel="noopener noreferrer">Block Mode <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>Signatures, PKI, and Key Management</h3></div>
+          <h4>Which key does what</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Goal</th><th>Sender uses</th><th>Recipient uses</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Confidentiality</td><td>Recipient&rsquo;s public key</td><td>Recipient&rsquo;s private key</td></tr>
+              <tr><td class="term">Digital signature</td><td>Sender&rsquo;s private key (signs the hash)</td><td>Sender&rsquo;s public key (verifies)</td></tr>
+              <tr><td class="term">Both</td><td>Signs with own private key, then encrypts with recipient&rsquo;s public key</td><td>Decrypts with own private key, then verifies with sender&rsquo;s public key</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Public key infrastructure</h4>
+          <p>A PKI binds public keys to identities. A <strong>certificate authority</strong> (CA) signs X.509 certificates after a <strong>registration authority</strong> verifies the requester. Trust runs from an offline root CA through intermediate CAs to the end-entity certificate. Revoked certificates are published in a certificate revocation list or checked live with the Online Certificate Status Protocol (OCSP). Certificate pinning and certificate transparency logs help detect misissued certificates.</p>
+          <p>PKI also solves <strong>key distribution</strong>. Symmetric keys are not mailed around; they are wrapped with a recipient&rsquo;s public key or agreed through an authenticated key exchange such as TLS. Inside an organization, a key management system or HSM distributes and wraps keys so that applications never handle raw key material.</p>
+          <h4>Cryptographic life cycle and key management</h4>
+          <ul class="detail">
+            <li><strong>Life cycle:</strong> generate keys with a strong random source, distribute them securely, store them protected (often in an HSM), use them only for their purpose, rotate them on schedule, and archive or destroy them when they retire. Algorithms have a life cycle too. Plan to replace them as they weaken.</li>
+            <li><strong>Practices:</strong> rotate keys on a schedule and after any suspected compromise, use split knowledge and dual control for master keys, provide key escrow or recovery where policy requires it, and keep data-encryption keys separate from key-encryption keys.</li>
+            <li><strong>Access management:</strong> control who and what can use each key, not just who can read it. Grant key use by role in the key management system, require approval for administrative actions, separate key administrators from key users, and log every use for review.</li>
+          </ul>
+          <h4>Post-quantum cryptography</h4>
+          <p>A large quantum computer running <strong>Shor&rsquo;s algorithm</strong> would break RSA, Diffie-Hellman, and elliptic curve cryptography, which covers almost all of today&rsquo;s key exchange and signatures. <strong>Grover&rsquo;s algorithm</strong> only halves the effective strength of symmetric keys and hashes, so AES-256 and SHA-384 remain strong. The urgent threat is <strong>harvest now, decrypt later</strong>: an adversary records encrypted traffic today and decrypts it once quantum computers are ready. Data that must stay secret for many years is already at risk.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>NIST standard</th><th>Algorithm</th><th>Use</th></tr></thead>
+            <tbody>
+              <tr><td class="term">FIPS 203</td><td>ML-KEM (from CRYSTALS-Kyber), lattice based</td><td>Key encapsulation: establishing shared keys</td></tr>
+              <tr><td class="term">FIPS 204</td><td>ML-DSA (from CRYSTALS-Dilithium), lattice based</td><td>Digital signatures, the general-purpose choice</td></tr>
+              <tr><td class="term">FIPS 205</td><td>SLH-DSA (from SPHINCS+), hash based</td><td>Digital signatures with conservative, hash-only assumptions</td></tr>
+            </tbody>
+          </table></div>
+          <p>Migration starts with a <strong>cryptographic inventory</strong>: find every place the organization uses public key cryptography, then rank by data lifetime and exposure. Many deployments use <strong>hybrid</strong> key exchange that combines a classical and a post-quantum algorithm, so security holds if either one survives. <strong>Crypto agility</strong>, the ability to swap algorithms through configuration instead of rewriting code, makes this transition and the next one manageable. Post-quantum cryptography runs on ordinary computers. It should not be confused with quantum key distribution, which uses quantum physics and special hardware to detect eavesdropping on a key exchange.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>If the question asks for nonrepudiation, the answer involves the sender&rsquo;s <em>private</em> key. Only one person holds it. Symmetric keys and HMACs cannot provide nonrepudiation, because more than one party holds the secret.</div>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Cryptanalytic Attacks</h3></div>
+          <p>Attacks on cryptography are classified by what the attacker has to work with, or by where they strike: the math, the implementation, or the system around it.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Attack</th><th>What the attacker has or does</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Brute force</td><td>Tries every possible key. Defeated by key length.</td></tr>
+              <tr><td class="term">Ciphertext only</td><td>Has only ciphertext. The hardest starting point.</td></tr>
+              <tr><td class="term">Known plaintext</td><td>Has some plaintext and its matching ciphertext.</td></tr>
+              <tr><td class="term">Chosen ciphertext</td><td>Can get chosen ciphertexts decrypted and study the results.</td></tr>
+              <tr><td class="term">Frequency analysis</td><td>Counts symbol frequency to break simple substitution ciphers.</td></tr>
+              <tr><td class="term">Implementation</td><td>Exploits flaws in how the algorithm was coded or configured, not in the math.</td></tr>
+              <tr><td class="term">Side-channel</td><td>Measures timing, power, sound, or emissions to recover secrets.</td></tr>
+              <tr><td class="term">Fault injection</td><td>Forces errors with voltage glitches, clock changes, or heat, then analyzes the faulty output.</td></tr>
+              <tr><td class="term">Timing</td><td>A side-channel that infers secrets from how long operations take. Constant-time code is the defense.</td></tr>
+              <tr><td class="term">Adversary in the middle (AitM)</td><td>Intercepts and relays traffic between two parties, often to steal session tokens and bypass MFA. Defeated by authenticated key exchange, certificate validation, and phishing-resistant authentication.</td></tr>
+              <tr><td class="term">Pass the hash</td><td>Reuses a captured password hash to authenticate without cracking it.</td></tr>
+              <tr><td class="term">Kerberos exploitation</td><td>Forged or stolen tickets, such as golden and silver tickets, or offline cracking of service tickets (Kerberoasting).</td></tr>
+              <tr><td class="term">Ransomware</td><td>Uses strong encryption against the victim. Backups and key hygiene matter more than cryptanalysis.</td></tr>
+              <tr><td class="term">Zero-day</td><td>Exploits a flaw the vendor does not yet know about or has not patched. No signature exists, so defenses rely on layered controls, behavior monitoring, segmentation, and fast response.</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Artificial intelligence threats</h4>
+          <p>Systems that use machine learning add a new attack surface: the training data, the model, and its inputs. The architect&rsquo;s job is to treat the model as a component with its own threats and controls.</p>
+          <ul class="detail">
+            <li><strong>Adversarial AI and evasion:</strong> inputs crafted with small, often invisible changes that make a model misclassify, such as altered images or malware tuned to slip past an ML detector. Defenses include adversarial testing, input validation, and not relying on a single model for a security decision.</li>
+            <li><strong>Model and data poisoning:</strong> corrupting training data or the model itself so it learns a hidden behavior or backdoor. Defenses include data provenance and integrity checks, controlled training pipelines, signed models, and monitoring for drift.</li>
+            <li><strong>Deepfakes:</strong> synthetic audio, video, or images that impersonate real people, used for fraud and social engineering, such as a cloned executive voice approving a wire transfer. Defenses are process controls: out-of-band verification, callback procedures, and dual approval for payments.</li>
+            <li><strong>Prompt injection and model theft:</strong> instructions hidden in input that redirect a language model, and repeated queries that extract a model or its training data. Limit what the model can access and do, and filter its inputs and outputs.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Salting defeats precomputed rainbow tables, because each password hash uses a unique random value. Key stretching (bcrypt, scrypt, PBKDF2, Argon2) slows every guess. Use both for stored passwords.</div>
+        </article>
+
+        <article class="content-section" id="s8">
+          <div class="cs-head"><span class="cs-num">8</span><h3>Site, Facility, and the System Life Cycle</h3></div>
+          <p>Physical security begins with the site. <strong>Crime Prevention Through Environmental Design</strong> (CPTED) uses natural surveillance, natural access control, and territorial reinforcement so the layout itself discourages intruders. Sensitive rooms belong in the center of the building, away from exterior walls, top floors, and basements that flood.</p>
+          <ul class="detail">
+            <li><strong>Wiring closets and intermediate distribution frames:</strong> locked, monitored, and never shared with janitorial storage.</li>
+            <li><strong>Server rooms and data centers:</strong> layered access control, no windows, raised floors or overhead cabling, hot and cold aisles, and monitoring for temperature and humidity.</li>
+            <li><strong>Media storage and evidence storage:</strong> restricted access with logs. Evidence storage must preserve the chain of custody.</li>
+            <li><strong>Restricted and work areas:</strong> badges, mantraps, escorts for visitors, and clean desk policies.</li>
+            <li><strong>Utilities and HVAC:</strong> positive pressurization keeps contaminants out. ASHRAE guidance recommends about 18 to 27 &deg;C (64 to 81 &deg;F). Too dry causes static, and too humid causes corrosion.</li>
+            <li><strong>Power:</strong> know the terms. A blackout is total loss. A fault is a momentary loss. A brownout is prolonged low voltage, and a sag is a momentary one. A surge is prolonged high voltage, and a spike is a momentary one. A UPS bridges short outages. A generator covers long ones. Redundant feeds from separate substations add resilience.</li>
+          </ul>
+          <h4>Fire prevention, detection, and suppression</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>U.S. class</th><th>Fuel</th><th>Suppression</th></tr></thead>
+            <tbody>
+              <tr><td class="term">A</td><td>Common combustibles: paper, wood</td><td>Water, foam</td></tr>
+              <tr><td class="term">B</td><td>Flammable liquids and gases</td><td>CO<sub>2</sub>, foam, dry chemical</td></tr>
+              <tr><td class="term">C</td><td>Energized electrical equipment</td><td>CO<sub>2</sub>, clean agent gas (such as FM-200), dry chemical</td></tr>
+              <tr><td class="term">D</td><td>Combustible metals</td><td>Dry powder</td></tr>
+              <tr><td class="term">K</td><td>Cooking oils and fats</td><td>Wet chemical</td></tr>
+            </tbody>
+          </table></div>
+          <p>Water sprinkler systems come in four types. <strong>Wet pipe</strong> holds water in the pipes at all times. <strong>Dry pipe</strong> holds air until a head opens, which suits freezing areas. <strong>Deluge</strong> opens every head at once for high-hazard areas. <strong>Pre-action</strong> fills the pipes only after detection and then waits for a head to melt, which gives staff time to respond. Pre-action is the usual choice for data centers. Halon is no longer produced because it depletes ozone. Clean agents such as FM-200, Novec 1230, and inert gas blends have replaced it. Carbon dioxide is dangerous to people in occupied rooms.</p>
+          <h4>Managing the information system life cycle</h4>
+          <p>Security belongs in every stage of the system life cycle, which ISO/IEC/IEEE 15288 and NIST SP 800-160 describe: stakeholder needs and requirements, requirements analysis, secure architectural design, development and implementation, integration, verification and validation, continuous security review, transition and deployment, operations and maintenance, and retirement with secure disposal. Each stage has a security task. Requirements capture security needs, secure architectural design applies the principles in this lesson, verification tests them, operations monitor them, and secure disposal sanitizes media and revokes credentials and keys.</p>
+          <p><strong>Continuous security review</strong> means security is not checked once at a gate and forgotten. Designs, configurations, and threat models are revisited whenever the system, its threats, or its dependencies change, and at a regular interval in between. Automated configuration checks and periodic architecture reviews keep the system aligned with its security requirements over its whole life.</p>
+        </article>
+
+        <article class="content-section" id="s9">
+          <div class="cs-head"><span class="cs-num">9</span><h3>Faculty Teaching Segment</h3></div>
+          <p>Domain 3 is the hardest domain to teach in a single course because it spans hardware, math, and buildings. Anchor it in two ideas: every design decision protects a property, and every mechanism has a place where it breaks.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> give students a short requirements brief, such as a clinic that must share records with labs. Each student selects the encryption, hashing, signature, and key management approach, names the property each one protects, and justifies the choice in one page.</li>
+            <li><strong>Rubric criteria:</strong> each control matched to the right property, the correct key used in each step, a realistic key management plan, and one named weakness with its mitigation.</li>
+            <li><strong>Lab idea:</strong> students use the Model Rule Tester above, then write three original scenarios of their own for classmates to solve. A second lab hashes a file, changes one character, and compares the digests, which makes the avalanche effect visible.</li>
+            <li><strong>Course fit:</strong> this domain maps to a cryptography, secure systems, or security architecture course. It supports the CAE-CD Basic Cryptography (BCY), Advanced Cryptography (ACR), and Cybersecurity Principles (CSP) Knowledge Units.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>Teach Bell-LaPadula and Biba together and draw only arrows. Students who memorize slogans mix them up under pressure. Students who see where information flows can rebuild both models from scratch.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 1</span></div><h3>Cybersecurity Design Principles</h3><p>Least privilege, defense in depth, fail securely, and other principles with examples of each.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/design/cybersecuritydesignprinciples.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cybersecurity Design Principles (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 1</span></div><h3>The Cube</h3><p>The McCumber Cube: security goals, information states, and safeguards as one design framework.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cube/cube.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: The Cube (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 4</span></div><h3>Memory Paging</h3><p>How virtual memory and paging work, the foundation of process memory protection.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/memorypaging/memorypaging.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Memory Paging (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Meltdown and Spectre</h3><p>Processor flaws that let one process read another&rsquo;s memory through speculative execution.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/meltdown_spectre/meltdown_spectre.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Meltdown and Spectre (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Stuxnet</h3><p>The landmark attack on industrial control systems and what it means for OT security.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/stuxnet/stuxnet.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Stuxnet (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>Cryptography</h3><p>The core vocabulary and goals of cryptography in one overview.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cryptography/cryptography.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cryptography (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>Encryption</h3><p>Symmetric and asymmetric encryption and where each one fits.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/encryption/encryption_jedit_6_1.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Encryption (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>Encrypt Data</h3><p>Hands-on practice protecting data with encryption.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/EncryptData/EncryptData.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Encrypt Data (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>Block Mode</h3><p>Block cipher modes compared, including why ECB leaks patterns.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/Block/Block.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Block Mode (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>Hashing</h3><p>One-way functions, digests, and how a small change produces a very different hash.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/hashing/Hashing.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Hashing (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>RSA</h3><p>How RSA key pairs are built and used for encryption and signatures.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/RSA/RSA.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: RSA (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>Diffie-Hellman Key Exchange</h3><p>Agreeing on a shared secret over an open channel, step by step.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/diffie_hellman/diffie_hellman.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Diffie-Hellman Key Exchange (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>Factor Prime</h3><p>Why factoring large numbers is hard, and why that hardness protects RSA.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/FactorPrime/FactorPrime.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Factor Prime (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 6</span></div><h3>Digital Signature</h3><p>Signing with a private key and verifying with a public key.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/DigSig/DigitalSignature.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Digital Signature (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 6</span></div><h3>PKI</h3><p>Certificate authorities, certificates, and the chain of trust.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/pki/pki.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: PKI (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 6</span></div><h3>Blockchain</h3><p>How hashing and signatures chain records into a tamper-evident ledger.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/blockchain/blockchain.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Blockchain (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Sections 5 to 7</span></div><h3>CryptoMatch</h3><p>A matching review of cryptography terms. Good for the end of the session.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cryptomatch/CryptoMatch.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: CryptoMatch (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 8</span></div><h3>Physical Protection Controls</h3><p>Physical and environmental controls for sites, rooms, and equipment.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/physical_environmental/physical_environmental.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Physical Protection Controls (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Self-checking practice for this lesson, ready to use with your own students. Each item ends with a report you can print or save as a PDF.</p>
+    <div class="pl-grid">
+      <article class="pl-card"><div class="pl-top"><span class="pl-type">CISSP Practice &middot; A4</span><span class="pl-time">&#9201; 35 min</span></div><h3><a href="activity04.html">Security Models and Cryptography</a></h3><p>Work Bell-LaPadula, Biba, Clark-Wilson, and Brewer-Nash cases, pick the cryptographic control for a need, and do the key count and key length math.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="activity04.html" aria-label="Open activity A4: Security Models and Cryptography">Open &#8594;</a></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B3</span><span class="pl-time">&#9201; 60 min</span></div><h3><a href="lab03.html">Cryptography Workbench</a></h3><p>Use real browser cryptography to hash and HMAC, encrypt with AES-GCM, sign and verify with ECDSA, run tamper tests, and read a certificate chain.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="lab03.html" aria-label="Open lab B3: Cryptography Workbench">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q1.</span>A research group of 50 people wants every pair of members to communicate privately using symmetric encryption only. How many keys are needed?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> 100</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> 1,225</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> 2,450</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> 50</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Symmetric keys for <em>n</em> users: n(n&minus;1)/2 = 50 &times; 49 / 2 = 1,225. Option A (2n) is the asymmetric count, and option C forgets to divide by two.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q2.</span>Under Bell-LaPadula, a user cleared for Secret tries to copy text into an Unclassified document. Which rule denies the action?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> Simple security property</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> Simple integrity property</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> Invocation property</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> Star (*) property</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> Writing to a lower level is a write down, which the Bell-LaPadula star property forbids. The simple security property governs reads. Options B and C belong to Biba.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q3.</span>A financial system lets clerks change account balances only through approved programs that log every change, and no clerk can both enter and approve a transfer. Which model does this BEST describe?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> Clark-Wilson</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> Bell-LaPadula</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> Brewer-Nash</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> Take-Grant</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> Clark-Wilson protects commercial integrity with well-formed transactions (approved programs), separation of duties, and auditing. Bell-LaPadula protects confidentiality, Brewer-Nash prevents conflicts of interest, and Take-Grant models how rights are passed.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q4.</span>A dean wants proof that a policy memo came from the provost and was not altered. Which key does the provost use to create that proof?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> The dean&rsquo;s public key</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> A shared symmetric key</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> The provost&rsquo;s private key</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> The provost&rsquo;s public key</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> A digital signature is created with the sender&rsquo;s private key and verified with the sender&rsquo;s public key. That provides integrity, authenticity, and nonrepudiation. The dean&rsquo;s public key would provide confidentiality, not proof of origin.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q5.</span>An application must encrypt records with AES and also detect any change to the ciphertext. Which mode BEST meets both needs?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> ECB</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> CBC</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> GCM</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> CTR</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> Galois/Counter Mode is authenticated encryption. It adds an authentication tag, so it provides confidentiality and integrity together. ECB, CBC, and CTR provide confidentiality only and need a separate MAC for integrity.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q6.</span>A user with access only to unclassified shipping records notices that deliveries to one base suddenly tripled, and correctly concludes that a classified deployment is underway. What is this called?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> Inference</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> Polyinstantiation</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> A covert timing channel</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> Privilege escalation</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> Inference is deducing sensitive information from data you are allowed to see. Polyinstantiation is a defense against it, not the attack itself.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q7.</span>A university research office stores grant data that must stay confidential for 20 years. Its VPN uses RSA key exchange. Why should the office plan its post-quantum migration NOW rather than wait for large quantum computers?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> Grover&rsquo;s algorithm already makes AES-256 unsafe.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> Post-quantum algorithms require quantum hardware that takes years to buy.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> Quantum key distribution will soon be mandatory for all VPNs.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> An adversary can record encrypted traffic today and decrypt it later, once a quantum computer can break RSA.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> This is harvest now, decrypt later. Data with a long secrecy requirement is exposed today if its key exchange will fall to Shor&rsquo;s algorithm. Grover&rsquo;s algorithm only halves symmetric strength, so AES-256 stays strong. Post-quantum algorithms run on ordinary computers, and quantum key distribution is a separate technology.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q8.</span>A college&rsquo;s machine learning model flags fraudulent financial aid applications. An insider slips hundreds of mislabeled records into the next training set so that one pattern of fraud is classified as legitimate. Which threat is this, and what is the BEST control?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> A deepfake; out-of-band verification of applicants</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> Data poisoning; data provenance and integrity controls on the training pipeline</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> An evasion attack; larger input fields on the application form</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> A side-channel attack; constant-time code in the model</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Corrupting training data to plant a hidden behavior is data poisoning. The fix protects the pipeline: verified data sources, integrity checks, controlled access to training data, and review of model behavior before release. Evasion manipulates inputs at prediction time, not training data.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson02.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 2: Asset Security</span></a>
+    <a href="lesson04.html" class="next"><span class="pager-dir">Next &#8594;</span><span class="pager-name">Lesson 4: Communication and Network Security</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

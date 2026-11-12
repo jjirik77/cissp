@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A3 Classify, Own, Retain, Destroy | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A3',
+  title: 'Classify, Own, Retain, Destroy',
+  accent: 'Retain, Destroy',
+  domain: 'Domain 2 (12%)',
+  time: '35 min',
+  level: 'Foundational',
+  lessonHref: 'lesson02.html#s3',
+  lessonLabel: 'Lesson 2, The Data Life Cycle and Data Roles',
+  lede: 'Asset security follows the data from collection to destruction. Practice naming who owns, operates, and processes each record at a community hospital, classifying by the harm its loss would cause, keeping records exactly as long as you must, and choosing the NIST SP 800-88 method that matches the media and where it is going next.',
+  concepts: [
+    { key: 'roles', name: 'Data roles', review: 'Lesson 2, The Data Life Cycle and Data Roles' },
+    { key: 'classify', name: 'Classification by impact', review: 'Lesson 2, Identify and Classify Information and Assets' },
+    { key: 'retain', name: 'Retention and asset retirement', review: 'Lesson 2, Retention, Remanence, and Sanitization' },
+    { key: 'sanitize', name: 'Clear, purge, or destroy', review: 'Lesson 2, Retention, Remanence, and Sanitization' }
+  ],
+  stations: [
+    {
+      type: 'sort', short: 'Data roles', title: 'Who plays which data role?', concept: 'roles',
+      instr: 'Tamsworth Valley Health is a community hospital with three clinics. Sort each party by the data role it plays for the hospital’s patient and employee data: <b>owner</b>, <b>controller</b>, <b>custodian</b>, <b>processor</b>, or <b>subject</b>. Then select <b>Check answers</b>.',
+      hint: 'The owner is the accountable person who classifies and approves access. The controller is the organization that decides why and how personal data is processed. The custodian runs the controls day to day. The processor handles personal data for the controller under contract. The subject is the person the data describes.',
+      buckets: ['Owner', 'Controller', 'Custodian', 'Processor', 'Subject'],
+      review: { href: 'lesson02.html#s3', label: 'Lesson 2, The Data Life Cycle and Data Roles' },
+      items: [
+        { text: 'The chief nursing officer, who approves who may read inpatient charts and sets their classification', answer: 0, why: 'Accountability, classification, and access approval belong to the owner, a senior business leader.' },
+        { text: 'Tamsworth Valley Health itself, which decides what patient data to collect and for what purposes', answer: 1, why: 'The organization that determines the purposes and means of processing is the controller.' },
+        { text: 'The database administrators who run backups and apply the access rules the owner approved', answer: 2, why: 'Custodians operate controls day to day. They do not decide who gets access.' },
+        { text: 'A cloud billing company that processes claims for the hospital under a signed contract', answer: 3, why: 'A vendor that handles personal data on the controller’s instructions is a processor.' },
+        { text: 'A patient whose lab results are stored in the clinic system', answer: 4, why: 'The person the data describes is the data subject.' },
+        { text: 'The human resources director, who decides how long personnel files are kept', answer: 0, why: 'Setting retention for a data set is an owner decision.' },
+        { text: 'The storage team that encrypts the imaging archive and replaces failed disks', answer: 2, why: 'Operating and maintaining protection is custodial work.' },
+        { text: 'A transcription service that types physicians’ dictated notes for the hospital', answer: 3, why: 'The service processes personal data only for the hospital’s purposes, which makes it a processor.' },
+        { text: 'A nurse whose payroll and license records are held by the hospital', answer: 4, why: 'Employees are data subjects for the personal data an employer holds about them.' },
+        { text: 'The hospital, when it decides to start using patient addresses for fundraising mailings', answer: 1, why: 'Choosing a new purpose for personal data is a controller decision, and it carries the controller’s legal accountability.' }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Classify and retain', title: 'Classification and retention decisions', concept: 'classify',
+      instr: 'Tamsworth uses four levels: <b>Public</b>, <b>Internal</b>, <b>Confidential</b>, and <b>Restricted</b> (the highest, for patient health records and payment data). Choose the <b>BEST</b> answer for each case.',
+      hint: 'Classify by the harm loss would cause, and a system takes the level of the most sensitive data it holds. The owner classifies. Retention follows law and business need, legal holds stop destruction, and keeping data longer than required adds risk with no benefit.',
+      review: { href: 'lesson02.html#s1', label: 'Lesson 2, Identify and Classify Information and Assets' },
+      items: [
+        {
+          title: 'Case 1: The shared server', text: 'One clinic server hosts the public visiting-hours page, the internal staff phone directory, and a folder of patient lab results waiting to be imported.',
+          parts: [
+            { q: 'How should the server be classified?', options: ['Public, since most of its content is public', 'Internal, the level of most of its files', 'Restricted, the level of its most sensitive data', 'Confidential, as a compromise between the levels'], answer: 2, why: 'An asset takes the classification of the most sensitive data it stores or processes. The lab results make the server Restricted, which is also a good reason to move them elsewhere.' }
+          ]
+        },
+        {
+          title: 'Case 2: Who decides', text: 'The quality team creates a new data set of infection rates by unit, with no patient names. A data analyst asks the security team to classify it.',
+          parts: [
+            { q: 'Who should set the classification?', options: ['The data owner for quality data, advised by security', 'The security team, since it enforces the controls', 'The analyst who created the data set', 'The database administrator who will store it'], answer: 0, why: 'The owner classifies. Security advises on the scheme and the controls each level needs.' },
+            { q: 'Two years later the unit-level rates are published in the hospital’s annual quality report. What should happen to the classification?', options: ['Nothing, since classifications are permanent', 'Raise it, since public attention increases the risk', 'Lower it to Public through a documented declassification', 'Delete the data set, since it is already public'], answer: 2, why: 'Classification is reviewed as value changes. Once the owner approves publication, the data can be declassified so it no longer carries costly controls.' }
+          ]
+        },
+        {
+          title: 'Case 3: The legal hold', text: 'Billing records are kept for seven years under the retention schedule. A batch from 2020 is due for destruction next week when legal counsel notifies records management of a lawsuit involving 2020 billing.',
+          parts: [
+            { q: 'What should records management do?', concept: 'retain', options: ['Destroy on schedule, since the policy requires it', 'Suspend destruction of the affected records under a legal hold', 'Copy the records to a backup and destroy the originals', 'Ask the custodian to decide case by case'], answer: 1, why: 'A legal hold suspends the retention schedule for records relevant to litigation. Destroying them could be spoliation of evidence.' }
+          ]
+        },
+        {
+          title: 'Case 4: Keep it all forever', text: 'The IT director proposes keeping every email and file share “forever,” because storage is cheap and “we might need it someday.”',
+          parts: [
+            { q: 'What is the BEST response?', concept: 'retain', options: ['Agree, since more data supports investigations', 'Agree, if the archive is encrypted', 'Keep it all, but only for the clinical departments', 'Disagree, since data past its retention period adds breach and legal discovery risk with no benefit'], answer: 3, why: 'Every record kept past its required period is one more thing to breach, produce in discovery, and protect. Retention should follow law and business need, then end.' }
+          ]
+        },
+        {
+          title: 'Case 5: The old imaging workstations', text: 'Six radiology workstations run an operating system that reached end of support last year. The imaging vendor will not certify the newer version until next spring.',
+          parts: [
+            { q: 'What is the BEST interim approach?', concept: 'retain', options: ['Isolate them on a restricted segment with compensating controls, and have the owner accept the documented risk', 'Keep them on the clinical network, since the vendor is responsible', 'Shut them down until the vendor certifies the new version', 'Install the unsupported upgrade and accept the vendor warranty loss'], answer: 0, why: 'Systems past end of support need replacement, isolation, or compensating controls, with risk accepted by the owner in writing until replacement.' }
+          ]
+        },
+        {
+          title: 'Case 6: Retiring the clinic file server', text: 'The clinic file server is being retired. Its data has been migrated, and the hardware is going to an electronics recycler.',
+          parts: [
+            { q: 'Which step must come before the server leaves the asset inventory?', concept: 'retain', options: ['Releasing its software licenses back to the pool', 'Sanitizing the media, verifying the result, and recording a certificate of sanitization', 'Notifying the help desk that the server name is free', 'Removing it from the monitoring dashboard'], answer: 1, why: 'Asset retirement ends with sanitized and verified media and a certificate of sanitization. Only then is the asset removed from the inventory.' },
+            { q: 'The server’s drives are SSDs. Which method would NOT sanitize them?', concept: 'sanitize', options: ['The drive’s built-in sanitize command', 'Cryptographic erase, if encrypted from the start', 'Shredding to small particles', 'Degaussing'], answer: 3, why: 'Degaussing works on magnetic media only. It does nothing to flash memory.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'sort', short: 'Clear, purge, destroy', title: 'NIST SP 800-88: clear, purge, or destroy?', concept: 'sanitize',
+      instr: 'Sort each sanitization method by the NIST SP 800-88 level it achieves: <b>Clear</b> (defeats simple recovery with standard tools), <b>Purge</b> (defeats laboratory recovery), or <b>Destroy</b> (defeats any recovery and the media cannot be reused).',
+      hint: 'Overwriting user-addressable storage and factory resets clear. Degaussing magnetic media, built-in secure erase or sanitize commands, and cryptographic erase purge. Shredding, disintegration, pulverizing, melting, and incineration destroy. Paper has no clear or purge.',
+      buckets: ['Clear', 'Purge', 'Destroy'],
+      review: { href: 'lesson02.html#s4', label: 'Lesson 2, Retention, Remanence, and Sanitization' },
+      items: [
+        { text: 'Overwriting a magnetic hard drive’s user-addressable space before reissuing it within the same department', answer: 0, why: 'Overwriting the addressable space clears. It defeats standard recovery tools, which is enough for internal reuse at the same level.' },
+        { text: 'A factory reset on a clinic tablet that stays in the hospital', answer: 0, why: 'A factory reset is a clear-level method, suited to reuse inside the organization.' },
+        { text: 'Degaussing a backup tape with a degausser rated for that tape', answer: 1, why: 'Degaussing magnetic media is a purge method when the degausser is rated for the media’s coercivity.' },
+        { text: 'Running the NVMe Sanitize command on a solid-state drive', answer: 1, why: 'Built-in sanitize commands reach spare and over-provisioned blocks, which makes them purge methods for flash.' },
+        { text: 'Cryptographic erase of a self-encrypting drive whose key was never exposed', answer: 1, why: 'Destroying a strong media encryption key leaves only unreadable ciphertext. NIST treats this as purge.' },
+        { text: 'ATA Secure Erase on a magnetic hard drive leaving for resale', answer: 1, why: 'Secure Erase is a purge method, appropriate when media leaves organizational control.' },
+        { text: 'Cross-cut shredding paper patient charts', answer: 2, why: 'Paper has no clear or purge. Shredding, pulping, or incineration destroys it.' },
+        { text: 'Disintegrating failed SSDs into small particles', answer: 2, why: 'Disintegration destroys the media. Failed drives often cannot run a sanitize command, so destruction is the answer.' },
+        { text: 'Incinerating optical discs of old imaging studies', answer: 2, why: 'Incineration destroys the media completely.' },
+        { text: 'Degaussing a magnetic hard drive, which leaves it unusable', answer: 1, why: 'Degaussing a hard drive is still classed as purge, even though it ruins the drive.' },
+        { text: 'Using the operating system’s standard tool to overwrite deleted files', answer: 0, why: 'Overwriting through the normal interface protects against simple recovery only, which is clear.' },
+        { text: 'Pulverizing hard drive platters', answer: 2, why: 'Pulverizing is a destroy method.' }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'shift', label: 'Think about student records at your college. Who is the owner, who is the custodian, and what happens to a lab computer’s drive when it is retired?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the next lesson, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

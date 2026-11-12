@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>CISSP Security Lab | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+<style>
+  .hub-intro { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .hub-intro div { background: var(--card-bg); border: 1px solid var(--border); border-top: 3px solid var(--gold); border-radius: 4px; padding: 1rem 1.1rem; }
+  .hub-intro b { display: block; font: 700 1rem Georgia, serif; color: var(--text-primary); margin-bottom: .3rem; }
+  .hub-intro p { font: .86rem/1.6 Arial, sans-serif; color: var(--text-secondary); margin: 0; }
+  .filter-bar { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 1.6rem; }
+  .filter-bar button { font: 900 .72rem 'Arial Narrow', Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--text-secondary); background: var(--card-bg); border: 1px solid var(--border); border-radius: 3px; padding: .45rem .85rem; cursor: pointer; }
+  .filter-bar button:hover { border-color: var(--gold); }
+  .filter-bar button[aria-pressed=true] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.1rem; margin-bottom: 2.6rem; }
+  .hub-card { background: var(--card-bg); border: 1px solid var(--border); border-top: 3px solid var(--gold); border-radius: 4px; padding: 1.1rem 1.2rem 1rem; display: flex; flex-direction: column; }
+  .hub-card[hidden] { display: none; }
+  .hub-top { display: flex; justify-content: space-between; align-items: baseline; gap: .6rem; margin-bottom: .35rem; }
+  .hub-id { font: 900 .78rem 'Arial Narrow', Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+  .hub-prog { font: 700 .68rem Arial, sans-serif; letter-spacing: .04em; color: var(--text-muted); }
+  .hub-prog.on { color: var(--navy-light); } .hub-prog.done { color: var(--correct); }
+  .hub-card h3 { font: 700 1.05rem/1.3 Georgia, serif; color: var(--text-primary); margin: 0 0 .5rem; }
+  .hub-card p { font: .86rem/1.55 Arial, sans-serif; color: var(--text-secondary); margin: 0 0 .8rem; flex: 1; }
+  .hub-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .9rem; }
+  .tag { font: 700 .68rem 'Arial Narrow', Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; padding: .16rem .5rem; border-radius: 3px; }
+  .tag-dom { background: var(--navy); color: #fff; }
+  .tag-lvl { background: var(--blue-pale); color: var(--text-secondary); border: 1px solid var(--blue-pale-border); }
+  .tag-time { color: var(--text-muted); border: 1px solid var(--border); }
+  .hub-foot { display: flex; justify-content: space-between; align-items: center; gap: .6rem; border-top: 1px solid var(--border); padding-top: .75rem; }
+  .hub-foot a.lesson { font: .78rem Arial, sans-serif; color: var(--navy-light); }
+  .hub-foot .btn { padding: .5rem 1rem; font-size: .74rem; }
+  .hub-empty { font: .9rem Arial, sans-serif; color: var(--text-muted); }
+  .faculty { background: var(--blue-pale); border: 1px solid var(--blue-pale-border); border-left: 4px solid var(--navy); border-radius: 0 4px 4px 0; padding: 1.1rem 1.3rem; }
+  .faculty p, .faculty li { font: .88rem/1.65 Arial, sans-serif; color: var(--text-secondary); margin: 0 0 .5rem; }
+  .faculty b { color: var(--text-primary); }
+  .faculty ul { margin: 0; padding-left: 1.2rem; }
+  @media (max-width: 700px) { nav.topnav .nav-links { display: none; } }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand"><div class="nav-seal">CISSP<br>PREP</div><span class="nav-title">5-Day Faculty Workshop</span></a>
+  <div class="nav-right"><ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="index.html#lessons">Lessons</a></li><li><a href="index.html#schedule">Schedule</a></li><li><a href="practices.html">Practices</a></li><li><a href="labs.html" aria-current="page">Security Lab</a></li><li><a href="index.html#exam-prep">Exam Prep</a></li></ul></div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#practice">Practice</a> &nbsp;&rsaquo;&nbsp; <span>CISSP Security Lab</span></p>
+    <span class="lesson-badge-lg">Applied Practice &middot; 8 Labs</span>
+    <h1>CISSP <span>Security Lab</span></h1>
+    <p class="lesson-lede">Eight hands-on labs, one per domain, built on live browser tools. Take the ticket, work the problem in the workbench, verify each checklist item, and print a graded lab report. Every lab lists the NSA CAE Cyber Defense Knowledge Units it supports, so faculty can drop it into a CAE-aligned course.</p>
+    <div class="meta-chips"><span class="meta-chip">Labs: <strong>8</strong></span><span class="meta-chip">Each: <strong>60 to 75 min</strong></span><span class="meta-chip">Domains: <strong>All eight</strong></span><span class="meta-chip">Mode: <strong>Individual or team</strong></span><span class="meta-chip">KUs: <strong>Mapped</strong></span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="block">
+    <p class="eyebrow">How the lab works</p>
+    <h2 class="h2">Do the work with interactive tools</h2>
+    <div class="rule"></div>
+    <div class="hub-intro">
+      <div><b>Take the ticket</b><p>Each lab opens with a request from a fictional organization and a 100-point checklist.</p></div>
+      <div><b>Use the tools</b><p>Threat model board, data inventory, real Web Crypto, firewall rule tester, identity console, results analyzer, incident tabletop, and pipeline review. All run in the browser.</p></div>
+      <div><b>Verify and debrief</b><p>Check each item as often as needed. Reveal the leader&rsquo;s debrief after a first try, at the cost of that item&rsquo;s points.</p></div>
+      <div><b>Lab report</b><p>Print or save a graded report with decisions, written deliverables, team members, the Knowledge Units covered, and a signature line.</p></div>
+    </div>
+
+    <div class="filter-bar" role="group" aria-label="Filter by domain">
+      <button type="button" data-f="all" aria-pressed="true">All</button>
+      <button type="button" data-f="1" aria-pressed="false">D1 &middot; Governance</button>
+      <button type="button" data-f="2" aria-pressed="false">D2 &middot; Assets</button>
+      <button type="button" data-f="3" aria-pressed="false">D3 &middot; Architecture</button>
+      <button type="button" data-f="4" aria-pressed="false">D4 &middot; Network</button>
+      <button type="button" data-f="5" aria-pressed="false">D5 &middot; Identity</button>
+      <button type="button" data-f="6" aria-pressed="false">D6 &middot; Testing</button>
+      <button type="button" data-f="7" aria-pressed="false">D7 &middot; Operations</button>
+      <button type="button" data-f="8" aria-pressed="false">D8 &middot; Software</button>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-lab">
+    <p class="eyebrow">Applied practice</p>
+    <h2 class="h2" id="h-lab">The eight labs</h2>
+    <div class="rule"></div>
+    <div class="hub-grid" id="grid-lab"></div>
+  </section>
+
+  <section class="block">
+    <div class="faculty" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between"><div style="flex:1 1 420px"><p class="eyebrow" style="margin-bottom:.3rem">Build the foundation first</p><p style="font:700 1.15rem Georgia,serif;color:var(--text-primary);margin:0 0 .3rem">Warm up with the CISSP Practices</p><p style="margin:0">Nine self-checking activities cover the concepts each lab applies. Activity A4, for example, builds the cryptography choices that Lab B3 puts to work with real keys.</p></div><a class="btn" href="practices.html">Open the Practices &#8594;</a></div>
+  </section>
+
+  <section class="block" aria-labelledby="h-fac">
+    <p class="eyebrow">For faculty</p>
+    <h2 class="h2" id="h-fac">Using the Security Lab in class</h2>
+    <div class="rule"></div>
+    <div class="faculty">
+      <ul>
+        <li><b>As submissions:</b> ask learners or teams to print the lab report to PDF and upload it. Reports show the score out of 100, attempts per item, recorded answers, the written deliverable, and which debriefs were revealed.</li>
+        <li><b>Team mode:</b> one learner drives the tool while the team decides, then the team submits one report listing every member.</li>
+        <li><b>Lab B7 tabletop:</b> open the lab on the projector and choose <b>Facilitator</b>. Teams choose <b>Team</b> and enter the session code. When you pause or release an inject early, a new code appears; teams re-enter it to stay in sync.</li>
+        <li><b>Knowledge Units:</b> each lab card and lab report names the 2024 CAE Cyber Defense KUs it supports. Cite the lab in your KU mapping as a hands-on activity.</li>
+        <li><b>Offline friendly:</b> every lab runs locally in the browser, with no installs or accounts.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. Practice scenarios, companies, and people are fictional and illustrative. Lab Knowledge Unit mappings refer to the 2024 CAE Cyber Defense Knowledge Units.</p>
+</footer>
+
+<script>
+(function () {
+  var DOM = { 1: 'D1 Governance', 2: 'D2 Assets', 3: 'D3 Architecture', 4: 'D4 Network', 5: 'D5 Identity', 6: 'D6 Testing', 7: 'D7 Operations', 8: 'D8 Software' };
+  var ACT = [
+    ["A1", "activity01.html", 1, "Think Like a Security Leader: Mindset and the ISC2 Code", "Choose the leader’s answer over the technician’s or the auditor’s, put the ISC2 canons in priority order, and resolve short ethics cases.", "Foundational", "35 min", "lesson00.html#s6", "Lesson 0", 3],
+    ["A2", "activity02.html", 1, "Governance, Law, and Risk", "Separate due care from due diligence, match laws and frameworks to needs, and calculate SLE, ALE, and safeguard value.", "Foundational", "35 min", "lesson01.html#s4", "Lesson 1", 3],
+    ["A3", "activity03.html", 2, "Classify, Own, Retain, Destroy", "Assign data roles, classify by impact, and choose retention periods and NIST SP 800-88 sanitization methods.", "Foundational", "35 min", "lesson02.html#s3", "Lesson 2", 3],
+    ["A4", "activity04.html", 3, "Security Models and Cryptography", "Work Bell-LaPadula, Biba, Clark-Wilson, and Brewer-Nash cases, pick the cryptographic control for a need, and do the key count and key length math.", "Intermediate", "35 min", "lesson03.html#s2", "Lesson 3", 3],
+    ["A5", "activity05.html", 4, "Networks by Layer", "Place protocols and devices on the OSI layers, match attacks to the control that stops them, and choose secure channels.", "Foundational", "35 min", "lesson04.html#s1", "Lesson 4", 3],
+    ["A6", "activity06.html", 5, "Identity and Access", "Sort factors and passwordless methods, match access models to cases, and put SAML and OIDC federation flows in order.", "Intermediate", "35 min", "lesson05.html#s2", "Lesson 5", 3],
+    ["A7", "activity07.html", 6, "Assessment and Testing Strategy", "Match test types to objectives, tell SOC 1, SOC 2, internal, and third-party audits apart, and sort KPIs from KRIs.", "Intermediate", "35 min", "lesson06.html#s1", "Lesson 6", 3],
+    ["A8", "activity08.html", 7, "Operations, Incidents, and Recovery", "Put incident response phases in order, rank evidence by volatility, and choose recovery sites and DR test types.", "Intermediate", "35 min", "lesson07.html#s3", "Lesson 7", 3],
+    ["A9", "activity09.html", 8, "Secure Software Life Cycle", "Place SDLC and DevSecOps activities by phase, match flaws to fixes, and make acquired software and SBOM decisions.", "Intermediate", "35 min", "lesson08.html#s1", "Lesson 8", 3]
+  ];
+  var LABS = [
+    ["B1", "lab01.html", 1, "Threat Modeling Workshop", "Build a data flow diagram, mark trust boundaries, apply STRIDE per element, rank the threats, and choose mitigations.", "Intermediate", "60 min", "lesson01.html#s6", "Lesson 1", "CTH, SRA"],
+    ["B2", "lab02.html", 2, "Data Classification and Handling", "Work an inventory of data stores: assign owner, custodian, classification, retention, DLP rule, and sanitization method while a live compliance meter tracks your choices.", "Intermediate", "60 min", "lesson02.html#s1", "Lesson 2", "PRI, CPM, PLE"],
+    ["B3", "lab03.html", 3, "Cryptography Workbench", "Use real browser cryptography to hash and HMAC, encrypt with AES-GCM, sign and verify with ECDSA, run tamper tests, and read a certificate chain.", "Intermediate", "60 min", "lesson03.html#s5", "Lesson 3", "BCY, ACR"],
+    ["B4", "lab04.html", 4, "Network Segmentation and Firewall Design", "Zone a fictional network, write ordered ACL rules, then run simulated test packets and see which rule matches.", "Intermediate", "60 min", "lesson04.html#s3", "Lesson 4", "BNW, NDF"],
+    ["B5", "lab05.html", 5, "Identity and Federation Lab", "Build RBAC roles from job functions, evaluate ABAC policies, assemble a SAML or OIDC sign-in, and find access review exceptions.", "Intermediate", "60 min", "lesson05.html#s4", "Lesson 5", "CSP, OSC"],
+    ["B6", "lab06.html", 6, "Assessment Plan and Results Analysis", "Choose tests for a scope, read simulated scan and code review results, separate false positives, and compute coverage and remediation metrics.", "Intermediate", "60 min", "lesson06.html#s1", "Lesson 6", "VLA, IAC"],
+    ["B7", "lab07.html", 7, "Incident Response Tabletop", "Work timed injects, make and defend decisions, handle evidence, and watch the impact clock, alone or in team mode.", "Advanced", "75 min", "lesson07.html#s3", "Lesson 7", "NDF, DFS, BCD"],
+    ["B8", "lab08.html", 8, "Secure Code and Pipeline Review", "Review short code samples, configure CI/CD gates, read an SBOM against a fictional advisory feed, and decide to release or hold.", "Advanced", "60 min", "lesson08.html#s3", "Lesson 8", "SPP, SAS, SCS"]
+  ];
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function read(k) { try { var r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+  function progAct(r) {
+    var s = read('cissp-practice-' + r[0]); if (!s) return ['', 'Not started'];
+    var n = Object.keys(s.checked || {}).filter(function (k) { return s.checked[k]; }).length;
+    return n >= r[9] ? ['done', '✓ Completed'] : (n ? ['on', n + ' of ' + r[9] + ' stations'] : ['on', 'Started']);
+  }
+  function progLab(r) {
+    var s = read('cissp-lab-' + r[0]); if (!s) return ['', 'Not started'];
+    var n = Object.keys(s.st || {}).filter(function (k) { return s.st[k] === 'ok'; }).length;
+    return n ? ['on', n + ' items verified'] : ['on', 'Started'];
+  }
+  function card(r, kind) {
+    var p = kind === 'act' ? progAct(r) : progLab(r);
+    return '<article class="hub-card" data-d="' + r[2] + '"><div class="hub-top"><span class="hub-id">' + (kind === 'act' ? 'Activity ' : 'Lab ') + r[0] + '</span><span class="hub-prog ' + p[0] + '">' + p[1] + '</span></div>' +
+      '<h3>' + esc(r[3]) + '</h3><p>' + esc(r[4]) + '</p>' +
+      '<div class="hub-tags"><span class="tag tag-dom">' + DOM[r[2]] + '</span><span class="tag tag-lvl">' + esc(r[5]) + '</span><span class="tag tag-time">&#9201; ' + esc(r[6]) + '</span></div>' +
+      '<div class="hub-foot"><a class="lesson" href="' + r[7] + '">Review ' + esc(r[8]) + '</a><a class="btn" href="' + r[1] + '" aria-label="Open ' + (kind === 'act' ? 'activity ' : 'lab ') + r[0] + ': ' + esc(r[3]) + '">Open &#8594;</a></div></article>';
+  }
+  document.getElementById('grid-lab').innerHTML = LABS.map(function (r) { return card(r, 'lab'); }).join('');
+  var btns = [].slice.call(document.querySelectorAll('.filter-bar button'));
+  function apply(f) {
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.f === f); });
+    [].forEach.call(document.querySelectorAll('.hub-card'), function (c) { c.hidden = !(f === 'all' || c.dataset.d === f); });
+    try { localStorage.setItem('cissp-hub-filter', f); } catch (e) { }
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { apply(b.dataset.f); }); });
+  var saved = null; try { saved = localStorage.getItem('cissp-hub-filter'); } catch (e) { }
+  apply(saved || 'all');
+})();
+</script>
+</body>
+</html>

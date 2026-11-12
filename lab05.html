@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>B5 Identity and Federation Lab | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+<style>
+/* B5: role builder, ABAC evaluator, federation flow, access review (light only) */
+.b5-flex { display: flex; flex-wrap: wrap; gap: 1rem 1.25rem; align-items: flex-start; }
+.b5-flex > .b5-col { flex: 1 1 260px; min-width: 0; }
+.b5-flex > .b5-wide { flex: 1.6 1 320px; min-width: 0; }
+.b5-card { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: .7rem .85rem; margin: 0 0 .6rem; font: .84rem/1.5 Arial, sans-serif; color: var(--text-secondary); }
+.b5-card b { color: var(--text-primary); }
+.b5-card .b5-rid { font: 700 .72rem 'Courier New', monospace; color: var(--gold); margin-right: .35rem; }
+.b5-tbl table.data { font-size: .8rem; }
+.b5-tbl table.data td, .b5-tbl table.data th { padding: .4rem .5rem; vertical-align: middle; }
+.b5-mx td { text-align: center; }
+.b5-mx td.b5-rn { text-align: left; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+.b5-mx input { width: 1.05rem; height: 1.05rem; accent-color: var(--gold); cursor: pointer; }
+.b5-flag { display: inline-block; font: 700 .7rem Arial, sans-serif; padding: .1rem .4rem; border-radius: 3px; border: 1px solid; white-space: nowrap; }
+.b5-flag.ok { color: var(--correct); background: var(--correct-bg); border-color: #9fd3b0; }
+.b5-flag.bad { color: var(--wrong); background: var(--wrong-bg); border-color: #f0b4b4; }
+.b5-flag.mid { color: #92400e; background: #fff4e0; border-color: #f2c98a; }
+.b5-tally { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 .8rem; }
+.b5-tally span { font: .8rem Arial, sans-serif; background: var(--blue-pale); border: 1px solid var(--blue-pale-border); border-radius: 3px; padding: .25rem .55rem; color: var(--text-secondary); }
+.b5-tally b { color: var(--text-primary); }
+.b5-tbl select { font: .78rem Arial, sans-serif; padding: .2rem .25rem; border: 1px solid var(--border); border-radius: 3px; background: #fff; color: var(--text-primary); max-width: 9.5rem; }
+.b5-steps { list-style: none; margin: 0; padding: 0; counter-reset: st; }
+.b5-steps li { display: flex; gap: .6rem; align-items: flex-start; background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: .55rem .65rem; margin: 0 0 .45rem; font: .84rem/1.5 Arial, sans-serif; color: var(--text-secondary); }
+.b5-steps li.ok { border-color: var(--correct); background: var(--correct-bg); }
+.b5-steps li.bad { border-color: var(--wrong); background: var(--wrong-bg); }
+.b5-steps .n { flex: 0 0 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--navy); color: #fff; font: 700 .78rem/1.6rem Arial, sans-serif; text-align: center; }
+.b5-steps .t { flex: 1 1 auto; min-width: 0; }
+.b5-steps .who { display: block; font: 700 .68rem Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--jade); margin-bottom: .1rem; }
+.b5-steps .mv { display: flex; flex-direction: column; gap: .2rem; }
+.b5-steps .mv button { border: 1px solid var(--border); background: #fff; border-radius: 3px; width: 1.9rem; height: 1.5rem; cursor: pointer; color: var(--navy); font-size: .8rem; }
+.b5-steps .mv button:disabled { opacity: .35; cursor: default; }
+.b5-msg { font: .84rem Arial, sans-serif; margin: .5rem 0 0; }
+.b5-msg.ok { color: var(--correct); font-weight: 700; }
+.b5-msg.bad { color: var(--wrong); }
+.b5-note { font: .8rem/1.5 Arial, sans-serif; color: var(--text-muted); margin: .3rem 0 .7rem; }
+.b5-tbl tr.b5-hl td { background: #fff7e8; }
+.b5-tbl tbody th[scope=row] { white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This lab needs JavaScript enabled.</p></noscript></div>
+
+<script>
+/* ===================== Quenby Regional Hospital data (fictional, fixed) ===================== */
+window.B5DATA = (function () {
+  var PERMS = [
+    ['P1', 'View patient chart', 'Read demographics, allergies, orders, results, and the medication record.'],
+    ['P2', 'Record vital signs and clinical notes', 'Write vitals, nursing notes, and progress notes.'],
+    ['P3', 'Write medication orders', 'Enter and sign new medication orders.'],
+    ['P4', 'Verify and dispense medication', 'Verify an order against allergies and interactions, then release the dose.'],
+    ['P5', 'View billing record', 'Read charges, payments, and insurance details.'],
+    ['P6', 'Submit insurance claims', 'Create and send claims to payers.'],
+    ['P7', 'Approve refunds and adjustments', 'Approve write-offs, refunds, and balance adjustments.'],
+    ['P8', 'Reset user passwords', 'Reset a password after verifying the caller’s identity.'],
+    ['P9', 'Create user accounts', 'Create accounts from HR hire records.'],
+    ['P10', 'Assign role membership', 'Add or remove users from roles after manager approval.']
+  ];
+  var ROLES = [
+    ['RN', 'Registered Nurse', 'Reviews the chart before giving care, records vital signs and nursing notes, and gives medications that pharmacy has already released. Does not order or dispense.', ['P1', 'P2']],
+    ['MD', 'Physician', 'Reviews the chart, writes progress notes, and writes and signs medication orders. Does not dispense.', ['P1', 'P2', 'P3']],
+    ['PH', 'Pharmacist', 'Reviews the chart for allergies and interactions, then verifies and dispenses each order. Does not write orders or clinical notes.', ['P1', 'P4']],
+    ['BS', 'Billing Specialist', 'Reads billing records and prepares and submits insurance claims. Has no clinical access and cannot approve adjustments.', ['P5', 'P6']],
+    ['BV', 'Billing Supervisor', 'Reads billing records and approves refunds and adjustments that specialists request. Does not submit claims.', ['P5', 'P7']],
+    ['HD', 'Help Desk Technician', 'Resets passwords for staff after identity verification. Does not create accounts or change role membership.', ['P8']],
+    ['IA', 'IAM Administrator', 'Creates accounts from HR hire records and assigns role membership after a manager approves. No clinical or billing access.', ['P9', 'P10']]
+  ];
+  var SOD = [['P3', 'P4', 'No one may both write a medication order and verify or dispense it.'], ['P6', 'P7', 'No one may both submit a claim and approve refunds or adjustments.']];
+  /* ABAC requests. dec: P permit, S step-up, D deny */
+  var REQ = [
+    { id: 'Q1', who: 'Priya Natarajan', role: 'RN', unit: '4 West', res: 'Chart, patient 4W-118', punit: '4 West', sens: 'Standard', att: 'Dr. Okafor', device: 'Managed', risk: 12, reason: '', dec: 'P' },
+    { id: 'Q2', who: 'Priya Natarajan', role: 'RN', unit: '4 West', res: 'Chart, patient 3E-207', punit: '3 East', sens: 'Standard', att: 'Dr. Haddad', device: 'Managed', risk: 10, reason: '', dec: 'D' },
+    { id: 'Q3', who: 'Dr. Marcus Lindqvist', role: 'MD', unit: 'Emergency', res: 'Chart, patient 3E-207', punit: '3 East', sens: 'Standard', att: 'Dr. Haddad', device: 'Managed', risk: 15, reason: 'Emergency access: patient arrived unresponsive', dec: 'P' },
+    { id: 'Q4', who: 'Tess Romero', role: 'BS', unit: 'Patient Accounts', res: 'Chart, patient 4W-118', punit: '4 West', sens: 'Standard', att: 'Dr. Okafor', device: 'Managed', risk: 8, reason: '', dec: 'D' },
+    { id: 'Q5', who: 'Dr. Ruth Okafor', role: 'MD', unit: '4 West', res: 'Chart, patient 4W-118', punit: '4 West', sens: 'Standard', att: 'Dr. Okafor', device: 'Managed', risk: 55, reason: '', dec: 'S' },
+    { id: 'Q6', who: 'Omar Tillman', role: 'RN', unit: '3 East', res: 'Behavioral health note, patient 3E-212', punit: '3 East', sens: 'Sensitive', att: 'Dr. Haddad', device: 'Managed', risk: 9, reason: '', dec: 'D' },
+    { id: 'Q7', who: 'Dr. Samir Haddad', role: 'MD', unit: '3 East', res: 'Behavioral health note, patient 3E-212', punit: '3 East', sens: 'Sensitive', att: 'Dr. Haddad', device: 'Managed', risk: 20, reason: '', dec: 'P' },
+    { id: 'Q8', who: 'Priya Natarajan', role: 'RN', unit: '4 West', res: 'Chart, patient 4W-118', punit: '4 West', sens: 'Standard', att: 'Dr. Okafor', device: 'Managed', risk: 82, reason: '', dec: 'D' }
+  ];
+  /* OIDC authorization code flow with PKCE, correct order */
+  var FLOW = [
+    ['User agent', 'A scheduler opens ShiftLattice in the browser and selects Sign in with Quenby.'],
+    ['Relying party', 'ShiftLattice redirects the browser to the Quenby identity provider with its client ID, the openid scope, a random state value, and a PKCE code challenge.'],
+    ['Identity provider', 'The identity provider authenticates the user with a passkey and applies its sign-in risk policy.'],
+    ['Identity provider', 'The identity provider redirects the browser to ShiftLattice’s registered redirect URI with a one-time authorization code and the same state value.'],
+    ['Relying party', 'ShiftLattice confirms that the returned state value matches the one it sent.'],
+    ['Relying party', 'ShiftLattice sends the authorization code and the PKCE code verifier directly to the identity provider’s token endpoint over the back channel.'],
+    ['Identity provider', 'The identity provider checks the code and verifier and returns an ID token and an access token.'],
+    ['Relying party', 'ShiftLattice validates the ID token signature against the identity provider’s published keys, checks the issuer, audience, and expiry, and starts a session.']
+  ];
+  var START = [3, 0, 6, 2, 7, 1, 5, 4];
+  /* Access review, as of November 2, 2026. ex: '', orphan, dormant, creep, sod */
+  var ACCT = [
+    ['A-01', 'Priya Natarajan', 'Registered Nurse, 4 West', 'Active', 'RN', '2026-11-01', ''],
+    ['A-02', 'Dr. Marcus Lindqvist', 'Physician, Emergency', 'Active', 'MD', '2026-10-30', ''],
+    ['A-03', 'Dana Kowalczyk', 'IAM Administrator (from Help Desk, June 2026)', 'Active', 'IA, HD', '2026-11-02', 'creep'],
+    ['A-04', 'Hollis Baptiste', 'Pharmacist', 'Active', 'PH', '2026-10-31', ''],
+    ['A-05', 'Tess Romero', 'Billing Specialist', 'Active', 'BS', '2026-11-02', ''],
+    ['A-06', 'svc-lab-interface', 'Service account; owner Eli Wexler, Lab Systems', 'Owner active', 'Lab interface (no user roles)', '2026-11-02', ''],
+    ['A-07', 'Corey Maddox', 'Registered Nurse, 3 East', 'Terminated 2026-09-30', 'RN', '2026-10-02', 'orphan'],
+    ['A-08', 'Dr. Ines Ferreira', 'Physician, 4 West', 'Active', 'MD', '2026-10-25', ''],
+    ['A-09', 'Rafael Ortiz', 'Billing Supervisor', 'Active', 'BV, BS (added for August coverage)', '2026-11-01', 'sod'],
+    ['A-10', 'Wen Jiang', 'Help Desk Technician', 'Active', 'HD', '2026-11-01', ''],
+    ['A-11', 'Gloria Sandoval', 'Pharmacist', 'Active', 'PH', '2026-05-04', 'dormant'],
+    ['A-12', 'Omar Tillman', 'Registered Nurse, 3 East', 'Active', 'RN', '2026-10-03', ''],
+    ['A-13', 'ext-kpatel', 'Kiran Patel, imaging vendor contractor', 'Contract ended 2026-08-31', 'Imaging support', '2026-08-29', 'orphan'],
+    ['A-14', 'Dr. Ruth Okafor', 'Physician, 4 West', 'Active', 'MD', '2026-11-02', '']
+  ];
+  return {
+    PERMS: PERMS, ROLES: ROLES, SOD: SOD, REQ: REQ, FLOW: FLOW, START: START, ACCT: ACCT,
+    key: {
+      ph: function () { return ROLES[2][3].slice(); },
+      total: function () { return ROLES.reduce(function (s, r) { return s + r[3].length; }, 0); },
+      permit: function () { return REQ.filter(function (r) { return r.dec === 'P'; }).map(function (r) { return r.id; }); },
+      review: function () { return ACCT.filter(function (a) { return a[6]; }).map(function (a) { return a[0]; }); }
+    }
+  };
+})();
+</script>
+
+<script>
+(function () {
+var D = window.B5DATA;
+window.LAB = {
+  id: 'B5',
+  title: 'Identity and Federation Lab',
+  accent: 'Federation Lab',
+  domain: 'Domain 5 (13.6%)',
+  time: '60 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson05.html#s4',
+  lessonLabel: 'Lesson 5, Authorization Models',
+  lede: 'Access control is a design job before it is a configuration job. Build least-privilege roles from job functions, evaluate attribute-based requests with a risk-adaptable step-up, put a federated sign-in in order, and find the exceptions in a quarterly access review.',
+  workbenchTitle: 'Identity workbench',
+  kus: ['Cybersecurity Principles (CSP)', 'Operating Systems Concepts (OSC)'],
+  ticket: {
+    number: 'QRH-IAM-2611',
+    priority: 'High priority',
+    from: 'Naomi Tillery, Director of Information Security, Quenby Regional Hospital',
+    to: 'Identity and access analyst (you)',
+    subject: 'Role redesign, access policy check, ShiftLattice sign-in, and the Q4 access review',
+    due: 'Findings memo by Friday, November 6',
+    body: '<p>Quenby Regional Hospital is replacing its old shared groups (one called <i>Clinical-All</i> gave every clinician almost everything) with role-based access control. HR has written a job function statement for each of the seven roles. I need a role design that gives each role what the job needs and nothing more, and that respects our two separation of duties rules.</p>' +
+      '<p>Second, the new attribute-based policy for the electronic health record goes live next week. Please run the eight test requests in the policy tester and tell me which ones the policy should permit, which should require step-up, and which it should deny. Our sign-in risk rules are new, so check the step-up case carefully.</p>' +
+      '<p>Third, staff schedulers will sign in to ShiftLattice, our cloud scheduling service, through our identity provider using OpenID Connect. The vendor’s diagram is out of order; put the steps right so the team can review it.</p>' +
+      '<p>Last, the quarterly access review closed on November 2. Find every exception in the account list, classify it, and recommend actions. Put it all in a short memo I can take to the Privacy Officer, Ana Whitcombe.</p>'
+  },
+  howTo: 'Step 2 opens a workbench with five tabs. The <b>Role builder</b> holds the job functions and a role-by-permission matrix; it counts assignments and flags separation of duties conflicts as you work, but it does not tell you whether a role is least privilege. The <b>ABAC tester</b> lists the policy rules and eight requests; record a decision for each. The <b>Federation flow</b> lets you reorder the OpenID Connect steps and check the order. The <b>Access review</b> lists 14 accounts as of November 2; classify each exception. The <b>Policies</b> tab holds the hospital’s access standards. Every checklist item has a hint. After your first check you can reveal the debrief, but a revealed item earns no points.',
+  workIntro: 'Work the tabs, then record your conclusions in the checklist. Quenby Regional Hospital, its staff, and ShiftLattice are fictional.',
+  checklist: [
+    { id: 'ph', type: 'set', points: 10, short: 'Pharmacist role', title: 'Least privilege for the Pharmacist role',
+      task: 'Build all seven roles in the Role builder from the job function statements. Then enter the permission IDs your design gives the <b>Pharmacist</b> role.',
+      label: 'Permission IDs, separated by commas', placeholder: 'e.g., P1, P2',
+      answer: function () { return D.key.ph(); },
+      hint: 'Read the Pharmacist statement word by word. What must a pharmacist read before releasing a dose, and what does the statement say the pharmacist does not do?',
+      debrief: '<p>The Pharmacist role needs <b>P1</b> (view the chart, to check allergies and interactions) and <b>P4</b> (verify and dispense). It must not hold P3, because writing an order and dispensing it is the first separation of duties rule, and it does not need P2 because pharmacists do not write clinical notes in this design.</p><p>Least privilege starts from the job, not from the old group. The <i>Clinical-All</i> group gave pharmacists order entry because it was easier to manage one group, and that is exactly how a single person ends up able to order and release a controlled substance. Teach students to justify every permission with a phrase from the job statement.</p>',
+      reviewNote: 'Each permission in a role must trace to a duty in the job function statement.' },
+    { id: 'total', type: 'number', points: 8, short: 'Assignment count', title: 'Total permission assignments',
+      task: 'With all seven roles built to least privilege, how many role-to-permission assignments does the design contain in total?',
+      unit: 'assignments', tol: 0,
+      answer: function () { return D.key.total(); },
+      hint: 'Add up the permissions per role. The Role builder shows a live total, but only a correct design gives the correct total. Physicians write notes; help desk staff only reset passwords.',
+      debrief: '<p>The least-privilege design has <b>14</b> assignments: Registered Nurse 2 (P1, P2), Physician 3 (P1, P2, P3), Pharmacist 2 (P1, P4), Billing Specialist 2 (P5, P6), Billing Supervisor 2 (P5, P7), Help Desk Technician 1 (P8), and IAM Administrator 2 (P9, P10). No role triggers a separation of duties flag.</p><p>A small, countable design is a feature. Seven roles and 14 assignments can be reviewed by a manager in minutes, while a group like <i>Clinical-All</i> with every permission cannot be reviewed meaningfully at all. Role explosion, where a hospital ends up with hundreds of near-duplicate roles, is the opposite failure; attributes, not more roles, handle context such as the patient’s unit.</p>',
+      reviewNote: 'Least privilege produces a small, reviewable set of assignments.' },
+    { id: 'sod', type: 'choice', points: 10, short: 'Separation of duties', title: 'A request that breaks separation of duties',
+      task: 'Dr. Ines Ferreira asks to be added to the Pharmacist role so she can release doses herself on night shifts when the pharmacy is short-staffed. What is the best response?',
+      options: ['Add her to the role and review her dispensing activity in the monthly audit log', 'Deny the combined access and keep ordering and dispensing apart, using the on-call pharmacist process for nights', 'Grant the Pharmacist role only between 11 p.m. and 7 a.m. through an attribute rule', 'Create a new Physician-Pharmacist role so the exception is documented'],
+      answer: 1,
+      hint: 'The conflict is between two duties, not between two job titles. Does a time window, a log, or a new role name remove the conflict?',
+      debrief: '<p>Writing and releasing the same medication order is the conflict the first separation of duties rule exists to prevent. A log review after the fact is a detective control and does not stop an error or a diversion. A time window still lets one person order and dispense, and a renamed role is the same conflict with documentation. The right answer keeps the duties apart and solves the staffing problem another way, such as a remote on-call pharmacist who verifies orders at night.</p><p>In practice, a true emergency is handled by a documented override with immediate review, not by a standing role. Faculty can tie this to the exam pattern: when a choice lets one person complete a sensitive transaction alone, it is rarely the best answer.</p>',
+      reviewNote: 'Separation of duties is preserved by keeping conflicting duties in different hands, not by logging or renaming.' },
+    { id: 'permit', type: 'set', points: 10, short: 'Requests permitted', title: 'Which requests should the policy permit?',
+      task: 'Evaluate all eight requests in the ABAC tester against the policy rules. Enter the IDs of the requests that should be <b>permitted</b> without step-up.',
+      label: 'Request IDs, separated by commas', placeholder: 'e.g., Q1, Q2',
+      answer: function () { return D.key.permit(); },
+      hint: 'Check the risk score first (rule R4), then the sensitivity of the record (R3), then the role and unit rules (R1, R2, R5). Emergency access counts as a permit when its conditions are met; it is logged and reviewed.',
+      debrief: '<p><b>Q1, Q3, and Q7</b> are permitted. Q1 is a nurse reading the chart of a patient on her own unit, from a managed device, at low risk. Q3 uses the emergency access rule: an Emergency Department physician with a recorded reason is permitted, and the access is logged for review. Q7 is the treating physician reading a sensitive note, which R3 allows.</p><p>The denials each fail a different attribute: Q2 is the wrong unit, Q4 is a billing role asking for a clinical chart, Q6 is a nurse asking for a sensitive record, and Q8 has a sign-in risk of 82, above the deny threshold. Q5 is the step-up case. This is the value of ABAC: the same nurse, Priya Natarajan, is permitted once and denied twice, depending on the patient and the risk of the session, without a single new role.</p>',
+      reviewNote: 'ABAC decisions combine subject, resource, action, and environment attributes; one failed condition changes the decision.' },
+    { id: 'stepup', type: 'choice', points: 8, short: 'Step-up method', title: 'Risk-adaptable step-up',
+      task: 'Request Q5 falls in the step-up band of rule R4. Which step-up method meets the policy?',
+      options: ['A six-digit code sent by text message to the physician’s phone', 'A push notification the physician approves in an authenticator app', 'Re-authentication with the physician’s registered passkey', 'An answer to the security question chosen at enrollment'],
+      answer: 2,
+      hint: 'Read R4 again. Which of these methods is phishing-resistant, meaning a fake sign-in page cannot capture and replay it?',
+      debrief: '<p>R4 requires a <b>phishing-resistant</b> method, and a passkey (FIDO2 and WebAuthn) is the only option here that qualifies. The passkey signs a challenge bound to the real site’s origin, so a lookalike page cannot reuse it. Text message codes can be relayed by a phishing proxy or stolen through SIM swapping, push approvals can be accepted by a tired user during a push-bombing attack, and a security question is a weak shared secret.</p><p>Risk-adaptable access means the policy asks for more proof only when the signals warrant it. Dr. Okafor normally signs in without friction; a new location pushes the score to 55, so the policy asks once for a passkey rather than denying her access to a patient she is treating.</p>',
+      reviewNote: 'Step-up for risky sessions should use a phishing-resistant factor such as a passkey.' },
+    { id: 'oidc', type: 'choice', points: 10, short: 'OIDC front channel', title: 'What returns through the browser',
+      task: 'In the correctly ordered ShiftLattice sign-in, what does the identity provider send back to ShiftLattice <b>through the browser</b> after the user authenticates?',
+      options: ['A one-time authorization code and the original state value', 'A signed ID token and an access token for the user', 'The user’s passkey so ShiftLattice can verify it', 'A signed SAML assertion posted to the service provider'],
+      answer: 0,
+      locked: function () { return (window.LAB_API && window.LAB_API.note('flowOk')) ? false : 'Put the sign-in steps in the correct order in the Federation flow tab first, then come back to this item.'; },
+      hint: 'In the authorization code flow, the tokens never pass through the browser. What does the browser carry, and what does ShiftLattice exchange for tokens later?',
+      debrief: '<p>The browser carries only a short-lived <b>authorization code</b> and the <b>state</b> value. ShiftLattice then exchanges the code, with its PKCE code verifier, for the ID token and access token over the back channel. Keeping tokens out of the browser limits what a malicious extension, a leaked browser history, or an intercepted redirect can expose. The state check defends against cross-site request forgery on the sign-in, and PKCE makes a stolen code useless without the verifier.</p><p>The passkey never leaves the user’s device; the identity provider verifies a signature from it. A SAML assertion belongs to a different protocol, where the identity provider (IdP) and service provider (SP) play the roles that OpenID Connect calls the OpenID provider and the relying party (RP).</p>',
+      reviewNote: 'In the OIDC authorization code flow, only the code and state travel through the browser; tokens come from the back channel.' },
+    { id: 'review', type: 'set', points: 12, short: 'Review exceptions', title: 'Find the access review exceptions',
+      task: 'Classify every account in the Access review tab. Enter the IDs of all accounts that have an exception of any kind.',
+      label: 'Account IDs, separated by commas', placeholder: 'e.g., A-01, A-02',
+      answer: function () { return D.key.review(); },
+      hint: 'Compare each account with the HR or vendor status, the job, the roles held, and the last sign-in date. The policies tab defines dormant (no sign-in for 90 days) and lists the conflicting role pairs. A service account with an active owner is not an exception by itself.',
+      debrief: '<p>Five accounts are exceptions. <b>A-07</b> and <b>A-13</b> are orphaned: Corey Maddox left on September 30 and the imaging contractor’s contract ended August 31, yet both accounts are enabled. <b>A-11</b> is dormant: Gloria Sandoval is still employed but has not signed in since May 4, more than 90 days before the review. <b>A-03</b> is privilege creep: Dana Kowalczyk moved from the help desk to IAM in June and kept her old role. <b>A-09</b> is a separation of duties conflict: Rafael Ortiz holds both billing roles because coverage access granted in August was never removed.</p><p>The decoys matter too. A-06 is a service account, but it has a named, active owner and fits its purpose. A-12 signed in 30 days ago, well inside the dormancy limit. Faculty can point out that every exception here traces to a process gap: leavers, movers, contractors, and temporary access are where access reviews earn their keep.</p>',
+      reviewNote: 'Access reviews look for orphaned, dormant, crept, and conflicting access by comparing accounts with HR and vendor records.' },
+    { id: 'creep', type: 'choice', points: 8, short: 'Privilege creep', title: 'Fixing privilege creep',
+      task: 'What is the best action for account A-03, Dana Kowalczyk?',
+      options: ['Leave both roles in place in case she is asked to cover the help desk', 'Remove the IAM Administrator role until her manager re-approves it', 'Move her IAM duties to a separate privileged account and leave the rest as is', 'Remove the Help Desk role she no longer needs and make job moves trigger a role review'],
+      answer: 3,
+      hint: 'Which role does her current job require? A good answer fixes the account and the process that caused the creep.',
+      debrief: '<p>Dana’s current job is IAM Administrator, so that role stays and the old Help Desk role goes. The durable fix is in the provisioning life cycle: a transfer in the HR system should trigger a review of the roles tied to the old job, so movers do not collect access over time. Keeping the role “just in case” is the definition of creep, and removing the role she does need would disrupt account creation.</p><p>A separate privileged account for administrative work is a good practice in its own right, but it does not remove the access she no longer needs. Managers approve, IAM provisions, and the access review confirms that the approval still matches the job.</p>',
+      reviewNote: 'Privilege creep is fixed by removing access the current job does not need and by reviewing roles when people move.' },
+    { id: 'orphan', type: 'choice', points: 8, short: 'Orphaned account', title: 'An orphaned account that was used',
+      task: 'Account A-07 belongs to Corey Maddox, who left on September 30. The account is enabled and shows a sign-in on October 2. What should happen now?',
+      options: ['Disable it at the next quarterly review so all changes go out together', 'Disable it now, preserve its logs, and report the post-departure sign-in to security and the Privacy Officer', 'Delete the account immediately so it can no longer be misused', 'Reset the password and email Corey to ask whether he signed in'],
+      answer: 1,
+      hint: 'A sign-in two days after departure is not just a hygiene issue. Who else needs to know when patient records might have been viewed, and what must not be destroyed?',
+      debrief: '<p>A sign-in after termination means someone may have viewed patient records without authorization. The account is disabled now, not at the next cycle, and its logs are preserved so the incident response team can see what was accessed. Because this is protected health information, the Privacy Officer decides whether the event is a reportable breach under HIPAA. Deleting the account would destroy the evidence, and contacting the former employee first could tip off the person involved.</p><p>The root cause is a deprovisioning gap: the HR termination did not disable the account. The fix is an automated trigger from the HR system, with a same-day manual check for involuntary terminations.</p>',
+      reviewNote: 'Orphaned accounts are disabled at once; evidence of use becomes an incident with logs preserved.' },
+    { id: 'memo', type: 'text', points: 16, short: 'Findings memo', title: 'Write the findings memo', reportTitle: 'Identity and access findings memo',
+      task: 'Write the short memo Naomi Tillery will take to the Privacy Officer. Cover the role design, the policy test results, each access review exception with its action, and the process fixes that would stop these exceptions from recurring.',
+      fields: [
+        { key: 'roles', label: 'Role design and separation of duties', min: 60, placeholder: 'Roles, the least-privilege principle used, the two conflict rules, and the Dr. Ferreira request.' },
+        { key: 'abac', label: 'ABAC policy test results and the step-up method', min: 50, placeholder: 'Which requests are permitted, which need step-up, which are denied, and why.' },
+        { key: 'review', label: 'Access review exceptions and actions', min: 80, placeholder: 'Each account ID, the exception type, and the action, starting with A-07.' },
+        { key: 'fix', label: 'Process fixes', min: 50, placeholder: 'Joiner, mover, leaver, contractor, and temporary access controls.' }
+      ],
+      hint: 'Lead with the most urgent item: the sign-in on a departed employee’s account. Every exception needs an owner and an action.',
+      debrief: '<p><b>Model memo.</b> <b>Roles:</b> seven roles built from the HR job statements with 14 assignments and no conflicts; ordering and dispensing stay apart, and so do submitting claims and approving adjustments. Dr. Ferreira’s request is declined; night coverage uses the on-call pharmacist. <b>Policy tests:</b> Q1, Q3, and Q7 permit (Q3 under emergency access, logged); Q5 requires passkey step-up at risk 55; Q2, Q4, Q6, and Q8 deny for unit, role, sensitivity, and risk respectively.</p><p><b>Exceptions:</b> A-07 orphaned and used after departure: disabled, logs preserved, referred to security and the Privacy Officer. A-13 orphaned contractor: disabled and the vendor notified. A-11 dormant: disabled pending manager confirmation. A-03 privilege creep: Help Desk role removed. A-09 conflict: Billing Specialist role removed, coverage access to expire automatically next time. <b>Fixes:</b> HR-driven deprovisioning, role review on transfers, end dates on contractor and temporary access, and a 90-day dormancy job. Your wording will differ; check that each exception has an action and an owner.</p>',
+      reviewNote: 'A findings memo gives each exception a type, an action, and an owner, and fixes the process behind it.' }
+  ],
+
+  /* ===================== Workbench ===================== */
+  workbench: function (root, api) {
+    var esc = api.esc;
+    var mx = api.note('mx') || {}, dec = api.note('dec') || {}, ex = api.note('ex') || {};
+    var ord = api.note('ord') || D.START.slice(), flowChecked = api.note('flowChecked') || false;
+    var DEC = [['', 'Choose'], ['P', 'Permit'], ['S', 'Step-up'], ['D', 'Deny']];
+    var EXT = [['', 'No exception'], ['orphan', 'Orphaned'], ['dormant', 'Dormant'], ['creep', 'Privilege creep'], ['sod', 'SoD conflict']];
+    function permName(p) { for (var i = 0; i < D.PERMS.length; i++) if (D.PERMS[i][0] === p) return D.PERMS[i][1]; return p; }
+
+    root.innerHTML =
+      '<div class="lb-tool">' +
+      '<div class="lb-tabs" role="tablist" aria-label="Workbench tools">' +
+        '<button role="tab" id="tb-rb" aria-controls="pn-rb" aria-selected="true">Role builder</button>' +
+        '<button role="tab" id="tb-ab" aria-controls="pn-ab" aria-selected="false" tabindex="-1">ABAC tester</button>' +
+        '<button role="tab" id="tb-fl" aria-controls="pn-fl" aria-selected="false" tabindex="-1">Federation flow</button>' +
+        '<button role="tab" id="tb-ar" aria-controls="pn-ar" aria-selected="false" tabindex="-1">Access review</button>' +
+        '<button role="tab" id="tb-po" aria-controls="pn-po" aria-selected="false" tabindex="-1">Policies</button></div>' +
+      /* role builder */
+      '<div class="lb-panel" role="tabpanel" id="pn-rb" aria-labelledby="tb-rb">' +
+        '<p class="eyebrow">HR job function statements</p>' +
+        '<div class="b5-flex"><div class="b5-col">' + D.ROLES.slice(0, 4).map(roleCard).join('') + '</div><div class="b5-col">' + D.ROLES.slice(4).map(roleCard).join('') +
+          '<div class="b5-card"><b>Permission catalog</b><br>' + D.PERMS.map(function (p) { return '<span class="b5-rid">' + p[0] + '</span>' + esc(p[1]); }).join('<br>') + '</div></div></div>' +
+        '<div class="b5-tally" id="rb-tally" aria-live="polite"></div>' +
+        '<div class="table-wrap b5-tbl b5-mx"><table class="data"><caption class="sr-only">Role by permission matrix</caption><thead><tr><th scope="col">Role</th>' +
+          D.PERMS.map(function (p) { return '<th scope="col" title="' + esc(p[1]) + '">' + p[0] + '</th>'; }).join('') + '<th scope="col">Count</th><th scope="col">SoD check</th></tr></thead><tbody id="rb-body"></tbody></table></div>' +
+        '<p class="b5-note">Hover a column heading, or use the catalog above, for the permission name. The SoD check applies the two conflict rules in the Policies tab. It does not judge least privilege; that is your job.</p>' +
+        '<button type="button" class="btn ghost" id="rb-clear">Clear the matrix</button>' +
+      '</div>' +
+      /* abac */
+      '<div class="lb-panel" role="tabpanel" id="pn-ab" aria-labelledby="tb-ab" hidden>' +
+        '<div class="lb-doc"><p class="eyebrow">EHR access policy QRH-AC-12 (evaluate in this order)</p><ul>' +
+          '<li><b>R4 Session risk:</b> sign-in risk 0 to 39 continues; 40 to 69 requires phishing-resistant step-up before any permit; 70 or higher is denied.</li>' +
+          '<li><b>R3 Sensitive records:</b> a record marked Sensitive may be read only by the patient’s attending physician.</li>' +
+          '<li><b>R2 Emergency access:</b> a physician assigned to Emergency may read any Standard chart if an emergency reason is recorded. Each use is logged and reviewed within 24 hours.</li>' +
+          '<li><b>R1 Care unit:</b> a nurse or physician may read the Standard chart of a patient on the same unit, from a managed device.</li>' +
+          '<li><b>R5 Billing:</b> billing roles may read billing records only, never clinical charts.</li>' +
+          '<li><b>R6 Default:</b> anything not permitted above is denied.</li></ul></div>' +
+        '<div class="b5-tally" id="ab-tally" aria-live="polite"></div>' +
+        '<div class="table-wrap b5-tbl"><table class="data" style="min-width:880px"><thead><tr><th scope="col">ID</th><th scope="col">Subject (role, unit)</th><th scope="col">Resource</th><th scope="col">Patient unit</th><th scope="col">Sensitivity</th><th scope="col">Attending</th><th scope="col">Device</th><th scope="col">Risk</th><th scope="col">Reason recorded</th><th scope="col">Decision</th></tr></thead><tbody>' +
+          D.REQ.map(function (r) { return '<tr><th scope="row">' + r.id + '</th><td>' + esc(r.who) + '<br><small>' + r.role + ', ' + esc(r.unit) + '</small></td><td>Read: ' + esc(r.res) + '</td><td>' + esc(r.punit) + '</td><td>' + r.sens + '</td><td>' + esc(r.att) + '</td><td>' + r.device + '</td><td><b>' + r.risk + '</b></td><td>' + (r.reason ? esc(r.reason) : 'None') + '</td>' +
+            '<td><label class="sr-only" for="ab-' + r.id + '">Decision for ' + r.id + '</label><select id="ab-' + r.id + '" data-q="' + r.id + '">' + DEC.map(function (d) { return '<option value="' + d[0] + '"' + (dec[r.id] === d[0] ? ' selected' : '') + '>' + d[1] + '</option>'; }).join('') + '</select></td></tr>'; }).join('') +
+        '</tbody></table></div>' +
+        '<p class="b5-note">All requests are read actions. Role codes: RN nurse, MD physician, BS billing specialist. Your decisions are saved here for reference and are graded only through the checklist.</p>' +
+      '</div>' +
+      /* federation */
+      '<div class="lb-panel" role="tabpanel" id="pn-fl" aria-labelledby="tb-fl" hidden>' +
+        '<div class="b5-flex"><div class="b5-wide"><p class="eyebrow">ShiftLattice sign-in, OpenID Connect authorization code flow with PKCE</p>' +
+          '<ol class="b5-steps" id="fl-list"></ol>' +
+          '<div class="px-actions"><button type="button" class="btn" id="fl-check">Check order</button><button type="button" class="btn ghost" id="fl-reset">Reset order</button></div><p class="b5-msg" id="fl-msg" aria-live="polite"></p></div>' +
+        '<div class="b5-col"><div class="b5-card"><b>Who is who</b><br>The <b>user agent</b> is the scheduler’s browser. ShiftLattice is the <b>relying party</b> (RP). Quenby’s identity provider is the OpenID provider.</div>' +
+          '<div class="b5-card"><b>Same idea in SAML</b><br>SAML calls the parties the <b>identity provider</b> (IdP) and the <b>service provider</b> (SP). The IdP signs an XML <b>assertion</b> that the browser posts to the SP. OpenID Connect uses a signed JSON <b>ID token</b> instead, built on OAuth 2.0.</div>' +
+          '<div class="b5-card"><b>Terms in the steps</b><br><b>State:</b> a random value the RP checks on return, to stop forged sign-in responses. <b>PKCE:</b> the RP sends a hashed challenge first and the matching verifier later, so a stolen code cannot be redeemed. <b>Back channel:</b> a direct server-to-server call that does not pass through the browser.</div></div></div>' +
+      '</div>' +
+      /* access review */
+      '<div class="lb-panel" role="tabpanel" id="pn-ar" aria-labelledby="tb-ar" hidden>' +
+        '<p class="eyebrow">Quarterly access review, Q4 2026, extracted November 2, 2026</p>' +
+        '<div class="b5-tally" id="ar-tally" aria-live="polite"></div>' +
+        '<div class="table-wrap b5-tbl"><table class="data" style="min-width:860px"><thead><tr><th scope="col">ID</th><th scope="col">Account</th><th scope="col">Job (HR or vendor record)</th><th scope="col">HR or vendor status</th><th scope="col">Roles held</th><th scope="col">Last sign-in</th><th scope="col">Exception</th></tr></thead><tbody id="ar-body"></tbody></table></div>' +
+        '<p class="b5-note">Role codes match the Role builder: RN, MD, PH, BS, BV, HD, IA. Your classifications are saved here for reference and are graded only through the checklist.</p>' +
+      '</div>' +
+      /* policies */
+      '<div class="lb-panel" role="tabpanel" id="pn-po" aria-labelledby="tb-po" hidden>' +
+        '<div class="lb-doc"><p class="eyebrow">Access control standard QRH-SEC-07 (excerpt)</p><h4>Quenby Regional Hospital</h4><ul>' +
+          '<li><b>Least privilege:</b> each role holds only the permissions its job function statement requires. Shared and generic groups are retired by December 31, 2026.</li>' +
+          D.SOD.map(function (s) { return '<li><b>Separation of duties, ' + s[0] + ' and ' + s[1] + ':</b> ' + esc(s[2]) + ' No account may hold roles that together grant both.</li>'; }).join('') +
+          '<li><b>Joiners and movers:</b> a manager approves each role; IAM provisions it. A transfer triggers a review of roles tied to the previous job.</li>' +
+          '<li><b>Leavers and contractors:</b> accounts are disabled on the last day of employment or contract. Vendor accounts carry an end date.</li>' +
+          '<li><b>Dormancy:</b> an account with no sign-in for 90 days is disabled pending manager confirmation. Service accounts must have a named, active owner.</li>' +
+          '<li><b>Authentication:</b> staff sign in with passkeys. Any step-up must use a phishing-resistant method.</li>' +
+          '<li><b>Privacy:</b> suspected unauthorized access to patient records is reported to security and to the Privacy Officer, Ana Whitcombe, the same day.</li></ul></div>' +
+      '</div></div>';
+
+    function roleCard(r) { return '<div class="b5-card"><b>' + esc(r[1]) + '</b> <span class="b5-rid">' + r[0] + '</span><br>' + esc(r[2]) + '</div>'; }
+
+    /* tabs */
+    var tabs = [].slice.call(root.querySelectorAll('[role=tab]'));
+    function sel(t) { tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }); api.note('tab', t.id); }
+    tabs.forEach(function (t, i) { t.addEventListener('click', function () { sel(t); }); t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; sel(n); n.focus(); } }); });
+    var saved = api.note('tab'); if (saved && document.getElementById(saved)) sel(document.getElementById(saved));
+
+    /* role builder */
+    function conflicts(rc) { var have = mx[rc] || []; return D.SOD.filter(function (s) { return have.indexOf(s[0]) >= 0 && have.indexOf(s[1]) >= 0; }); }
+    function drawMx() {
+      root.querySelector('#rb-body').innerHTML = D.ROLES.map(function (r) {
+        var have = mx[r[0]] || [], c = conflicts(r[0]);
+        return '<tr><td class="b5-rn">' + r[0] + ' <small style="font-weight:400">' + esc(r[1]) + '</small></td>' + D.PERMS.map(function (p) {
+          return '<td><input type="checkbox" data-r="' + r[0] + '" data-p="' + p[0] + '"' + (have.indexOf(p[0]) >= 0 ? ' checked' : '') + ' aria-label="' + esc(r[1]) + ': ' + esc(p[1]) + '"></td>';
+        }).join('') + '<td><b>' + have.length + '</b></td><td>' + (!have.length ? '<span class="b5-flag mid">Empty</span>' : c.length ? '<span class="b5-flag bad">Conflict ' + c.map(function (s) { return s[0] + '+' + s[1]; }).join(', ') + '</span>' : '<span class="b5-flag ok">No conflict</span>') + '</td></tr>';
+      }).join('');
+      var tot = 0, nconf = 0, empty = 0;
+      D.ROLES.forEach(function (r) { tot += (mx[r[0]] || []).length; nconf += conflicts(r[0]).length; if (!(mx[r[0]] || []).length) empty++; });
+      root.querySelector('#rb-tally').innerHTML = '<span>Total assignments: <b>' + tot + '</b></span><span>Roles with conflicts: <b>' + nconf + '</b></span><span>Empty roles: <b>' + empty + '</b></span>';
+      root.querySelectorAll('#rb-body input').forEach(function (cb) { cb.addEventListener('change', function () {
+        var r = cb.dataset.r, p = cb.dataset.p, a = (mx[r] || []).slice(), k = a.indexOf(p);
+        if (cb.checked && k < 0) a.push(p); if (!cb.checked && k >= 0) a.splice(k, 1);
+        a.sort(function (x, y) { return +x.slice(1) - +y.slice(1); }); mx[r] = a; api.note('mx', mx); drawMx();
+        var f = root.querySelector('#rb-body input[data-r="' + r + '"][data-p="' + p + '"]'); if (f) f.focus();
+      }); });
+    }
+    root.querySelector('#rb-clear').addEventListener('click', function () { if (!confirm('Clear every checkbox in the matrix?')) return; mx = {}; api.note('mx', mx); drawMx(); });
+    drawMx();
+
+    /* abac */
+    function abTally() {
+      var n = { P: 0, S: 0, D: 0 }, open = 0; D.REQ.forEach(function (r) { if (dec[r.id]) n[dec[r.id]]++; else open++; });
+      root.querySelector('#ab-tally').innerHTML = '<span>Permit: <b>' + n.P + '</b></span><span>Step-up: <b>' + n.S + '</b></span><span>Deny: <b>' + n.D + '</b></span><span>Not decided: <b>' + open + '</b></span>';
+    }
+    root.querySelectorAll('#pn-ab select').forEach(function (s) { s.addEventListener('change', function () { dec[s.dataset.q] = s.value; api.note('dec', dec); abTally(); }); });
+    abTally();
+
+    /* federation */
+    function drawFlow(marks) {
+      var ol = root.querySelector('#fl-list');
+      ol.innerHTML = ord.map(function (si, pos) {
+        var st = D.FLOW[si], cls = marks ? (marks[pos] ? ' ok' : ' bad') : '';
+        return '<li class="' + cls.trim() + '"><span class="n" aria-hidden="true">' + (pos + 1) + '</span><span class="t"><span class="who">' + esc(st[0]) + '</span>' + esc(st[1]) + '</span>' +
+          '<span class="mv"><button type="button" data-mv="-1" data-pos="' + pos + '" aria-label="Move step ' + (pos + 1) + ' up"' + (pos === 0 ? ' disabled' : '') + '>&#9650;</button><button type="button" data-mv="1" data-pos="' + pos + '" aria-label="Move step ' + (pos + 1) + ' down"' + (pos === ord.length - 1 ? ' disabled' : '') + '>&#9660;</button></span></li>';
+      }).join('');
+      ol.querySelectorAll('[data-mv]').forEach(function (b) { b.addEventListener('click', function () {
+        var p = +b.dataset.pos, q = p + +b.dataset.mv, t = ord[p]; ord[p] = ord[q]; ord[q] = t; api.note('ord', ord);
+        flowChecked = false; api.note('flowChecked', false); root.querySelector('#fl-msg').textContent = ''; root.querySelector('#fl-msg').className = 'b5-msg'; drawFlow();
+        var f = ol.querySelector('[data-pos="' + q + '"][data-mv="' + b.dataset.mv + '"]') || ol.querySelector('[data-pos="' + q + '"]'); if (f) f.focus();
+      }); });
+    }
+    function checkFlow() {
+      var marks = ord.map(function (si, pos) { return si === pos; }), good = marks.filter(Boolean).length, msg = root.querySelector('#fl-msg');
+      flowChecked = true; api.note('flowChecked', true);
+      if (good === ord.length) { msg.className = 'b5-msg ok'; msg.textContent = 'All eight steps are in order. Checklist item 6 is now open.'; api.note('flowOk', true); api.refresh(); }
+      else { msg.className = 'b5-msg bad'; msg.textContent = good + ' of 8 steps are in the right position. Green steps are placed correctly; move the red ones.'; }
+      drawFlow(marks);
+    }
+    root.querySelector('#fl-check').addEventListener('click', checkFlow);
+    root.querySelector('#fl-reset').addEventListener('click', function () { ord = D.START.slice(); api.note('ord', ord); flowChecked = false; api.note('flowChecked', false); var m = root.querySelector('#fl-msg'); m.textContent = ''; m.className = 'b5-msg'; drawFlow(); });
+    if (flowChecked) checkFlow(); else drawFlow();
+
+    /* access review */
+    function drawAr() {
+      root.querySelector('#ar-body').innerHTML = D.ACCT.map(function (a) {
+        return '<tr' + (ex[a[0]] ? ' class="b5-hl"' : '') + '><th scope="row">' + a[0] + '</th><td>' + esc(a[1]) + '</td><td>' + esc(a[2]) + '</td><td>' + esc(a[3]) + '</td><td>' + esc(a[4]) + '</td><td>' + a[5] + '</td>' +
+          '<td><label class="sr-only" for="ar-' + a[0] + '">Exception for ' + a[0] + '</label><select id="ar-' + a[0] + '" data-a="' + a[0] + '">' + EXT.map(function (e) { return '<option value="' + e[0] + '"' + ((ex[a[0]] || '') === e[0] ? ' selected' : '') + '>' + e[1] + '</option>'; }).join('') + '</select></td></tr>';
+      }).join('');
+      var n = 0; D.ACCT.forEach(function (a) { if (ex[a[0]]) n++; });
+      root.querySelector('#ar-tally').innerHTML = '<span>Accounts: <b>' + D.ACCT.length + '</b></span><span>Flagged as exceptions: <b>' + n + '</b></span><span>Review date: <b>2026-11-02</b></span>';
+      root.querySelectorAll('#ar-body select').forEach(function (s) { s.addEventListener('change', function () { ex[s.dataset.a] = s.value; api.note('ex', ex); drawAr(); var f = document.getElementById('ar-' + s.dataset.a); if (f) f.focus(); }); });
+    }
+    drawAr();
+  }
+};
+})();
+</script>
+<script src="lab.js"></script>
+</body>
+</html>

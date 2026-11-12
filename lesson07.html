@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 7: Security Operations | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 7</span></p>
+    <span class="lesson-badge-lg">Day 4, Afternoon &bull; Domain 7</span>
+    <h1>Security <span>Operations</span></h1>
+    <p class="lesson-lede">Domain 7 is where plans meet the night shift. It covers how an organization watches its systems, investigates what goes wrong, responds to incidents, and recovers from disasters. It is the widest domain on the exam. The common thread is discipline: follow the process, protect the evidence, and keep people safe first.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 4, 1:00 to 5:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~3.5 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>12.8%</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">Run it, watch it, recover it</h2>
+    <div class="rule"></div>
+    <p class="lead">Security operations is the daily work of keeping controls running. It includes investigations and forensics, logging and monitoring, configuration and change management, privileged access, incident response, patching, backup and recovery, disaster recovery testing, physical security, and personnel safety. Domain 1 sets the requirements. Domain 7 carries them out and proves they work.</p>
+    <p class="lead">This lesson moves from detection to recovery: how evidence is handled, how incidents run from detection to lessons learned, which preventive and detective tools matter, and how backup schemes and recovery sites meet recovery objectives.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>Human safety always comes first. After that, follow the documented process: the incident response plan, the change process, the evidence procedure. An answer that skips the process to act faster is usually wrong, even when the action itself sounds sensible.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Apply</strong> evidence handling rules: chain of custody, order of volatility, and admissibility. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Sequence</strong> the phases of incident management from detection to lessons learned. <em class="bloom-tag">Bloom: Understand</em></span></li>
+      <li><span><strong>Select</strong> detective and preventive measures, including EDR, XDR, and SOAR, for a stated threat. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Compare</strong> full, incremental, and differential backups, and explain why ransomware resilience needs an immutable or offline copy. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Choose</strong> a recovery site and a DR test type that fit the RTO, RPO, and budget. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Design</strong> a classroom tabletop exercise with injects and a debrief. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Chain of Custody</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A documented record of who collected, handled, and stored evidence, when, and why, from collection until it is presented.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Order of Volatility</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Collect the most short-lived evidence first: registers and cache, then memory, then network state and running processes, then disk, then archives.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">SIEM</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Security information and event management: collects and correlates logs from many sources and raises alerts on suspicious patterns.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">UEBA</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">User and entity behavior analytics: builds a baseline of normal behavior and flags deviations, such as a login at an unusual hour from a new country.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Incremental Backup</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Copies only what changed since the last backup of any kind and clears the archive bit. Fast to back up, slower to restore.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Differential Backup</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Copies everything changed since the last full backup and does not clear the archive bit. Grows each day; restores need only the full and the latest differential.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Warm Site</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">An alternate site with power, network, and some equipment, but without current data. Ready in hours to days; a middle ground in cost.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Parallel Test</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A DR test that brings the recovery site up and processes real work there while the primary site keeps running. Realistic with no outage risk.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">SOAR</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Security orchestration, automation, and response: tools that connect security systems and run playbooks to enrich alerts and take routine response steps automatically.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Immutable Backup</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A backup that cannot be changed or deleted until its retention period ends, even by an administrator. The key defense against ransomware that targets backups.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. Investigations and Evidence</a></li>
+          <li><a href="#s2">2. Logging, Monitoring, and Core Concepts</a></li>
+          <li><a href="#s3">3. Incident Management</a></li>
+          <li><a href="#s4">4. Prevention, Patching, and Change</a></li>
+          <li><a href="#s5">5. Recovery Strategies</a></li>
+          <li><a href="#s6">6. DR Testing, BC, and Safety</a></li>
+          <li><a href="#s7">7. Interactive: Backup and Recovery Planner</a></li>
+          <li><a href="#s8">8. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>Investigations and Evidence</h3></div>
+          <p>Lesson 1 named the investigation types. Domain 7 covers how investigations are run. The goal is evidence that is reliable enough for the strictest likely audience, which may be a court.</p>
+          <ul class="detail">
+            <li><strong>Evidence collection and handling:</strong> identify, preserve, collect, examine, analyze, and present. Work on verified copies, not originals. Hash the original and the image to prove they match.</li>
+            <li><strong>Chain of custody:</strong> record every transfer of the evidence, with names, times, and purpose. A gap can make evidence inadmissible.</li>
+            <li><strong>Order of volatility:</strong> collect memory and live network state before pulling the power. Once a system is off, what was in RAM is gone.</li>
+            <li><strong>Admissibility:</strong> evidence must be relevant, reliable, and legally obtained. Best evidence is the original or a verified duplicate. Hearsay rules can apply to some records; regularly kept business records are often an exception.</li>
+            <li><strong>Investigative techniques:</strong> interviews, log and timeline analysis, and forensic examination of media, memory, networks, and software.</li>
+            <li><strong>Artifacts:</strong> data files, computer artifacts such as registry entries and browser history, network captures and flow records, and mobile device data.</li>
+            <li><strong>Reporting and documentation:</strong> record every step, tool, and finding so another examiner could repeat the work and reach the same result.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Use a write blocker when imaging storage, and verify the image with a hash. If an answer has the investigator browse the original drive to &ldquo;take a quick look,&rdquo; it is wrong.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128269;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>What&rsquo;s my Crime?</strong>: identify the type of cybercrime from the evidence in each case.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/crime/crime.html" target="_blank" rel="noopener noreferrer">What&rsquo;s my Crime? <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Logging, Monitoring, and Core Concepts</h3></div>
+          <p>You cannot respond to what you cannot see. Monitoring turns raw events into decisions, and it needs both good data and people who look at it.</p>
+          <ul class="detail">
+            <li><strong>Intrusion detection and prevention (IDPS):</strong> signature-based detection matches known patterns; anomaly-based detection flags departures from a baseline. An IDS alerts; an IPS sits inline and can block.</li>
+            <li><strong>SIEM:</strong> centralizes and correlates logs. It depends on accurate time synchronization across sources.</li>
+            <li><strong>SOAR:</strong> security orchestration, automation, and response. It connects the SIEM, ticketing, endpoint, identity, and firewall tools, and runs playbooks: enrich an alert with threat intelligence, open a case, disable an account, or isolate a host. Automation handles routine, well-understood steps in seconds; analysts approve the high-impact ones.</li>
+            <li><strong>Continuous monitoring and tuning:</strong> adjust rules to cut false positives without creating false negatives.</li>
+            <li><strong>Egress monitoring:</strong> watch outbound traffic for data leaving the organization. <strong>Data loss prevention (DLP)</strong> inspects email, web uploads, cloud sharing, and removable media for sensitive content, such as student ID numbers, and can alert, encrypt, or block. Unusual volume and destinations still matter, because encrypted exfiltration hides its content.</li>
+            <li><strong>Log management:</strong> collect, protect from alteration, retain per policy and law, and review.</li>
+            <li><strong>Threat intelligence:</strong> feeds of indicators and adversary behavior, plus <strong>threat hunting</strong>, which searches proactively for attackers already inside.</li>
+            <li><strong>UEBA:</strong> behavior baselines for users and devices that expose insider threats and stolen credentials.</li>
+          </ul>
+          <h4>Foundational operations concepts</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Concept</th><th>What it means</th><th>Why it matters</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Need to know and least privilege</td><td>Access only to the data and rights a task requires</td><td>Limits damage from mistakes and compromise</td></tr>
+              <tr><td class="term">Separation of duties</td><td>No single person controls a whole sensitive process</td><td>Requires collusion to commit fraud</td></tr>
+              <tr><td class="term">Privileged account management</td><td>Vaulted, monitored, time-limited administrator access</td><td>Administrator accounts are the top target</td></tr>
+              <tr><td class="term">Job rotation</td><td>Staff move between roles on a schedule</td><td>Detects fraud and builds backup skills</td></tr>
+              <tr><td class="term">Defense in depth</td><td>Layered, independent controls so one failure does not expose the asset</td><td>An attacker must defeat several controls, and each layer is a chance to detect</td></tr>
+            </tbody>
+          </table></div>
+          <p><strong>Configuration management</strong> keeps systems in a known state. Provision from approved images, set a secure <strong>baseline</strong>, automate deployment and drift detection, and track every system in a configuration management database. <strong>Resource protection</strong> covers media management: label, store, track, and sanitize media according to the classification of the data on it.</p>
+          <h4>Media protection techniques</h4>
+          <ul class="detail">
+            <li><strong>Archiving:</strong> move data that must be kept but is rarely used to protected long-term storage, with an index, an integrity check, and a retention date.</li>
+            <li><strong>Encryption:</strong> encrypt media at rest so a lost tape or drive exposes nothing, and manage the keys separately from the media.</li>
+            <li><strong>Disposal and reuse:</strong> sanitize before reuse or disposal, using the clear, purge, or destroy decision from Lesson 2, and keep a record of each item.</li>
+            <li><strong>Data states:</strong> protect data at rest (encryption, access control), in transit (TLS, VPN), and in use (memory protection, restricted sessions, confidential computing).</li>
+          </ul>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128225;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>IDS/IPS</strong>: how detection and prevention systems differ in placement, method, and response.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/IDS_IPS/IDS_IPS.html" target="_blank" rel="noopener noreferrer">IDS/IPS <span class="ext">&#8599;</span></a></div>
+          </div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>A SIEM correlates and alerts. SOAR acts. If a question asks how to cut the time analysts spend on repetitive triage steps, the answer is orchestration and automation, not another detection tool.</div>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>Incident Management</h3></div>
+          <p>An event is any observable occurrence. An incident is an event that harms or threatens confidentiality, integrity, or availability. The exam uses a seven-step model.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Phase</th><th>What happens</th></tr></thead>
+            <tbody>
+              <tr><td class="term">1. Detection</td><td>Alerts, reports, and monitoring identify a possible incident; the team confirms and declares it.</td></tr>
+              <tr><td class="term">2. Response</td><td>Activate the incident response team and plan; begin collecting evidence.</td></tr>
+              <tr><td class="term">3. Mitigation</td><td>Contain the damage, for example by isolating a host, without destroying evidence.</td></tr>
+              <tr><td class="term">4. Reporting</td><td>Inform management and, where required, regulators, partners, and affected people.</td></tr>
+              <tr><td class="term">5. Recovery</td><td>Restore systems to normal operation from known-good sources.</td></tr>
+              <tr><td class="term">6. Remediation</td><td>Fix the root cause so the incident cannot repeat.</td></tr>
+              <tr><td class="term">7. Lessons learned</td><td>Review what happened and improve the plan, controls, and training.</td></tr>
+            </tbody>
+          </table></div>
+          <p>Reporting is shown as one step, but it continues throughout. Legal deadlines for breach notification may start the clock early.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Containment comes before eradication and recovery. If an answer restores a server from backup before the attacker&rsquo;s access path is closed, the attacker can simply return.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128274;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Ransomware</strong>: how a ransomware attack unfolds, and where detection and recovery break the chain.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/ransomware/RansomwareAttack.html" target="_blank" rel="noopener noreferrer">Ransomware <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Prevention, Patching, and Change</h3></div>
+          <h4>Detective and preventive measures</h4>
+          <ul class="detail">
+            <li><strong>Firewalls:</strong> network firewalls filter by address, port, and state; next-generation firewalls add application awareness and intrusion prevention; web application firewalls inspect HTTP traffic for attacks such as injection.</li>
+            <li><strong>Allowlist and denylist:</strong> an allowlist permits only approved software or destinations and is stronger; a denylist blocks known bad items and is easier to bypass.</li>
+            <li><strong>Third-party security services:</strong> a <strong>managed security service provider (MSSP)</strong> monitors and responds around the clock for a small team, and a <strong>DDoS scrubbing service</strong> reroutes traffic through its own network during an attack, filters the flood, and passes clean traffic back. Both run under contract and service levels.</li>
+            <li><strong>Sandboxing:</strong> runs untrusted code in isolation to observe what it does.</li>
+            <li><strong>Honeypots and honeynets:</strong> decoy systems that attract attackers and reveal their methods. Use them for enticement, never entrapment.</li>
+            <li><strong>Endpoint protection:</strong> anti-malware uses signature, heuristic, and behavior-based detection. <strong>Endpoint detection and response (EDR)</strong> records process, file, and network activity on each device so analysts can investigate and isolate a host remotely. <strong>Extended detection and response (XDR)</strong> correlates that data with email, identity, network, and cloud signals for a single view of an attack.</li>
+            <li><strong>Machine learning and AI tools:</strong> help find anomalies at scale, but need tuning, oversight, and human review.</li>
+          </ul>
+          <h4>Patch, vulnerability-based, and change management</h4>
+          <p>Patch management inventories systems, evaluates patches, tests them, approves them through change management, deploys them, and verifies the result. Vulnerability-based management goes further than patching on a calendar: it scans, prioritizes each weakness by severity, exploitation in the wild, and asset value, then tracks remediation to closure. A flaw on an internet-facing server that attackers are already using jumps the queue. Change management requires a request, an impact assessment, approval by a change advisory board, a tested rollback plan, implementation in a window, and documentation. Emergency changes still follow a defined process, with review after the fact.</p>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#9881;&#65039;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Configuration Management</strong>: baselines, change control, and how drift creates risk.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/ConfigMgmt/ConfigMgmt.html" target="_blank" rel="noopener noreferrer">Configuration Management <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>Recovery Strategies</h3></div>
+          <h4>Backup types</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Type</th><th>Copies</th><th>Backup time</th><th>Restore needs</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Full</td><td>Everything</td><td>Longest</td><td>The latest full only</td></tr>
+              <tr><td class="term">Incremental</td><td>Changes since the last backup of any type</td><td>Shortest</td><td>The last full plus every incremental since, in order</td></tr>
+              <tr><td class="term">Differential</td><td>Changes since the last full</td><td>Grows each day</td><td>The last full plus the latest differential</td></tr>
+            </tbody>
+          </table></div>
+          <p><strong>Backup storage strategies</strong> include onsite copies for fast restores, offsite copies to survive a site loss, and cloud storage. A common rule of thumb is three copies, on two types of media, with one offsite.</p>
+          <ul class="detail">
+            <li><strong>Immutable backups:</strong> write once, read many storage, such as cloud object lock, that no one can change or delete until a retention period ends, even with administrator credentials. Ransomware operators target backups first, so at least one copy must be immutable or offline.</li>
+            <li><strong>Encrypted backups:</strong> backups hold everything, so encrypt them in transit and at rest and keep the keys apart from the backup system. A backup you cannot decrypt is no backup at all.</li>
+          </ul>
+          <h4>Recovery sites</h4>
+          <ul class="detail">
+            <li><strong>Hot site:</strong> fully equipped and close to current; ready in minutes to hours; the most expensive.</li>
+            <li><strong>Warm site:</strong> power, network, and some equipment; data must be restored; ready in hours to a few days.</li>
+            <li><strong>Cold site:</strong> space, power, and cooling only; equipment must be brought in; ready in days to weeks; the cheapest.</li>
+            <li><strong>Mobile site:</strong> a trailer or container data center moved where needed.</li>
+            <li><strong>Reciprocal agreement:</strong> two organizations agree to host each other; cheap but hard to enforce, and capacity is rarely there. Resource capacity agreements formalize this.</li>
+            <li><strong>Cloud recovery:</strong> systems are rebuilt from templates and images in a cloud region, paying mainly when used.</li>
+            <li><strong>Multiple processing sites:</strong> active-active centers that share the load, so a site loss causes little or no outage.</li>
+          </ul>
+          <h4>Resilience and recovery metrics</h4>
+          <p><strong>High availability</strong> keeps a service running through component failures with clustering and failover. <strong>Fault tolerance</strong> continues with no interruption, for example RAID 1 mirroring, RAID 5 striping with parity, or RAID 6 with two parity blocks. RAID 0 stripes for speed and offers no redundancy. <strong>Quality of service</strong> prioritizes critical traffic so it keeps working under load.</p>
+          <p>Measure recovery against a <strong>baseline</strong> of normal performance. <strong>Mean time between failures (MTBF)</strong> is the average time a component runs before it fails, so a higher value means more reliable equipment. <strong>Mean time to resolve (MTTR)</strong> is the average time from failure or detection until service is fully restored, so a lower value means faster recovery. Track both over time: MTBF guides what to replace or make redundant, and MTTR shows whether DR processes and practice are working.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>RAID and clustering protect against hardware failure, not against deletion, corruption, or ransomware, because they copy the damage instantly. Only backups protect against those.</div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>If an attacker with domain administrator rights could delete every backup, the backups are part of the blast radius. The BEST answer for ransomware resilience is an immutable or offline copy that those credentials cannot reach.</div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>DR Testing, BC, and Safety</h3></div>
+          <p>A disaster recovery plan covers response, personnel, communications, assessment, restoration, training and awareness, lessons learned, and metrics. Communications need both methods and <strong>prioritization</strong>: who hears first, in what order, and through which channel if email and phones are down. Safety and the response team come first, then leadership, then staff, customers, and regulators as required. A plan is only as good as its last test.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>DR test</th><th>What happens</th><th>Disruption risk</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Read-through (checklist)</td><td>Team members review the plan on their own and report problems</td><td>None</td></tr>
+              <tr><td class="term">Walkthrough (tabletop)</td><td>The team meets and talks through a scenario step by step</td><td>None</td></tr>
+              <tr><td class="term">Simulation</td><td>A realistic scenario is acted out, up to but not including moving operations</td><td>Very low</td></tr>
+              <tr><td class="term">Parallel</td><td>The recovery site runs real work while the primary site keeps running</td><td>Low</td></tr>
+              <tr><td class="term">Full interruption</td><td>The primary site is shut down and operations move to the recovery site</td><td>High; needs senior approval</td></tr>
+            </tbody>
+          </table></div>
+          <p>Business continuity planning exercises extend the same idea to whole business processes. Plan both internal communications, to staff and leadership, and external communications, to students, partners, the media, and regulators where needed, and rehearse who may speak for the organization.</p>
+          <h4>Physical security and personnel safety</h4>
+          <ul class="detail">
+            <li><strong>External security controls:</strong> fencing, lighting, gates, bollards, landscaping that removes hiding places, and cameras that cover approaches and parking.</li>
+            <li><strong>Internal security controls:</strong> badges, mantraps, locks, guards, visitor escorts, and zones that tighten as you move toward sensitive rooms.</li>
+            <li><strong>Travel:</strong> loaner devices, VPN use, and briefings for high-risk destinations.</li>
+            <li><strong>Security training and awareness:</strong> insider threats, social media exposure, and MFA fatigue, where attackers flood a user with push prompts.</li>
+            <li><strong>Emergency management:</strong> evacuation, shelter in place, and accountability for every person.</li>
+            <li><strong>Duress:</strong> codes or alarms that let a person signal they are being forced, without alerting the attacker.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>In any emergency question, the first priority is the safety of people. Data, systems, and evidence come after.</div>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Interactive: Backup and Recovery Planner</h3></div>
+          <p>A college server holds 2 TB of data and about 100 GB changes each day. Backups run at 11:00 p.m. each night, and the weekly full runs Sunday night. Pick a scenario, a backup scheme, where the backups are stored, what fails, when, and a recovery site. The planner shows which backup sets you need, the time to resolve, and whether you meet the RPO, RTO, and MTD. Try the ransomware failure with each storage option.</p>
+
+          <style>
+            #br-root [hidden]{display:none !important;}
+            .br-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.35fr);gap:1rem;align-items:start;}
+            .br-f{margin-bottom:.65rem;}
+            .br-f > span{display:block;font-family:Arial,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.3rem;}
+            .br-f select{width:100%;}
+            .br-scn{font-family:Arial,sans-serif;font-size:.76rem;color:var(--text-secondary);line-height:1.5;background:var(--blue-pale);border:1px solid var(--blue-pale-border);border-radius:4px;padding:.45rem .6rem;margin-top:.35rem;}
+            .br-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.3rem;margin:.2rem 0 .75rem;}
+            .br-day{border:1px solid var(--border);border-radius:5px;background:var(--card-bg);padding:.35rem .2rem;text-align:center;font-family:Arial,sans-serif;min-width:0;}
+            .br-day .d{font-size:.64rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);}
+            .br-day .t{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:1rem;color:var(--text-primary);line-height:1.2;}
+            .br-day .s{font-size:.6rem;color:var(--text-muted);}
+            .br-day.need{border-color:var(--jade);background:var(--jade-pale);box-shadow:inset 0 -3px 0 var(--jade);}
+            .br-day.need .t{color:var(--jade-dark);}
+            .br-day.future{opacity:.45;border-style:dashed;}
+            .br-day.fail{border-color:var(--wrong);background:var(--wrong-bg);}
+            .br-day.fail .t{color:var(--wrong);font-size:.78rem;}
+            .br-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin-bottom:.6rem;}
+            .br-tile{background:var(--card-bg);border:1px solid var(--border);border-radius:5px;padding:.45rem .5rem;text-align:center;font-family:Arial,sans-serif;}
+            .br-tile .k{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);}
+            .br-tile .v{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:1.05rem;color:var(--gold);font-variant-numeric:tabular-nums;}
+            .br-checks{list-style:none;margin:0 0 .5rem;padding:0;display:flex;flex-direction:column;gap:.35rem;}
+            .br-checks li{display:flex;gap:.5rem;align-items:flex-start;font-family:Arial,sans-serif;font-size:.78rem;color:var(--text-secondary);line-height:1.45;background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:4px;padding:.4rem .55rem;}
+            .br-checks li.good{border-left-color:var(--correct);} .br-checks li.bad{border-left-color:var(--wrong);}
+            .br-steps{font-family:Arial,sans-serif;font-size:.76rem;color:var(--text-secondary);line-height:1.5;margin:.2rem 0 0;padding-left:1.1rem;}
+            @media (max-width:760px){.br-grid{grid-template-columns:1fr;}.br-tiles{grid-template-columns:1fr 1fr;}}
+          </style>
+
+          <div class="iw" id="br-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; plan the recovery</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="br-grid">
+                <div class="iw-panel">
+                  <h5 class="iw-h5">Your plan</h5>
+                  <div class="br-f"><span id="br-l0">Scenario</span>
+                    <select id="br-scn" aria-labelledby="br-l0">
+                      <option value="enr">Enrollment system</option>
+                      <option value="pay">Online tuition payments</option>
+                    </select>
+                    <div class="br-scn" id="br-scntxt"></div></div>
+                  <div class="br-f"><span id="br-l1">Backup scheme</span>
+                    <select id="br-sch" aria-labelledby="br-l1">
+                      <option value="full">Full backup every night</option>
+                      <option value="inc" selected>Sunday full + nightly incremental</option>
+                      <option value="diff">Sunday full + nightly differential</option>
+                    </select></div>
+                  <div class="br-f"><span id="br-l5">Backup storage</span>
+                    <select id="br-sto2" aria-labelledby="br-l5">
+                      <option value="online" selected>Online backup disk on the same network</option>
+                      <option value="sync">Offsite copy, replicated nightly over the network</option>
+                      <option value="immut">Immutable cloud copy (object lock)</option>
+                      <option value="offline">Offline tape, rotated offsite</option>
+                    </select></div>
+                  <div class="br-f"><span id="br-l6">What fails</span>
+                    <select id="br-evt" aria-labelledby="br-l6">
+                      <option value="hw" selected>Hardware or site failure</option>
+                      <option value="rw">Ransomware with stolen admin credentials</option>
+                    </select></div>
+                  <div class="br-f"><span id="br-l2">Failure day</span>
+                    <select id="br-day" aria-labelledby="br-l2">
+                      <option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option>
+                      <option value="4">Thursday</option><option value="5" selected>Friday</option><option value="6">Saturday</option>
+                    </select></div>
+                  <div class="br-f"><span id="br-l3">Failure time</span>
+                    <select id="br-hr" aria-labelledby="br-l3">
+                      <option value="9">9:00 a.m.</option><option value="14" selected>2:00 p.m.</option><option value="22">10:00 p.m.</option>
+                    </select></div>
+                  <div class="br-f"><span id="br-l4">Recovery site</span>
+                    <select id="br-site" aria-labelledby="br-l4">
+                      <option value="hot">Hot site (ready in about 1 hour)</option>
+                      <option value="cloud">Cloud DR (about 2 hours to provision)</option>
+                      <option value="warm" selected>Warm site (about 12 hours)</option>
+                      <option value="cold">Cold site (about 5 days)</option>
+                    </select></div>
+                </div>
+                <div class="iw-panel" aria-live="polite">
+                  <h5 class="iw-h5">Backup sets this week</h5>
+                  <div class="br-week" id="br-week"></div>
+                  <div class="br-tiles">
+                    <div class="br-tile"><div class="k">Sets to restore</div><div class="v" id="br-sets">0</div></div>
+                    <div class="br-tile"><div class="k">Time to resolve</div><div class="v" id="br-rt">0</div></div>
+                    <div class="br-tile"><div class="k">Data lost</div><div class="v" id="br-loss">0</div></div>
+                    <div class="br-tile"><div class="k">Last night&rsquo;s window</div><div class="v" id="br-win">0</div></div>
+                    <div class="br-tile"><div class="k">Storage per week</div><div class="v" id="br-sto">0</div></div>
+                    <div class="br-tile"><div class="k">Site cost</div><div class="v" id="br-cost">0</div></div>
+                  </div>
+                  <ul class="br-checks" id="br-checks"></ul>
+                  <div class="iw-verdict" id="br-verdict"><span class="iw-pill" id="br-pill">Plan</span><span id="br-coach"></span></div>
+                  <ol class="br-steps" id="br-steps"></ol>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>Try a Saturday failure with incremental backups: six sets must be restored in order, and losing any one breaks the chain. Switch to differential and the restore needs only two sets, but each night&rsquo;s backup grows. Then try the payments scenario. No nightly scheme meets a one-hour RPO, because data written since 11:00 p.m. is gone. Tight RPOs call for replication or journaling, not better tapes. Finally, set the failure to ransomware. Online and replicated backups are encrypted along with the servers, so there is nothing to restore. Only the immutable or offline copy survives.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('br-root'); if(!root) return;
+            var $=function(id){return root.querySelector('#'+id);};
+            var SCN={enr:{rpo:24,rto:12,mtd:48,wrt:4,txt:'The registrar can lose up to one day of changes (RPO 24 hours). Systems must be back within 12 hours (RTO), and enrollment can be down no more than 48 hours (MTD). Verifying data and resuming work takes 4 hours.'},
+                     pay:{rpo:1,rto:4,mtd:8,wrt:2,txt:'Payments can lose at most 1 hour of transactions (RPO). Systems must be back within 4 hours (RTO), and the service can be down no more than 8 hours (MTD). Reconciliation takes 2 hours.'}};
+            var SITE={hot:{h:1,cost:'$$$$'},cloud:{h:2,cost:'$$'},warm:{h:12,cost:'$$'},cold:{h:120,cost:'$'}};
+            var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            var FULL=2000, CHG=100, BKP=500, RST=400, MOUNT=0.5;
+            var STO={online:{name:'online backup disk',extra:0,survives:false},sync:{name:'replicated offsite copy',extra:0,survives:false},immut:{name:'immutable cloud copy',extra:1,survives:true},offline:{name:'offline tape',extra:4,survives:true}};
+            var CLEAN=6;
+            function fmtH(h){return h>=48?(Math.round(h/24*10)/10)+' days':(Math.round(h*10)/10)+' h';}
+            function fmtGB(g){return g>=1000?(Math.round(g/100)/10)+' TB':g+' GB';}
+            function paint(){
+              var sc=SCN[$('br-scn').value], sch=$('br-sch').value, d=+$('br-day').value, hr=+$('br-hr').value, site=SITE[$('br-site').value];
+              var sto=STO[$('br-sto2').value], rw=$('br-evt').value==='rw', lost=rw&&!sto.survives;
+              $('br-scntxt').textContent=sc.txt;
+              // nights 0..d-1 have backups; failure on day d before tonight's 11 p.m. job
+              var sets=[], gb=0, cells=[];
+              for(var k=0;k<7;k++){
+                var type, size;
+                if(sch==='full'){type='F';size=FULL;}
+                else if(k===0){type='F';size=FULL;}
+                else if(sch==='inc'){type='I';size=CHG;}
+                else {type='D';size=CHG*k;}
+                cells.push({type:type,size:size});
+              }
+              if(sch==='full'){sets=[d-1];}
+              else if(sch==='inc'){for(var i=0;i<d;i++)sets.push(i);}
+              else {sets=d===1?[0]:[0,d-1];}
+              sets.forEach(function(k){gb+=cells[k].size;});
+              $('br-week').innerHTML=cells.map(function(c,k){
+                if(k===d) return '<div class="br-day fail"><div class="d">'+DAYS[k]+'</div><div class="t">FAIL</div><div class="s">'+(hr>12?(hr-12)+' p.m.':hr+' a.m.')+'</div></div>';
+                var cls=k>d?' future':(lost?' fail':(sets.indexOf(k)>=0?' need':''));
+                if(lost&&k<d) return '<div class="br-day fail"><div class="d">'+DAYS[k]+'</div><div class="t">'+c.type+'</div><div class="s">encrypted</div></div>';
+                return '<div class="br-day'+cls+'"><div class="d">'+DAYS[k]+'</div><div class="t">'+c.type+'</div><div class="s">'+fmtGB(c.size)+'</div></div>';
+              }).join('');
+              var restore=gb/RST+MOUNT*sets.length+sto.extra+(rw?CLEAN:0), loss=hr+1, total=site.h+restore, down=total+sc.wrt;
+              var win=cells[d-1].size/BKP, stoGB=0; cells.forEach(function(c){stoGB+=c.size;});
+              $('br-sets').textContent=lost?'0 usable':sets.length; $('br-rt').textContent=lost?'unknown':fmtH(total); $('br-loss').textContent=lost?'all':loss+' h';
+              $('br-win').textContent=fmtH(win); $('br-sto').textContent=fmtGB(stoGB); $('br-cost').textContent=site.cost;
+              if(lost){
+                $('br-checks').innerHTML=['RPO: every backup set on the '+sto.name+' was encrypted with the servers. No restore point exists.','RTO: cannot be met without usable backups. Rebuilding from scratch takes weeks.','MTD: exceeded. The business cannot survive the outage on this plan.'].map(function(s){return '<li class="bad"><span class="iw-pill bad">Misses</span><span>'+s+'</span></li>';}).join('');
+                $('br-verdict').className='iw-verdict bad'; $('br-pill').className='iw-pill bad'; $('br-pill').textContent='No clean backup';
+                $('br-coach').textContent='The attacker used stolen administrator credentials to encrypt or delete every backup reachable from the network. Keep at least one copy immutable or offline, and protect backup credentials separately from the domain.';
+                $('br-steps').innerHTML=['Contain the attack and preserve evidence.','Find any copy the attacker could not reach. There is none on this plan.','Escalate to leadership and counsel: rebuild from scratch, or consider options management must decide.'].map(function(s){return '<li>'+s+'</li>';}).join('');
+                return;
+              }
+              var C=[
+                {ok:loss<=sc.rpo,t:'RPO: '+loss+' hours of data lost since the 11:00 p.m. backup, against a target of '+sc.rpo+' h.'},
+                {ok:total<=sc.rto,t:'RTO: site ready in '+fmtH(site.h)+' plus '+fmtH(restore)+(rw?' to clean, verify the restore point, and restore':' to restore')+(sto.extra?' (including '+sto.extra+' h to retrieve the '+sto.name+')':'')+' = '+fmtH(total)+' time to resolve, against a target of '+sc.rto+' h.'},
+                {ok:down<=sc.mtd,t:'MTD: recovery '+fmtH(total)+' plus '+sc.wrt+' h to verify and resume = '+fmtH(down)+', against a limit of '+sc.mtd+' h.'}
+              ];
+              $('br-checks').innerHTML=C.map(function(c){return '<li class="'+(c.ok?'good':'bad')+'"><span class="iw-pill '+(c.ok?'good':'bad')+'">'+(c.ok?'Meets':'Misses')+'</span><span>'+c.t+'</span></li>';}).join('');
+              var fails=C.filter(function(c){return !c.ok;}).length, v=$('br-verdict'), p=$('br-pill'), msg;
+              if(!fails){v.className='iw-verdict good';p.className='iw-pill good';p.textContent='Plan works';msg='This plan meets every objective. Check the cost: is a cheaper site still inside the RTO?';}
+              else if(!C[0].ok){v.className='iw-verdict bad';p.className='iw-pill bad';p.textContent='RPO gap';msg='Nightly backups cannot meet an RPO this tight. The fix is more frequent copies, such as database log shipping, journaling, or replication to the recovery site.';}
+              else if(!C[2].ok){v.className='iw-verdict bad';p.className='iw-pill bad';p.textContent='Past MTD';msg='Recovery takes longer than the business can survive. Choose a faster recovery site, or a scheme with fewer sets to restore.';}
+              else {v.className='iw-verdict warn';p.className='iw-pill warn';p.textContent='RTO missed';msg='You survive within the MTD but miss the RTO. A faster site or fewer restore sets would close the gap.';}
+              $('br-coach').textContent=msg;
+              var steps=['Declare the disaster and activate the '+$('br-site').selectedOptions[0].text.split(' (')[0].toLowerCase()+'.'];
+              if(rw) steps.push('Contain the attack, reset compromised credentials, and confirm the restore point predates the infection.');
+              if(sto.extra) steps.push('Retrieve the '+sto.name+' ('+sto.extra+' h).');
+              sets.forEach(function(k,i){steps.push('Restore '+DAYS[k]+' '+(cells[k].type==='F'?'full':cells[k].type==='I'?'incremental':'differential')+' backup ('+fmtGB(cells[k].size)+')'+(sch==='inc'&&i>0?', in order':'')+'.');});
+              steps.push('Verify the data, then reenter or reconcile the '+loss+' hours of lost work.');
+              $('br-steps').innerHTML=steps.map(function(s){return '<li>'+s+'</li>';}).join('');
+            }
+            ['br-scn','br-sch','br-sto2','br-evt','br-day','br-hr','br-site'].forEach(function(id){$(id).addEventListener('change',paint);});
+            paint();
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s8">
+          <div class="cs-head"><span class="cs-num">8</span><h3>Faculty Teaching Segment</h3></div>
+          <p>Students often learn operations as a list of tools. It lands better as a sequence of decisions under time pressure, with evidence and people to protect.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> run a 50-minute tabletop on a ransomware scenario at a fictional college. Release injects every 10 minutes: the first alert, a ransom note, a reporter&rsquo;s call, a failed restore, and a regulator&rsquo;s question. Teams record each decision and who owns it.</li>
+            <li><strong>Rubric criteria:</strong> phases in the right order, containment before recovery, evidence preserved with a chain of custody, required notifications identified, and lessons learned with named owners and dates.</li>
+            <li><strong>Lab idea:</strong> students image a small virtual disk in an isolated lab, hash the original and the image, document the chain of custody, and then use the planner above to write a backup and recovery plan that meets a given RTO and RPO.</li>
+            <li><strong>Course fit:</strong> this domain maps to security operations, digital forensics, and business continuity courses. It supports the CAE-CD Network Defense (NDF), Digital Forensics (DFS), and Business Continuity and Disaster Recovery (BCD) Knowledge Units.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>Ask students to find the cheapest plan in the planner that still meets every objective for enrollment. The answer forces a trade between site cost and restore effort, which is exactly the conversation a CISO has with a CFO.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 1</span></div><h3>What&rsquo;s my Crime?</h3><p>Match case evidence to the type of cybercrime it shows, a warm-up for investigation questions.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/crime/crime.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: What's my Crime? (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 2</span></div><h3>IDS/IPS</h3><p>Detection versus prevention, signature versus anomaly methods, and where each sensor belongs.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/IDS_IPS/IDS_IPS.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: IDS/IPS (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Ransomware</h3><p>How a ransomware attack unfolds and where detection, containment, and recovery stop it.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/ransomware/RansomwareAttack.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Ransomware (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Phishing Mystery</h3><p>Investigate a phishing incident and trace it from the first email to the response.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/phishing/phishing.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Phishing Mystery (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Attacks: Malware, APT, Zero Day</h3><p>The threats that detective and preventive controls must handle, from common malware to zero days.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/attacks/attacks.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Attacks: Malware, APT, Zero Day (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Configuration Management</h3><p>Baselines, change control, and how configuration drift creates risk.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/ConfigMgmt/ConfigMgmt.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Configuration Management (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 5</span></div><h3>Digital Media Handling: Backups</h3><p>Backup types and media handling. Also listed in Lesson 2 for media management.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/backups/backups.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Digital Media Handling: Backups (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Self-checking practice for this lesson, ready to use with your own students. Each item ends with a report you can print or save as a PDF.</p>
+    <div class="pl-grid">
+      <article class="pl-card"><div class="pl-top"><span class="pl-type">CISSP Practice &middot; A8</span><span class="pl-time">&#9201; 35 min</span></div><h3><a href="activity08.html">Operations, Incidents, and Recovery</a></h3><p>Put incident response phases in order, rank evidence by volatility, and choose recovery sites and DR test types.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="activity08.html" aria-label="Open activity A8: Operations, Incidents, and Recovery">Open &#8594;</a></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B7</span><span class="pl-time">&#9201; 75 min</span></div><h3><a href="lab07.html">Incident Response Tabletop</a></h3><p>Work timed injects, make and defend decisions, handle evidence, and watch the impact clock, alone or in team mode.</p><div class="pl-foot"><span class="pl-level">Advanced</span><a class="pl-open" href="lab07.html" aria-label="Open lab B7: Incident Response Tabletop">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q1.</span>An investigator arrives at a running server that may hold evidence of a crime. Which evidence should be collected FIRST?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> The contents of system memory</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> A forensic image of the hard drive</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> Offsite backup tapes</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> Printed system documentation</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> Following the order of volatility, memory is lost when the system powers off, so it is captured before the disk. Backups and documentation are the least volatile.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q2.</span>An organization takes a full backup Sunday night and incremental backups Monday through Friday nights. The server fails Saturday morning. What must be restored?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> Only Friday&rsquo;s incremental</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> Sunday&rsquo;s full and Friday&rsquo;s incremental</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> Sunday&rsquo;s full, then every incremental from Monday through Friday, in order</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> Every incremental, then Sunday&rsquo;s full</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> Each incremental holds only the changes since the previous backup, so all of them are needed after the full, in order. Option B describes a differential restore.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q3.</span>A college needs a recovery site that can be running within two days and wants to keep costs moderate. Which option fits BEST?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> A hot site</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> A warm site</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> A cold site</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> A reciprocal agreement with a nearby college</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> A warm site has power, network, and some equipment, and is usually ready in hours to a few days at moderate cost. A hot site exceeds the need at higher cost; a cold site takes too long; reciprocal agreements are hard to enforce.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q4.</span>Leadership wants to confirm the recovery site can process real transactions, but will not accept any risk of an outage at the primary site. Which test should be used?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> Full interruption test</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> Read-through test</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> Tabletop walkthrough</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> Parallel test</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> A parallel test runs real work at the recovery site while the primary keeps running. A full interruption risks an outage; read-through and tabletop tests do not process real transactions.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q5.</span>A security team detects ransomware spreading across file servers. After declaring an incident, what should the team do NEXT?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> Restore all file servers from last night&rsquo;s backup</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> Write the lessons learned report</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> Pay the ransom to limit downtime</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> Contain the spread, for example by isolating affected systems, while preserving evidence</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> Mitigation, or containment, comes before recovery. Restoring before the infection is contained lets it encrypt the restored data again. Lessons learned come last.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q6.</span>A college keeps nightly backups on a disk array and replicates them to a second campus. A ransomware group with domain administrator credentials encrypted both copies. Which change would BEST have preserved a usable backup?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> Replicating the backups to a third campus</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> Keeping one copy immutable or offline, with backup credentials separate from the domain</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> Switching from incremental to differential backups</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> Mirroring the backup disks with RAID 1</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Any copy the stolen credentials can reach can be encrypted or deleted. An immutable copy, such as one under object lock, or an offline copy cannot be altered from the network. More replicas, a different backup type, and RAID all copy the damage.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q7.</span>Analysts in a two-person SOC spend most of each shift looking up the same threat intelligence for phishing alerts and opening tickets by hand. Mean time to resolve is rising. Which investment BEST addresses the problem?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> A SOAR platform with playbooks that enrich alerts, open tickets, and quarantine messages, with analyst approval for high-impact steps</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> A second SIEM to collect more log sources</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> A honeynet to attract phishing attackers</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> Lowering alert thresholds so more events are reviewed</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> The bottleneck is repetitive response work, which orchestration and automation remove. More logs or lower thresholds add alerts without adding capacity, and a honeynet gathers intelligence but does not speed triage.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q8.</span>A fire alarm sounds in the data center during a forensic acquisition. What should the investigator do FIRST?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> Finish the disk image so the evidence is preserved</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> Shut down the servers in an orderly way</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> Evacuate according to the emergency plan</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> Update the chain of custody form</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> Human safety is always the first priority. Evidence and systems matter, but never more than people.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson06.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 6: Security Assessment and Testing</span></a>
+    <a href="lesson08.html" class="next"><span class="pager-dir">Next &#8594;</span><span class="pager-name">Lesson 8: Software Development Security</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

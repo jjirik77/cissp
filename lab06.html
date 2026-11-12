@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>B6 Assessment Plan and Results Analysis | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+<style>
+/* B6: assessment plan, scan triage, code review triage, metrics data (light only) */
+.b6-flex { display: flex; flex-wrap: wrap; gap: 1rem 1.25rem; align-items: flex-start; }
+.b6-flex > .b6-col { flex: 1 1 260px; min-width: 0; }
+.b6-tbl table.data { font-size: .8rem; }
+.b6-tbl table.data td, .b6-tbl table.data th { padding: .42rem .55rem; vertical-align: top; }
+.b6-tbl select { font: .78rem Arial, sans-serif; padding: .2rem .25rem; border: 1px solid var(--border); border-radius: 3px; background: #fff; color: var(--text-primary); max-width: 13rem; }
+.b6-tbl tr.ok td { background: var(--correct-bg); }
+.b6-tbl tr.bad td { background: var(--wrong-bg); }
+.b6-why { display: block; font: .76rem/1.45 Arial, sans-serif; color: var(--text-secondary); margin-top: .25rem; }
+.b6-sev { display: inline-block; min-width: 4.4rem; font: 700 .7rem Arial, sans-serif; padding: .12rem .35rem; border-radius: 3px; border: 1px solid; text-align: center; }
+.b6-sev.c { color: #7f1d1d; background: #fde8e8; border-color: #f3b4b4; }
+.b6-sev.h { color: #9a3412; background: #fff1e6; border-color: #f7c59f; }
+.b6-sev.m { color: #713f12; background: #fef7dc; border-color: #ecd68a; }
+.b6-sev.l { color: #1e3a8a; background: #eaf0fb; border-color: #c3d1ee; }
+.b6-tbl details summary { cursor: pointer; color: var(--gold); font-weight: 700; font-size: .76rem; }
+.b6-tbl details p { margin: .3rem 0 0; font: .76rem/1.45 'Courier New', monospace; color: var(--text-primary); background: var(--section-alt); padding: .35rem .45rem; border-radius: 3px; overflow-wrap: anywhere; }
+.b6-tally { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 .8rem; }
+.b6-tally span { font: .8rem Arial, sans-serif; background: var(--blue-pale); border: 1px solid var(--blue-pale-border); border-radius: 3px; padding: .25rem .55rem; color: var(--text-secondary); }
+.b6-tally b { color: var(--text-primary); }
+.b6-code { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 4px; padding: .7rem .85rem; margin: 0 0 .8rem; }
+.b6-code.tp { border-left-color: var(--wrong); }
+.b6-code.fp { border-left-color: var(--correct); }
+.b6-code h5 { margin: 0 0 .3rem; font: 700 .9rem Arial, sans-serif; color: var(--text-primary); }
+.b6-code h5 code { font: 700 .78rem 'Courier New', monospace; color: var(--gold); }
+.b6-code pre { margin: .3rem 0 .5rem; background: var(--code-bg); color: #e6edf7; font: .78rem/1.5 'Courier New', monospace; padding: .55rem .7rem; border-radius: 3px; overflow-x: auto; white-space: pre; }
+.b6-code p { margin: 0 0 .45rem; font: .82rem/1.5 Arial, sans-serif; color: var(--text-secondary); }
+.b6-code label { font: 700 .74rem Arial, sans-serif; color: var(--text-muted); margin-right: .4rem; }
+.b6-code select { font: .8rem Arial, sans-serif; padding: .22rem .3rem; border: 1px solid var(--border); border-radius: 3px; background: #fff; }
+.b6-msg { font: .84rem Arial, sans-serif; margin: .5rem 0 0; }
+.b6-msg.ok { color: var(--correct); font-weight: 700; }
+.b6-msg.bad { color: var(--wrong); }
+.b6-note { font: .8rem/1.5 Arial, sans-serif; color: var(--text-muted); margin: .3rem 0 .7rem; }
+.b6-tbl tr.b6-out td { color: var(--text-muted); font-style: italic; }
+.b6-tbl tr.b6-out th { font-style: italic; }
+.b6-tbl tbody th[scope=row] { white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This lab needs JavaScript enabled.</p></noscript></div>
+
+<script>
+/* ===================== Brackenfield Outfitters data (fictional, fixed) =====================
+   Answers in the checklist are computed from these arrays. */
+window.B6DATA = (function () {
+  var TESTS = [
+    ['cred', 'Credentialed vulnerability scan'], ['uncred', 'Uncredentialed vulnerability scan'], ['sast', 'Static analysis (SAST)'],
+    ['dast', 'Dynamic analysis (DAST)'], ['fuzz', 'Fuzzing'], ['pen', 'Penetration test'], ['bas', 'Breach and attack simulation'],
+    ['code', 'Manual code review'], ['log', 'Log review'], ['syn', 'Synthetic transactions']
+  ];
+  var OBJ = [
+    ['O1', 'Find missing patches and weak settings on the 140 store POS servers, using read-only accounts, without disrupting sales.', 'cred', 'A credentialed scan reads installed packages and settings directly, so it finds missing patches accurately and gently.'],
+    ['O2', 'Find coding flaws in the in-house checkout service source code before the next release is built.', 'sast', 'SAST reads source code without running it, so it fits early in the pipeline, before a build exists.'],
+    ['O3', 'Test the running loyalty web app, hosted by a vendor that will not share source code, for injection flaws.', 'dast', 'DAST tests a running application from the outside and needs no source code. The vendor must authorize it in writing first.'],
+    ['O4', 'Find crashes and unhandled errors in the parser that imports gift card files from partners.', 'fuzz', 'Fuzzing feeds large volumes of malformed input to a parser and watches for crashes and hangs.'],
+    ['O5', 'Confirm every five minutes that a test customer can browse, add to cart, and complete checkout.', 'syn', 'Synthetic transactions run scripted user journeys on a schedule to monitor availability and function.'],
+    ['O6', 'Check continuously whether EDR and the SIEM detect and alert on known attacker techniques.', 'bas', 'Breach and attack simulation safely replays known techniques and reports which ones the controls detect.'],
+    ['O7', 'Show what an outside attacker can see on Brackenfield’s internet-facing addresses, with no inside knowledge.', 'uncred', 'An uncredentialed scan from outside sees what an attacker sees: exposed services and their banners.'],
+    ['O8', 'Determine whether a skilled attacker could chain weaknesses to reach cardholder data, as the annual PCI DSS requirement asks.', 'pen', 'A penetration test goes beyond listing weaknesses: an authorized tester tries to exploit and chain them toward a goal.'],
+    ['O9', 'Find out whether any administrator account was used outside approved change windows last quarter.', 'log', 'Log review compares recorded administrator activity with the change calendar.'],
+    ['O10', 'Have a second developer examine a change to the sign-in module for business logic flaws that tools miss.', 'code', 'Manual code review by a peer catches logic and design flaws that automated tools cannot reason about.']
+  ];
+  /* scan findings: id, host, finding, sev (c/h/m/l), detection, evidence, truth (tp/fp) */
+  var SCAN = [
+    ['F-01', 'pos-store-112', 'Operating system security update MSU-2026-10 not installed', 'c', 'Credentialed check', 'Update registry query: MSU-2026-10 state = NotInstalled. Last patch run 2026-09-14.', 'tp'],
+    ['F-02', 'web-01', 'OpenTLS 3.0.7 heap overflow, VX-2026-1120', 'c', 'Version (banner)', 'Banner: OpenTLS/3.0.7. Package query: opentls 3.0.7-4.mg2. Changelog: "Backport fix for VX-2026-1120 (2026-09-02)."', 'fp'],
+    ['F-03', 'web-02', 'TLS 1.0 protocol enabled', 'm', 'Active check', 'Handshake with TLS 1.0 completed; cipher TLS_RSA_WITH_AES_128_CBC_SHA negotiated.', 'tp'],
+    ['F-04', 'erp-db-01', 'Default database administrator account enabled', 'h', 'Credentialed check', 'Account dbadmin: enabled; password last changed 2019-03-11; listed in vendor install guide.', 'tp'],
+    ['F-05', 'lb-01', 'Remote desktop service exposed on tcp/3389', 'h', 'Fingerprint', 'TCP probe: SYN-ACK received from the load balancer SYN proxy. Protocol request: no RDP response; connection reset. lb-01 runs no remote desktop service.', 'fp'],
+    ['F-06', 'rtr-store-031', 'SNMP v2c read community set to a default value', 'h', 'Active check', 'SNMP get sysDescr.0 with community "public" succeeded.', 'tp'],
+    ['F-07', 'pos-store-207', 'Unsupported operating system build', 'h', 'Credentialed check', 'OS build 19041; vendor support ended 2025-10-14.', 'tp'],
+    ['F-08', 'app-gift-01', 'Directory listing enabled on /exports', 'm', 'Active check', 'GET /exports/ returned an index of 41 files, including partner_giftcards_2026-10.csv.', 'tp'],
+    ['F-09', 'rtr-store-044', 'Default administrator credentials', 'c', 'Fingerprint', 'Login page matches the vendor default template. Credentialed config read: default account "admin" disabled; local admin password changed 2026-08-14 under change CHG-8812.', 'fp'],
+    ['F-10', 'erp-app-02', 'Outdated Java runtime with known flaws', 'm', 'Credentialed check', 'Installed runtime 17.0.6; vendor fixed release 17.0.12.', 'tp'],
+    ['F-11', 'web-01', 'Missing HTTP security headers', 'l', 'Active check', 'Responses lack Content-Security-Policy and Strict-Transport-Security headers.', 'tp'],
+    ['F-12', 'corp-file-01', 'SMB version 1 enabled', 'h', 'Credentialed check', 'Feature SMB1Protocol state = Enabled.', 'tp']
+  ];
+  /* code review findings: id, file, rule, snippet, context, truth */
+  var CODE = [
+    ['S-1', 'checkout/orders.py, line 48', 'SQL injection', 'def get_order(order_id):\n    query = "SELECT * FROM orders WHERE id = \'" + order_id + "\'"\n    return db.execute(query)', 'order_id comes straight from the URL path /orders/&lt;order_id&gt;. No validation happens before this call.', 'tp'],
+    ['S-2', 'checkout/carts.py, line 22', 'SQL injection', 'def get_cart(cart_id):\n    return db.execute(\n        "SELECT * FROM carts WHERE id = %s", (cart_id,))', 'The database driver sends the query text and the cart_id value separately and binds the value as data.', 'fp'],
+    ['S-3', 'templates/account.html, line 9', 'Cross-site scripting', '<p>Welcome back, {{ customer.name }}</p>', 'settings.py line 31 sets AUTOESCAPE = True for every .html template, and this template applies no filter that turns escaping off.', 'fp'],
+    ['S-4', 'config/payments.py, line 5', 'Hardcoded secret', 'GATEWAY_API_KEY = "mg_live_7f3a91c2e8d04b6a"', 'The file is committed to the main branch. The payment gateway documentation says keys that start with mg_live are production keys.', 'tp'],
+    ['S-5', 'exports/download.py, line 14', 'Path traversal', 'name = request.args["file"]\nreturn send_file(os.path.join(EXPORT_DIR, name))', 'There is no allow list and no check that the final path stays inside EXPORT_DIR. Every store manager can reach this page.', 'tp'],
+    ['S-6', 'web/cache.py, line 30', 'Weak hash algorithm (MD5)', 'etag = hashlib.md5(body).hexdigest()', 'The value is used only as an HTTP cache ETag so browsers can tell whether a page changed. It protects no password, signature, or integrity decision.', 'fp']
+  ];
+  /* scope and coverage: group, in scope, assets, scanned, note */
+  var INV = [
+    ['Store POS servers', true, 140, 128, '12 not reached; stores power down overnight when the scan runs'],
+    ['Store routers', true, 40, 38, '2 not reached; stores closed for remodel'],
+    ['Web and API tier', true, 8, 8, ''],
+    ['ERP and database servers', true, 6, 6, ''],
+    ['Corporate file and application servers', true, 6, 5, '1 not reached; credential failure'],
+    ['Loyalty app (vendor hosted)', false, 2, 0, 'Out of scope for scanning; covered by vendor-authorized DAST (O3)'],
+    ['Corporate laptops', false, 410, 0, 'Out of scope; covered by the separate EDR program']
+  ];
+  /* closed high findings, Q3 2026: id, title, days open, closure reason */
+  var CLOSED = [
+    ['H-311', 'Weak SSH ciphers on store routers', 12, 'Remediated'],
+    ['H-317', 'Unpatched ERP application server', 30, 'Remediated'],
+    ['H-322', 'Exposed admin interface on web-02', 21, 'Remediated'],
+    ['H-329', 'Suspected open relay on mail gateway', 3, 'Closed as false positive'],
+    ['H-334', 'End-of-support database version', 45, 'Remediated'],
+    ['H-340', 'Missing account lockout on staff portal', 17, 'Remediated']
+  ];
+  /* open critical items in the tracker on November 4, 2026: id, title, age in days */
+  var OPENC = [
+    ['F-01', 'MSU-2026-10 not installed on pos-store-112', 22],
+    ['F-02', 'OpenTLS heap overflow on web-01', 12],
+    ['F-09', 'Default administrator credentials on rtr-store-044', 9],
+    ['T-201', 'Unsupported VPN firmware at distribution center', 40],
+    ['T-202', 'Exposed storage bucket with order exports', 3],
+    ['T-203', 'Remote code execution flaw in the gift card service', 18],
+    ['T-204', 'Domain controller missing an emergency update', 11],
+    ['T-205', 'Payment API dependency with a known exploited flaw', 14]
+  ];
+  var SLA = 15, FP = {}; SCAN.forEach(function (s) { if (s[6] === 'fp') FP[s[0]] = 1; });
+  return {
+    TESTS: TESTS, OBJ: OBJ, SCAN: SCAN, CODE: CODE, INV: INV, CLOSED: CLOSED, OPENC: OPENC, SLA: SLA,
+    key: {
+      scanfp: function () { return SCAN.filter(function (s) { return s[6] === 'fp'; }).map(function (s) { return s[0]; }); },
+      codefp: function () { return CODE.filter(function (s) { return s[5] === 'fp'; }).map(function (s) { return s[0]; }); },
+      coverage: function () { var a = 0, s = 0; INV.forEach(function (r) { if (r[1]) { a += r[2]; s += r[3]; } }); return Math.round(1000 * s / a) / 10; },
+      mttr: function () { var r = CLOSED.filter(function (c) { return c[3] === 'Remediated'; }); return r.reduce(function (t, c) { return t + c[2]; }, 0) / r.length; },
+      sla: function () { var v = OPENC.filter(function (o) { return !FP[o[0]]; }); return Math.round(1000 * v.filter(function (o) { return o[2] > SLA; }).length / v.length) / 10; }
+    }
+  };
+})();
+</script>
+
+<script>
+(function () {
+var D = window.B6DATA;
+window.LAB = {
+  id: 'B6',
+  title: 'Assessment Plan and Results Analysis',
+  accent: 'Results Analysis',
+  domain: 'Domain 6 (11.2%)',
+  time: '60 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson06.html#s1',
+  lessonLabel: 'Lesson 6, Assessment Strategy',
+  lede: 'An assessment is only as good as its plan and its reading of the results. Match each objective to the right test, separate true findings from false positives with evidence, and compute the coverage and remediation metrics a director can act on.',
+  workbenchTitle: 'Assessment workbench',
+  kus: ['Vulnerability Analysis (VLA)', 'IA Compliance (IAC)'],
+  ticket: {
+    number: 'MGO-SEC-4471',
+    priority: 'Normal priority',
+    from: 'Celeste Okonkwo-Hale, IT Director, Brackenfield Outfitters',
+    to: 'Security assessor (you)',
+    subject: 'Q4 assessment plan, results triage, and the metrics for the steering committee',
+    due: 'Results summary by Monday, November 9',
+    body: '<p>Brackenfield Outfitters sells outdoor gear online and in 40 stores. Our annual PCI DSS work starts next month, and the steering committee wants a single assessment plan instead of the patchwork of tests we ran last year. I have listed ten objectives in the plan tab. Please pick the right kind of test for each one.</p>' +
+      '<p>We already have results from two sources. The credentialed and active scan of the store and data center networks finished on November 3, and the static analysis tool ran on the checkout service last week. Both tools flag more than is real. Before anything goes to the committee, separate the true findings from the false positives and note the evidence for each call.</p>' +
+      '<p>Finally, the committee tracks three metrics: scan coverage of in-scope assets, mean time to remediate high findings, and the share of open critical findings past the 15-day SLA. The raw data is in the metrics tab and the definitions are in the standards tab. Compute all three the way the standard defines them.</p>'
+  },
+  howTo: 'Step 2 opens a workbench with five tabs. In the <b>Assessment plan</b>, choose a test type for each objective and select <b>Check plan</b> for feedback; the plan itself carries no points, but two checklist items open after you check it. The <b>Scan results</b> and <b>Code review</b> tabs list the findings with their evidence; mark each one true or false positive. The <b>Metrics data</b> tab holds the asset inventory, closed findings, and open criticals. The <b>Standards</b> tab defines each metric and the SLA. Every checklist item has a hint. After your first check you can reveal the debrief, but a revealed item earns no points.',
+  workIntro: 'Work the tabs, then record your conclusions in the checklist. All results are as of November 4, 2026. Brackenfield Outfitters, its systems, and its people are fictional.',
+  checklist: [
+    { id: 'o3', type: 'choice', points: 8, short: 'Vendor-hosted app', title: 'Testing an application you do not own',
+      task: 'For objective O3, the loyalty app runs on the vendor’s servers and the vendor will not share source code. What is the right approach?',
+      options: ['Run DAST against the running app after the vendor authorizes the test in writing', 'Decompile the app and run SAST on the recovered code', 'Run an unannounced penetration test so the vendor’s defenses are tested realistically', 'Run a credentialed scan with the admin account the vendor shared for support'],
+      answer: 0,
+      locked: function () { return (window.LAB_API && window.LAB_API.note('planChecked')) ? false : 'Choose a test for every objective in the Assessment plan tab and select Check plan first.'; },
+      hint: 'Two questions decide this: what can be tested without source code, and who has to give permission to test a system Brackenfield does not run?',
+      debrief: '<p>DAST tests the running application from the outside, so it needs no source code, and it finds the injection flaws O3 asks about. Because the vendor runs the servers, the vendor must authorize the test in writing, with scope, dates, and contacts; Brackenfield’s contract should require that right to test. Decompiling the code may break the license and still is not the vendor’s real source. An unannounced test of someone else’s system is unauthorized access, and a support account was shared for support, not for testing.</p><p>For third-party software, the assessor can also ask for the vendor’s own evidence, such as a SOC 2 Type II report or a recent penetration test summary. Faculty can use this item to tie Domain 6 back to the supply chain material in Domain 1.</p>',
+      reviewNote: 'Third-party hosted systems are tested only with the owner’s written authorization; DAST needs no source code.' },
+    { id: 'o8', type: 'choice', points: 8, short: 'Scan versus pen test', title: 'Why a scan does not meet O8',
+      task: 'A manager asks why the November vulnerability scan cannot also satisfy objective O8, the annual penetration test. What is the best answer?',
+      options: ['The scan ran with credentials, and a penetration test must run without them', 'Vulnerability scans cannot run safely against POS systems', 'A scan lists known weaknesses; a penetration test shows whether an attacker can exploit and chain them to reach cardholder data', 'A penetration test is cheaper because it covers fewer systems'],
+      answer: 2,
+      locked: function () { return (window.LAB_API && window.LAB_API.note('planChecked')) ? false : 'Choose a test for every objective in the Assessment plan tab and select Check plan first.'; },
+      hint: 'Compare what each test produces. Which one answers the question “could someone actually get to the card data?”',
+      debrief: '<p>A vulnerability scan produces a list of known weaknesses and missing patches. A penetration test is goal driven: an authorized tester tries to exploit weaknesses, chain them, and reach a target such as the cardholder data environment, which proves real-world impact and also finds flaws no scanner has a signature for. Penetration tests can be credentialed or not, scans run safely on POS systems every quarter here, and a penetration test usually costs more, not less.</p><p>The two tests answer different questions, so a mature plan uses both: frequent scans to keep the list short, and periodic penetration tests to check whether what remains can be chained. That is the essence of matching a test to an objective.</p>',
+      reviewNote: 'Scans list weaknesses; penetration tests prove whether they can be exploited and chained toward a goal.' },
+    { id: 'scanfp', type: 'set', points: 12, short: 'Scan false positives', title: 'Identify the scan false positives',
+      task: 'Read the evidence for every finding in the Scan results tab. Enter the IDs of all findings the evidence shows are <b>false positives</b>.',
+      label: 'Finding IDs, separated by commas', placeholder: 'e.g., F-01, F-02',
+      answer: function () { return D.key.scanfp(); },
+      hint: 'Look hardest at findings detected by version banner or fingerprint. Does the evidence show that the flaw exists on that system, or only that something looks like it might?',
+      debrief: '<p>Three findings are false positives. <b>F-02</b>: the banner shows OpenTLS 3.0.7, but the installed package changelog records a backported fix for the exact flaw. <b>F-05</b>: the load balancer’s SYN proxy answered the probe, but no remote desktop service is behind it. <b>F-09</b>: the login page looks like the vendor default, but the configuration read shows the default account disabled and the password changed under a change ticket.</p><p>The other nine are confirmed by credentialed checks or active checks that observed the weakness directly. False positives are not harmless: they waste remediation time and, worse, they distort metrics, as the SLA item later in this checklist shows. Record the evidence for each call so the next scan can suppress the finding with a documented reason.</p>',
+      reviewNote: 'Banner and fingerprint detections are leads; credentialed and active evidence confirms or refutes them.' },
+    { id: 'f09', type: 'choice', points: 8, short: 'Refuting F-09', title: 'The evidence that refutes F-09',
+      task: 'Which evidence best justifies marking F-09, default administrator credentials on rtr-store-044, as a false positive?',
+      options: ['The login page matches the router vendor’s default template', 'The vendor’s documentation lists the default password for this model', 'The router answered the scanner quickly and showed no errors', 'A configuration read shows the default account disabled and the password changed under CHG-8812'],
+      answer: 3,
+      hint: 'Which of these describes the router as it is configured today, rather than how routers of this model look out of the box?',
+      debrief: '<p>Only the configuration read describes this router’s current state: the default account is disabled and the local administrator password was changed on August 14 under an approved change. The login page template is what triggered the false positive in the first place, the vendor documentation describes every router of the model, and response time says nothing about credentials.</p><p>The assessor should still note one improvement: a login page that matches the default template tells an attacker the make and model. That is informational, not a finding of default credentials.</p>',
+      reviewNote: 'Refute a finding with evidence of the system’s actual configuration, not with how the product ships.' },
+    { id: 'codefp', type: 'set', points: 12, short: 'Code false positives', title: 'Identify the code review false positives',
+      task: 'Review each static analysis result in the Code review tab. Enter the IDs of all results that are <b>false positives</b> in this code.',
+      label: 'Result IDs, separated by commas', placeholder: 'e.g., S-1, S-2',
+      answer: function () { return D.key.codefp(); },
+      hint: 'A rule fires on a pattern. Read the context: is the input bound as data, escaped by the framework, or used for something that is not a security decision?',
+      debrief: '<p><b>S-2</b> uses a parameterized query, so the cart ID is bound as data and cannot change the SQL. <b>S-3</b> is protected by template autoescaping, which is on for every template and not turned off here. <b>S-6</b> uses MD5 only as a cache ETag, where collision resistance does not protect anything; it would be a true positive if the same code hashed passwords or signed files.</p><p>The true positives are serious. <b>S-1</b> builds SQL by concatenating a URL value, the classic injection. <b>S-4</b> commits a live payment gateway key to source control, so the key must be rotated, not just deleted from the file, and moved to a secrets manager. <b>S-5</b> lets a crafted file name walk out of the export folder. Static tools are tuned to over-report; the reviewer’s job is to confirm with context, then tune the rules so the same false positive does not return.</p>',
+      reviewNote: 'Static analysis flags patterns; context decides whether the pattern is exploitable here.' },
+    { id: 'coverage', type: 'number', points: 10, short: 'Scan coverage', title: 'Scan coverage of in-scope assets',
+      task: 'Using the asset inventory in the Metrics data tab and the definition in the Standards tab, what is the scan coverage percentage? Round to one decimal place.',
+      unit: '%', tol: 0.05,
+      answer: function () { return D.key.coverage(); },
+      hint: 'Count only groups marked in scope, both in the numerator and the denominator. Out-of-scope groups are covered by other programs.',
+      debrief: '<p>In-scope assets total 140 + 40 + 8 + 6 + 6 = <b>200</b>, and 128 + 38 + 8 + 6 + 5 = <b>185</b> were scanned, so coverage is 185 / 200 = <b>92.5 percent</b>. Including the vendor-hosted loyalty app would wrongly give 185 / 202 = 91.6 percent, and including the laptops would make the metric meaningless.</p><p>Coverage is the metric that keeps every other metric honest. A perfect remediation record on 92.5 percent of the estate says nothing about the other 15 systems, and the standard’s 95 percent target is not met.</p>',
+      reviewNote: 'Coverage counts scanned in-scope assets over all in-scope assets.' },
+    { id: 'mttr', type: 'number', points: 8, short: 'Mean time to remediate', title: 'Mean time to remediate high findings',
+      task: 'Using the closed high findings for Q3 and the definition in the Standards tab, what is the mean time to remediate, in days?',
+      unit: 'days', tol: 0.05,
+      answer: function () { return D.key.mttr(); },
+      hint: 'Read the closure reason column. Does a finding closed as a false positive count as a remediation?',
+      debrief: '<p>Five findings were remediated: 12 + 30 + 21 + 45 + 17 = 125 days, and 125 / 5 = <b>25 days</b>. H-329 was closed as a false positive after 3 days. Including it would give 128 / 6, about 21.3 days, and make the team look faster than it is.</p><p>A mean of 25 days sits inside the 30-day SLA for highs, but one finding took 45 days. Faculty can point out that a mean hides outliers, which is why many programs report the share past SLA alongside the mean.</p>',
+      reviewNote: 'MTTR averages only findings closed as remediated; false positive closures are excluded.' },
+    { id: 'sla', type: 'number', points: 10, short: 'Criticals past SLA', title: 'Open critical findings past SLA',
+      task: 'Using the open critical list in the Metrics data tab, your triage results, and the Standards tab, what percentage of open <b>validated</b> critical findings are past the 15-day SLA? Round to one decimal place.',
+      unit: '%', tol: 0.05,
+      answer: function () { return D.key.sla(); },
+      hint: 'Remove the critical findings you proved false in the Scan results tab first. Past SLA means open for more than 15 days.',
+      debrief: '<p>The tracker lists eight open criticals, but <b>F-02</b> and <b>F-09</b> are false positives, leaving six validated criticals. Three of them are older than 15 days: F-01 (22 days), T-201 (40 days), and T-203 (18 days). That gives 3 / 6 = <b>50 percent</b> past SLA. Counting the false positives would report 3 / 8 = 37.5 percent and understate the problem.</p><p>This is why triage comes before metrics. Unvalidated findings in a metric can push it in either direction, and here they would have hidden the fact that half of the real critical findings are overdue.</p>',
+      reviewNote: 'Compute SLA metrics on validated findings only; false positives distort the result.' },
+    { id: 'gap', type: 'choice', points: 8, short: 'Coverage gap', title: 'Closing the coverage gap',
+      task: 'Twelve POS servers were not scanned because their stores power down overnight when the scan runs. What should the assessor recommend?',
+      options: ['Accept 92.5 percent, since it is close to the target and the gap is a scheduling issue', 'Scan those stores during business hours or use host agents, and report coverage as a KPI until the gap closes', 'Remove the 12 POS servers from scope until the stores change their hours', 'Run an uncredentialed scan against the 12 servers the next time they are online'],
+      answer: 1,
+      hint: 'The goal is to measure the whole in-scope estate. Which answer closes the gap without lowering the quality of the scan?',
+      debrief: '<p>The gap has a known cause, so fix the cause: schedule scans while the stores are open, or install a lightweight agent that reports even when the network scan misses the host. Then report coverage each month as a key performance indicator until it meets the 95 percent target. Accepting the gap leaves 12 card-processing systems unmeasured, removing them from scope hides them, and an uncredentialed scan would miss exactly the missing patches that O1 is about.</p><p>Faculty can connect this to the Domain 6 idea of security process data: the coverage KPI measures whether the program works, while the findings measure the systems.</p>',
+      reviewNote: 'Coverage gaps are fixed at their cause and tracked as a KPI, not removed from scope.' },
+    { id: 'summary', type: 'text', points: 16, short: 'Results summary', title: 'Write the results summary', reportTitle: 'Assessment results summary for the steering committee',
+      task: 'Write the summary Celeste Okonkwo-Hale will take to the steering committee. Cover the assessment plan, the validated findings and false positives with evidence, the three metrics, and your top recommendations.',
+      fields: [
+        { key: 'plan', label: 'Assessment plan: the test chosen for each objective, in brief', min: 60, placeholder: 'e.g., O1 credentialed scan, O2 SAST, O3 DAST with vendor authorization...' },
+        { key: 'results', label: 'Validated findings and false positives, with evidence', min: 80, placeholder: 'The most serious true findings, then each false positive and what refuted it.' },
+        { key: 'metrics', label: 'Coverage, MTTR, and SLA metrics with their calculations', min: 50, placeholder: 'Show the arithmetic so the committee can audit it.' },
+        { key: 'recs', label: 'Top recommendations', min: 50, placeholder: 'What to fix first, and what to change in the program.' }
+      ],
+      hint: 'Lead with what is most urgent: the overdue criticals and the live payment key in source control. Show each metric’s arithmetic.',
+      debrief: '<p><b>Model summary.</b> <b>Plan:</b> O1 credentialed scan, O2 SAST, O3 DAST with the vendor’s written authorization, O4 fuzzing, O5 synthetic transactions, O6 breach and attack simulation, O7 uncredentialed external scan, O8 penetration test, O9 log review, O10 manual code review. <b>Results:</b> nine scan findings confirmed, led by the missing update on pos-store-112, the default database administrator account, and SMB version 1; F-02 (backported fix), F-05 (load balancer SYN proxy), and F-09 (default account disabled) are false positives. In code, S-1 SQL injection, S-4 live gateway key, and S-5 path traversal are real; S-2, S-3, and S-6 are not.</p><p><b>Metrics:</b> coverage 185 / 200 = 92.5 percent, below the 95 percent target; MTTR for highs 125 / 5 = 25 days; criticals past SLA 3 / 6 = 50 percent. <b>Recommendations:</b> rotate the gateway key and move secrets to a vault; fix S-1 and S-5 before release; clear F-01, T-201, and T-203 now; close the POS coverage gap with daytime scans or agents; suppress the three scan false positives with documented evidence. Your wording will differ; check that each claim has its evidence or arithmetic.</p>',
+      reviewNote: 'A results summary pairs each finding with evidence and each metric with its arithmetic.' }
+  ],
+
+  /* ===================== Workbench ===================== */
+  workbench: function (root, api) {
+    var esc = api.esc;
+    var plan = api.note('plan') || {}, scan = api.note('scan') || {}, code = api.note('code') || {}, planMarks = api.note('planMarks') || null;
+    var SEVL = { c: 'Critical', h: 'High', m: 'Medium', l: 'Low' };
+    var TRI = [['', 'Unreviewed'], ['tp', 'True positive'], ['fp', 'False positive']];
+    function triSel(id, cur, kind) { return '<label class="sr-only" for="' + kind + '-' + id + '">Triage for ' + id + '</label><select id="' + kind + '-' + id + '" data-k="' + kind + '" data-id="' + id + '">' + TRI.map(function (t) { return '<option value="' + t[0] + '"' + ((cur || '') === t[0] ? ' selected' : '') + '>' + t[1] + '</option>'; }).join('') + '</select>'; }
+
+    root.innerHTML =
+      '<div class="lb-tool">' +
+      '<div class="lb-tabs" role="tablist" aria-label="Workbench tools">' +
+        '<button role="tab" id="tb-pl" aria-controls="pn-pl" aria-selected="true">Assessment plan</button>' +
+        '<button role="tab" id="tb-sc" aria-controls="pn-sc" aria-selected="false" tabindex="-1">Scan results</button>' +
+        '<button role="tab" id="tb-cr" aria-controls="pn-cr" aria-selected="false" tabindex="-1">Code review</button>' +
+        '<button role="tab" id="tb-md" aria-controls="pn-md" aria-selected="false" tabindex="-1">Metrics data</button>' +
+        '<button role="tab" id="tb-st" aria-controls="pn-st" aria-selected="false" tabindex="-1">Standards</button></div>' +
+      /* plan */
+      '<div class="lb-panel" role="tabpanel" id="pn-pl" aria-labelledby="tb-pl">' +
+        '<p class="eyebrow">Q4 assessment plan, ten objectives</p>' +
+        '<p class="b6-note">Choose the single best test type for each objective. Each test type is the best fit for exactly one objective.</p>' +
+        '<div class="table-wrap b6-tbl"><table class="data" style="min-width:640px"><thead><tr><th scope="col">ID</th><th scope="col">Objective</th><th scope="col">Test type</th></tr></thead><tbody id="pl-body"></tbody></table></div>' +
+        '<div class="px-actions"><button type="button" class="btn" id="pl-check">Check plan</button><button type="button" class="btn ghost" id="pl-clear">Clear plan</button></div><p class="b6-msg" id="pl-msg" aria-live="polite"></p>' +
+      '</div>' +
+      /* scan */
+      '<div class="lb-panel" role="tabpanel" id="pn-sc" aria-labelledby="tb-sc" hidden>' +
+        '<p class="eyebrow">Credentialed and active scan, store and data center networks, completed 2026-11-03</p>' +
+        '<div class="b6-tally" id="sc-tally" aria-live="polite"></div>' +
+        '<div class="table-wrap b6-tbl"><table class="data" style="min-width:820px"><thead><tr><th scope="col">ID</th><th scope="col">Host</th><th scope="col">Finding</th><th scope="col">Severity</th><th scope="col">Detection</th><th scope="col">Evidence</th><th scope="col">Triage</th></tr></thead><tbody>' +
+          D.SCAN.map(function (s) { return '<tr><th scope="row">' + s[0] + '</th><td>' + esc(s[1]) + '</td><td>' + esc(s[2]) + '</td><td><span class="b6-sev ' + s[3] + '">' + SEVL[s[3]] + '</span></td><td>' + esc(s[4]) + '</td><td><details><summary>Show evidence</summary><p>' + esc(s[5]) + '</p></details></td><td>' + triSel(s[0], scan[s[0]], 'sc') + '</td></tr>'; }).join('') +
+        '</tbody></table></div>' +
+        '<p class="b6-note">Your triage calls are saved here for reference and are graded only through the checklist.</p>' +
+      '</div>' +
+      /* code */
+      '<div class="lb-panel" role="tabpanel" id="pn-cr" aria-labelledby="tb-cr" hidden>' +
+        '<p class="eyebrow">Static analysis results, checkout service, run 2026-10-29</p>' +
+        '<div class="b6-tally" id="cr-tally" aria-live="polite"></div>' +
+        '<div id="cr-list"></div>' +
+      '</div>' +
+      /* metrics */
+      '<div class="lb-panel" role="tabpanel" id="pn-md" aria-labelledby="tb-md" hidden>' +
+        '<div class="lb-doc"><h4>Asset inventory and scan reach, November 3 scan</h4><div class="table-wrap b6-tbl"><table class="data" style="min-width:600px"><thead><tr><th scope="col">Asset group</th><th scope="col">In scope</th><th scope="col">Assets</th><th scope="col">Scanned</th><th scope="col">Note</th></tr></thead><tbody>' +
+          D.INV.map(function (r) { return '<tr' + (r[1] ? '' : ' class="b6-out"') + '><th scope="row">' + esc(r[0]) + '</th><td>' + (r[1] ? 'Yes' : 'No') + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td><td>' + esc(r[4]) + '</td></tr>'; }).join('') +
+        '</tbody></table></div></div>' +
+        '<div class="b6-flex"><div class="b6-col"><div class="lb-doc"><h4>High findings closed in Q3 2026</h4><div class="table-wrap b6-tbl"><table class="data"><thead><tr><th scope="col">ID</th><th scope="col">Finding</th><th scope="col">Days open</th><th scope="col">Closure reason</th></tr></thead><tbody>' +
+          D.CLOSED.map(function (c) { return '<tr><th scope="row">' + c[0] + '</th><td>' + esc(c[1]) + '</td><td>' + c[2] + '</td><td>' + esc(c[3]) + '</td></tr>'; }).join('') +
+        '</tbody></table></div></div></div>' +
+        '<div class="b6-col"><div class="lb-doc"><h4>Open critical items in the tracker, November 4</h4><div class="table-wrap b6-tbl"><table class="data"><thead><tr><th scope="col">ID</th><th scope="col">Item</th><th scope="col">Age (days)</th></tr></thead><tbody>' +
+          D.OPENC.map(function (o) { return '<tr><th scope="row">' + o[0] + '</th><td>' + esc(o[1]) + '</td><td>' + o[2] + '</td></tr>'; }).join('') +
+        '</tbody></table></div><p class="b6-note">F-items come straight from the November 3 scan and have not been triaged. T-items were validated in earlier assessments.</p></div></div></div>' +
+      '</div>' +
+      /* standards */
+      '<div class="lb-panel" role="tabpanel" id="pn-st" aria-labelledby="tb-st" hidden>' +
+        '<div class="lb-doc"><p class="eyebrow">Security assessment standard MGO-SEC-09 (excerpt)</p><h4>Brackenfield Outfitters</h4><ul>' +
+          '<li><b>Authorization:</b> every test needs written approval from the system owner. Systems run by a third party also need the third party’s written approval.</li>' +
+          '<li><b>Triage:</b> findings are validated before they are reported or counted. A finding detected only by version banner or fingerprint must be confirmed by a credentialed or active check.</li>' +
+          '<li><b>Remediation SLA:</b> Critical 15 days, High 30 days, Medium 90 days, Low at the next maintenance cycle.</li>' +
+          '<li><b>Scan coverage (KPI):</b> in-scope assets scanned ÷ in-scope assets × 100. Target: 95 percent or higher each month.</li>' +
+          '<li><b>Mean time to remediate (KPI):</b> the average days open for findings closed as remediated in the period. Findings closed as false positives are excluded.</li>' +
+          '<li><b>Criticals past SLA (KRI):</b> open validated critical findings open more than 15 days ÷ open validated critical findings × 100.</li>' +
+          '<li><b>Reporting:</b> metrics go to the steering committee monthly with the arithmetic shown.</li></ul></div>' +
+      '</div></div>';
+
+    /* tabs */
+    var tabs = [].slice.call(root.querySelectorAll('[role=tab]'));
+    function sel(t) { tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }); api.note('tab', t.id); }
+    tabs.forEach(function (t, i) { t.addEventListener('click', function () { sel(t); }); t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; sel(n); n.focus(); } }); });
+    var saved = api.note('tab'); if (saved && document.getElementById(saved)) sel(document.getElementById(saved));
+
+    /* plan */
+    function drawPlan() {
+      root.querySelector('#pl-body').innerHTML = D.OBJ.map(function (o, i) {
+        var m = planMarks ? (planMarks[i] ? 'ok' : 'bad') : '';
+        return '<tr' + (m ? ' class="' + m + '"' : '') + '><th scope="row">' + o[0] + '</th><td>' + esc(o[1]) + (m === 'ok' ? '<span class="b6-why">&#10003; ' + esc(o[3]) + '</span>' : m === 'bad' ? '<span class="b6-why">Not the best fit. Reread what the objective needs to observe.</span>' : '') + '</td>' +
+          '<td><label class="sr-only" for="pl-' + o[0] + '">Test type for ' + o[0] + '</label><select id="pl-' + o[0] + '" data-o="' + o[0] + '"><option value="">Choose a test</option>' + D.TESTS.map(function (t) { return '<option value="' + t[0] + '"' + (plan[o[0]] === t[0] ? ' selected' : '') + '>' + esc(t[1]) + '</option>'; }).join('') + '</select></td></tr>';
+      }).join('');
+      root.querySelectorAll('#pl-body select').forEach(function (s) { s.addEventListener('change', function () { plan[s.dataset.o] = s.value; api.note('plan', plan); if (planMarks) { planMarks = null; api.note('planMarks', null); root.querySelector('#pl-msg').textContent = ''; root.querySelector('#pl-msg').className = 'b6-msg'; drawPlan(); var f = document.getElementById('pl-' + s.dataset.o); if (f) f.focus(); } }); });
+    }
+    root.querySelector('#pl-check').addEventListener('click', function () {
+      var msg = root.querySelector('#pl-msg'), missing = D.OBJ.filter(function (o) { return !plan[o[0]]; }).length;
+      if (missing) { msg.className = 'b6-msg bad'; msg.textContent = 'Choose a test for every objective first. ' + missing + ' still open.'; return; }
+      planMarks = D.OBJ.map(function (o) { return plan[o[0]] === o[2]; }); api.note('planMarks', planMarks);
+      var good = planMarks.filter(Boolean).length;
+      msg.className = 'b6-msg ' + (good === D.OBJ.length ? 'ok' : 'bad');
+      msg.textContent = good === D.OBJ.length ? 'All ten objectives have the best-fit test. Checklist items 1 and 2 are open.' : good + ' of 10 objectives have the best-fit test. Checklist items 1 and 2 are open; revise the red rows.';
+      api.note('planChecked', true); drawPlan(); api.refresh();
+    });
+    root.querySelector('#pl-clear').addEventListener('click', function () { plan = {}; planMarks = null; api.note('plan', plan); api.note('planMarks', null); var m = root.querySelector('#pl-msg'); m.textContent = ''; m.className = 'b6-msg'; drawPlan(); });
+    drawPlan();
+
+    /* scan + code triage */
+    function tally(list, store, el) {
+      var n = { tp: 0, fp: 0, open: 0 }; list.forEach(function (x) { var v = store[x[0]]; if (v) n[v]++; else n.open++; });
+      root.querySelector(el).innerHTML = '<span>True positive: <b>' + n.tp + '</b></span><span>False positive: <b>' + n.fp + '</b></span><span>Unreviewed: <b>' + n.open + '</b></span>';
+    }
+    function drawCode() {
+      root.querySelector('#cr-list').innerHTML = D.CODE.map(function (c) {
+        return '<div class="b6-code' + (code[c[0]] ? ' ' + code[c[0]] : '') + '"><h5><code>' + c[0] + '</code> ' + esc(c[2]) + ' <span style="font-weight:400;color:var(--text-muted)">&middot; ' + esc(c[1]) + '</span></h5>' +
+          '<pre><code>' + esc(c[3]) + '</code></pre><p><b>Context:</b> ' + c[4] + '</p>' + triSel(c[0], code[c[0]], 'cr').replace('<label class="sr-only"', '<label') .replace('>Triage for ' + c[0] + '<', '>Your call<') + '</div>';
+      }).join('');
+      root.querySelectorAll('#cr-list select').forEach(function (s) { s.addEventListener('change', function () { code[s.dataset.id] = s.value; api.note('code', code); drawCode(); tally(D.CODE, code, '#cr-tally'); var f = document.getElementById('cr-' + s.dataset.id); if (f) f.focus(); }); });
+    }
+    root.querySelectorAll('#pn-sc select').forEach(function (s) { s.addEventListener('change', function () { scan[s.dataset.id] = s.value; api.note('scan', scan); tally(D.SCAN, scan, '#sc-tally'); }); });
+    tally(D.SCAN, scan, '#sc-tally'); drawCode(); tally(D.CODE, code, '#cr-tally');
+  }
+};
+})();
+</script>
+<script src="lab.js"></script>
+</body>
+</html>

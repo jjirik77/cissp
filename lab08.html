@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>B8 Secure Code and Pipeline Review | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+<style>
+/* ===== Lab B8: secure code and pipeline review (scoped b8-) ===== */
+.b8-intro { font: .88rem/1.6 Arial, sans-serif; color: var(--text-secondary); margin: 0 0 1rem; }
+.b8-samples { display: flex; flex-direction: column; gap: 1rem; }
+.b8-sample { border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 0 4px 4px 0; padding: .8rem 1rem .9rem; background: var(--card-bg); }
+.b8-sample h5 { font: 700 1rem Georgia, serif; color: var(--text-primary); margin: 0 0 .2rem; }
+.b8-sample .b8-ctx { font: .84rem/1.55 Arial, sans-serif; color: var(--text-secondary); margin: 0 0 .5rem; }
+.b8-code { margin: 0 0 .6rem; background: var(--code-bg); color: #e6ecf7; border-radius: 4px; padding: .7rem .9rem; font: .8rem/1.55 'Courier New', monospace; overflow-x: auto; white-space: pre; max-width: 100%; }
+.b8-code .k { color: #a7f3d0; }
+.b8-row { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; }
+.b8-row label { font: 700 .8rem Arial, sans-serif; color: var(--text-primary); }
+.b8-row select, .b8-gate select { font: .84rem Arial, sans-serif; padding: .35rem .5rem; border: 1px solid var(--border); border-radius: 4px; background: #fff; color: var(--text-primary); max-width: 100%; }
+.b8-row select:focus-visible, .b8-gate select:focus-visible, .b8-gate input:focus-visible, .b8-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.b8-gates { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
+.b8-gate { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; border: 1px solid var(--border); border-radius: 4px; padding: .6rem .8rem; background: var(--card-bg); }
+.b8-gate .b8-gname { flex: 1 1 260px; min-width: 0; font: .86rem/1.45 Arial, sans-serif; color: var(--text-secondary); }
+.b8-gate .b8-gname b { display: block; font: 700 .95rem Georgia, serif; color: var(--text-primary); }
+.b8-gate .b8-gctl { flex: 0 1 auto; display: flex; flex-wrap: wrap; gap: .5rem .9rem; align-items: center; font: .84rem Arial, sans-serif; color: var(--text-primary); }
+.b8-gate.off { background: var(--section-alt); }
+.b8-stage { font: 700 .68rem Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--navy); color: var(--navy); border-radius: 3px; padding: .05rem .4rem; margin-left: .3rem; vertical-align: middle; background: #fff; }
+.b8-cols { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+.b8-cols > div { flex: 1 1 260px; min-width: 0; }
+.b8-sum { border: 1px solid var(--blue-pale-border); background: var(--blue-pale); border-radius: 4px; padding: .8rem 1rem; margin: .8rem 0 1rem; font: .88rem/1.55 Arial, sans-serif; color: var(--text-primary); }
+.b8-sum .b8-big { font: 900 1.6rem 'Arial Narrow', Arial, sans-serif; color: var(--navy); margin-right: .3rem; }
+.b8-gap { color: var(--wrong); font-weight: 700; }
+.b8-okc { color: var(--correct); font-weight: 700; }
+.b8-pill { display: inline-block; font: 700 .7rem Arial, sans-serif; letter-spacing: .04em; border-radius: 3px; padding: .1rem .45rem; border: 1px solid; white-space: nowrap; }
+.b8-pill.blk { color: var(--correct); border-color: var(--correct); background: var(--correct-bg); }
+.b8-pill.esc { color: var(--wrong); border-color: var(--wrong); background: var(--wrong-bg); }
+.b8-pill.wrn { color: #7a4a00; border-color: var(--amber); background: #fff5e0; }
+.b8-h4 { font: 700 1.05rem Georgia, serif; color: var(--text-primary); margin: 1.2rem 0 .5rem; }
+.b8-note { font: .82rem/1.5 Arial, sans-serif; color: var(--text-muted); margin: .3rem 0 0; }
+table.data td code { font: .78rem 'Courier New', monospace; }
+@media (max-width: 600px) { .b8-code { font-size: .74rem; } }
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This lab needs JavaScript enabled.</p></noscript></div>
+
+<script>
+/* ===================== Lab B8 data and workbench =====================
+   Lumenrow Payments: a checkout API release. Seven code samples, a configurable CI/CD
+   pipeline with six gates, a CycloneDX-style SBOM, and a fictional advisory feed.
+   All identifiers, advisories, keys, and companies are fictional. */
+(function () {
+  function e(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var FLAWS = ['Not reviewed yet', 'No security flaw found', 'SQL injection', 'Missing authorization', 'Hard-coded secret', 'Unsafe deserialization', 'Buffer overflow', 'Cross-site scripting'];
+  var SAMPLES = [
+    { id: 'S1', lang: 'Python', title: 'Order search for the merchant dashboard', ctx: 'Called with merchant_id and status taken from the query string.',
+      code: 'def find_orders(db, merchant_id, status):\n    sql = ("SELECT id, amount FROM orders WHERE merchant_id = "\n           + merchant_id + " AND status = \'" + status + "\'")\n    return db.execute(sql).fetchall()' },
+    { id: 'S2', lang: 'Python', title: 'Refund lookup', ctx: 'Called with merchant_id from the query string and the signed-in user from the session.',
+      code: 'def find_refunds(db, user, merchant_id):\n    if not user.can_view(merchant_id):\n        raise PermissionDenied()\n    sql = "SELECT id, amount FROM refunds WHERE merchant_id = %s"\n    return db.execute(sql, (merchant_id,)).fetchall()' },
+    { id: 'S3', lang: 'JavaScript', title: 'Account details endpoint', ctx: 'Any merchant user can sign in. Account IDs are sequential numbers.',
+      code: "app.get('/api/accounts/:id', requireLogin, async (req, res) => {\n  const account = await Accounts.findById(req.params.id);\n  res.json(account);\n});" },
+    { id: 'S4', lang: 'JavaScript', title: 'Payout service client', ctx: 'This file is committed to the main repository, which forty developers and two contractors can read.',
+      code: "const payoutClient = new PayoutClient({\n  endpoint: 'https://payouts.lumenrow.example',\n  apiKey: 'lr_live_EXAMPLEKEY00000000000000'\n});" },
+    { id: 'S5', lang: 'C', title: 'Settlement reference formatter', ctx: 'Builds a reference such as MERCHANT-000042 for the settlement file. out_len is the size of the caller’s buffer.',
+      code: 'void format_ref(char *out, size_t out_len,\n                const char *merchant, int seq) {\n    snprintf(out, out_len, "%.16s-%06d", merchant, seq);\n}' },
+    { id: 'S6', lang: 'Python', title: 'Merchant settings import', ctx: 'Merchants upload a settings file; request.body is the uploaded file. yamlite is the libyamlite package in the SBOM.',
+      code: 'import yamlite\n\ndef import_settings(request):\n    settings = yamlite.load(request.body)\n    apply_settings(request.user, settings)' },
+    { id: 'S7', lang: 'C', title: 'Card label copy in the terminal driver', ctx: 'label comes from the merchant’s terminal configuration and has no length limit.',
+      code: 'void copy_card_label(char *dest, const char *label) {\n    char buf[32];\n    strcpy(buf, label);\n    strcpy(dest, buf);\n}' }
+  ];
+  /* Pipeline gates. kind 'sev' gates take a blocking threshold; 'any' gates block on any finding; 'on' gates have no threshold. */
+  var SEV = ['Critical', 'High', 'Medium', 'Low'];
+  var THR = [{ t: 'Block on Critical only', r: 0 }, { t: 'Block on High and above', r: 1 }, { t: 'Block on Medium and above', r: 2 }, { t: 'Warn only, never block', r: -1 }];
+  var GATES = [
+    { id: 'G1', key: 'sast', name: 'Static analysis (SAST)', stage: 'Commit', kind: 'sev', what: 'Scans first-party source code for flaw patterns such as injection, unsafe calls, and unbounded copies.' },
+    { id: 'G2', key: 'secrets', name: 'Secrets scan', stage: 'Commit', kind: 'any', what: 'Looks for keys, tokens, and passwords in code and configuration before they reach the shared repository.' },
+    { id: 'G3', key: 'sbom', name: 'SBOM generation', stage: 'Build', kind: 'on', what: 'Writes a CycloneDX SBOM of every component and version in the build. SCA reads this SBOM.' },
+    { id: 'G4', key: 'sca', name: 'Software composition analysis (SCA)', stage: 'Build', kind: 'sev', what: 'Matches the SBOM against the advisory feed and reports affected components.' },
+    { id: 'G5', key: 'sign', name: 'Artifact signing', stage: 'Release', kind: 'on', what: 'Signs the container image and SBOM with the pipeline’s key so deployment can verify origin and integrity.' },
+    { id: 'G6', key: 'dast', name: 'Dynamic testing (DAST) in staging', stage: 'Staging', kind: 'sev', what: 'Exercises the running application in staging with crafted requests and reports what it can trigger.' }
+  ];
+  var FINDINGS = [
+    { id: 'F1', src: 'S1', title: 'SQL injection in order search', gate: 'sast', sev: 1 },
+    { id: 'F2', src: 'S3', title: 'Missing object-level authorization on /api/accounts/:id', gate: null, sev: 1 },
+    { id: 'F3', src: 'S4', title: 'Live API key committed in the payout client', gate: 'secrets', sev: 0 },
+    { id: 'F4', src: 'S6', title: 'Untrusted input to yamlite.load (unsafe deserialization)', gate: 'sast', sev: 0 },
+    { id: 'F5', src: 'S7', title: 'Unbounded strcpy into a 32-byte buffer', gate: 'sast', sev: 1 },
+    { id: 'F6', src: 'SBOM', title: 'ADV-2027-0142 in libyamlite 2.1.0', gate: 'sca', sev: 0 },
+    { id: 'F7', src: 'SBOM', title: 'ADV-2027-0388 in imgthumb 1.4.2', gate: 'sca', sev: 2 },
+    { id: 'F8', src: 'SBOM', title: 'ADV-2027-0451 in jsonpath-mini 0.3.1', gate: 'sca', sev: 1 },
+    { id: 'F9', src: 'Staging', title: 'Reflected cross-site scripting on /search', gate: 'dast', sev: 1 }
+  ];
+  var SR3 = { sast: { on: true, thr: 1 }, secrets: { on: true, thr: 0 }, sbom: { on: true }, sca: { on: true, thr: 1 }, sign: { on: true }, dast: { on: true, thr: 1 } };
+  var DEFAULT = { sast: { on: true, thr: 3 }, secrets: { on: false, thr: 0 }, sbom: { on: false }, sca: { on: true, thr: 0 }, sign: { on: false }, dast: { on: false, thr: 1 } };
+
+  var SBOM = [
+    ['pkg:app/lumenrow-checkout-api@4.2.0', 'lumenrow-checkout-api', '4.2.0', 'application', 'Lumenrow Payments', 'first party'],
+    ['pkg:lib/fastroute@3.8.1', 'fastroute', '3.8.1', 'library', 'Fastroute project', 'direct'],
+    ['pkg:lib/libyamlite@2.1.0', 'libyamlite', '2.1.0', 'library', 'Yamlite maintainers', 'direct'],
+    ['pkg:lib/docgen@0.9.7', 'docgen', '0.9.7', 'library', 'Docgen project', 'direct'],
+    ['pkg:lib/imgthumb@1.4.2', 'imgthumb', '1.4.2', 'library', 'Imgthumb project', 'transitive (via docgen)'],
+    ['pkg:lib/cryptwell@5.0.3', 'cryptwell', '5.0.3', 'library', 'Cryptwell foundation', 'direct'],
+    ['pkg:lib/httpkeel@2.6.0', 'httpkeel', '2.6.0', 'library', 'Httpkeel project', 'direct'],
+    ['pkg:lib/jsonpath-mini@0.3.1', 'jsonpath-mini', '0.3.1', 'library', 'Jsonpath-mini project', 'transitive (via fastroute)'],
+    ['pkg:lib/tzinfo-lite@2027.1', 'tzinfo-lite', '2027.1', 'data', 'Tzinfo-lite project', 'transitive (via fastroute)'],
+    ['pkg:lib/logfmtx@1.12.0', 'logfmtx', '1.12.0', 'library', 'Logfmtx project', 'direct']
+  ];
+  var FEED = [
+    ['ADV-2027-0090', 'logfmtx', 'below 1.11.0', 'Low', 'Log injection when user input is used as a format string', '1.11.0'],
+    ['ADV-2027-0142', 'libyamlite', 'below 2.1.3', 'Critical', 'load() builds arbitrary objects from untrusted input; safe_load() is not affected', '2.1.3'],
+    ['ADV-2027-0217', 'httpkeel', 'below 2.5.0', 'High', 'Request smuggling through conflicting length headers', '2.5.0'],
+    ['ADV-2027-0388', 'imgthumb', '1.4.0 up to 1.4.4', 'Medium', 'A crafted image causes excessive memory use in thumbnail()', '1.4.5'],
+    ['ADV-2027-0451', 'jsonpath-mini', '0.3.1 and below', 'High', 'Catastrophic backtracking (ReDoS) in filter expressions', '0.3.2'],
+    ['ADV-2027-0509', 'cryptwell', '4.0.0 up to 4.9.1', 'High', 'Weak nonce generation in the legacy AEAD wrapper', '4.9.2']
+  ];
+  var CALLS = [
+    ['libyamlite.load()', 'Called from import_settings() in S6, which handles merchant uploads.'],
+    ['imgthumb.thumbnail()', 'Called only from docgen.pdf_preview(). The checkout API never imports docgen.pdf_preview; docgen is used only for receipt text templates.'],
+    ['jsonpath-mini filter()', 'Called by fastroute.query_filter(), which the checkout API uses on /api/orders?filter= to filter results from merchant-supplied expressions.'],
+    ['httpkeel', 'Used for every outbound call to the payout service.'],
+    ['cryptwell', 'Uses the current AEAD interface only; the legacy wrapper is not present in 5.x.']
+  ];
+
+  function cfg(api) { var c = api.note('gates'); if (!c) { c = JSON.parse(JSON.stringify(DEFAULT)); } return c; }
+  function run(c) {
+    var out = FINDINGS.map(function (f) {
+      if (!f.gate) return { f: f, st: 'esc', why: 'No automated gate detects this class of flaw.' };
+      var g = c[f.gate];
+      if (f.gate === 'sca' && !(c.sbom && c.sbom.on)) return { f: f, st: 'esc', why: 'SCA skipped: no SBOM was generated in this build.' };
+      if (!g || !g.on) return { f: f, st: 'esc', why: 'The gate that detects this is turned off.' };
+      if (f.gate === 'secrets') return g.thr === 0 ? { f: f, st: 'blk', why: 'Secrets scan blocks the commit.' } : { f: f, st: 'wrn', why: 'Detected, but the gate only warns.' };
+      var r = THR[g.thr].r;
+      if (r >= 0 && f.sev <= r) return { f: f, st: 'blk', why: 'Detected at ' + SEV[f.sev] + '; the gate blocks.' };
+      return { f: f, st: 'wrn', why: 'Detected at ' + SEV[f.sev] + '; below the blocking threshold, so the build continues.' };
+    });
+    return out;
+  }
+  function gaps(c) {
+    var g = [];
+    GATES.forEach(function (G) {
+      var want = SR3[G.key], have = c[G.key] || {};
+      if (!have.on) { g.push(G.id + ' ' + G.name + ' must be on.'); return; }
+      if (G.kind === 'sev' && have.thr !== want.thr) g.push(G.id + ' ' + G.name + ' must ' + THR[want.thr].t.toLowerCase() + '.');
+      if (G.kind === 'any' && have.thr !== 0) g.push(G.id + ' ' + G.name + ' must block on any finding.');
+    });
+    return g;
+  }
+
+  function codeTab(api) {
+    var rv = api.note('review') || {};
+    return '<p class="b8-intro">Seven changes are in the release branch for checkout API 4.2.0. Read each sample as a reviewer would. Record your finding in the worksheet below each one; the worksheet is saved and appears in your report, and the checklist asks for your conclusions. Two of the samples are controls with no security flaw.</p><div class="b8-samples">' +
+      SAMPLES.map(function (s) {
+        return '<article class="b8-sample" aria-labelledby="b8s-' + s.id + '"><h5 id="b8s-' + s.id + '">' + s.id + '. ' + e(s.title) + ' <span class="b8-stage">' + s.lang + '</span></h5><p class="b8-ctx">' + e(s.ctx) + '</p>' +
+          '<pre class="b8-code" tabindex="0" aria-label="Code sample ' + s.id + '"><code>' + e(s.code) + '</code></pre>' +
+          '<div class="b8-row"><label for="b8r-' + s.id + '">Your finding for ' + s.id + '</label><select id="b8r-' + s.id + '" data-rv="' + s.id + '">' + FLAWS.map(function (f, k) { return '<option value="' + k + '"' + ((rv[s.id] || 0) === k ? ' selected' : '') + '>' + e(f) + '</option>'; }).join('') + '</select></div></article>';
+      }).join('') + '</div>';
+  }
+  function gateTab(api) {
+    var c = cfg(api);
+    return '<p class="b8-intro">This is the pipeline as it runs today. Configure each gate to meet <b>Standard SR-3</b> (on the Policy and context tab), then select <b>Run pipeline</b> to push the release branch through it. The seeded findings come from the code samples, the SBOM, and staging.</p><div class="b8-gates">' +
+      GATES.map(function (G) {
+        var g = c[G.key] || {}, ctl = '<label><input type="checkbox" id="b8g-' + G.key + '" data-gon="' + G.key + '"' + (g.on ? ' checked' : '') + '> On</label>';
+        if (G.kind === 'sev') ctl += '<label class="sr-only" for="b8t-' + G.key + '">Threshold for ' + e(G.name) + '</label><select id="b8t-' + G.key + '" data-gthr="' + G.key + '"' + (g.on ? '' : ' disabled') + '>' + THR.map(function (t, k) { return '<option value="' + k + '"' + (g.thr === k ? ' selected' : '') + '>' + t.t + '</option>'; }).join('') + '</select>';
+        if (G.kind === 'any') ctl += '<label class="sr-only" for="b8t-' + G.key + '">Mode for ' + e(G.name) + '</label><select id="b8t-' + G.key + '" data-gthr="' + G.key + '"' + (g.on ? '' : ' disabled') + '><option value="0"' + (g.thr === 0 ? ' selected' : '') + '>Block on any finding</option><option value="3"' + (g.thr === 3 ? ' selected' : '') + '>Warn only, never block</option></select>';
+        return '<div class="b8-gate' + (g.on ? '' : ' off') + '"><div class="b8-gname"><b>' + G.id + '. ' + e(G.name) + ' <span class="b8-stage">' + G.stage + '</span></b>' + e(G.what) + '</div><div class="b8-gctl">' + ctl + '</div></div>';
+      }).join('') + '</div><div class="b8-row"><button type="button" class="btn" id="b8-run">Run pipeline</button><button type="button" class="btn ghost" id="b8-reset">Reset to today’s pipeline</button></div><div id="b8-result" aria-live="polite">' + resultHTML(api) + '</div>';
+  }
+  function resultHTML(api) {
+    var R = api.note('ran'); if (!R) return '<p class="b8-note">No run yet. Configure the gates and select Run pipeline.</p>';
+    var c = R.cfg, res = run(c), gp = gaps(c), esc = res.filter(function (x) { return x.st !== 'blk'; });
+    var pill = { blk: '<span class="b8-pill blk">Blocked</span>', esc: '<span class="b8-pill esc">Not detected</span>', wrn: '<span class="b8-pill wrn">Warned, passes</span>' };
+    return '<div class="b8-sum"><span class="b8-big">' + esc.length + '</span> of ' + res.length + ' seeded findings would reach production with this configuration. ' +
+      (gp.length ? '<span class="b8-gap">Does not meet SR-3:</span> ' + e(gp.join(' ')) : '<span class="b8-okc">This configuration meets SR-3.</span>') +
+      (c.sign && c.sign.on ? ' The artifact and SBOM are signed.' : ' <span class="b8-gap">The artifact is unsigned, so deployment cannot verify where it came from.</span>') + '</div>' +
+      '<div class="table-wrap"><table class="data"><thead><tr><th scope="col">Finding</th><th scope="col">Source</th><th scope="col">Severity</th><th scope="col">Result</th></tr></thead><tbody>' +
+      res.map(function (x) { return '<tr><td><b>' + x.f.id + '.</b> ' + e(x.f.title) + '<br><span class="b8-note">' + e(x.why) + '</span></td><td>' + x.f.src + '</td><td>' + SEV[x.f.sev] + '</td><td>' + pill[x.st] + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  }
+  function sbomTab(api) {
+    var tr = api.note('triage') || {};
+    function yn(id, k, opts) { var v = (tr[id] || {})[k] || ''; return '<select id="b8x-' + id + '-' + k + '" data-tri="' + id + '" data-k="' + k + '" aria-label="' + k + ' for ' + id + '"><option value="">Choose</option>' + opts.map(function (o) { return '<option' + (v === o ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>'; }
+    return '<p class="b8-intro">The build produced this SBOM (CycloneDX 1.6 style, simplified). Match each advisory in the feed against the component versions, then use the call graph excerpt to decide whether the vulnerable code is reachable from the checkout API. The triage worksheet is saved for your report.</p>' +
+      '<h4 class="b8-h4">SBOM: lumenrow-checkout-api 4.2.0</h4><div class="table-wrap"><table class="data"><thead><tr><th scope="col">bom-ref (purl)</th><th scope="col">Name</th><th scope="col">Version</th><th scope="col">Type</th><th scope="col">Supplier</th><th scope="col">Dependency</th></tr></thead><tbody>' +
+      SBOM.map(function (r) { return '<tr><td><code>' + e(r[0]) + '</code></td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td><td>' + e(r[3]) + '</td><td>' + e(r[4]) + '</td><td>' + e(r[5]) + '</td></tr>'; }).join('') + '</tbody></table></div>' +
+      '<h4 class="b8-h4">Advisory feed (fictional)</h4><div class="table-wrap"><table class="data"><thead><tr><th scope="col">Advisory</th><th scope="col">Component</th><th scope="col">Affected versions</th><th scope="col">Severity</th><th scope="col">Issue</th><th scope="col">Fixed in</th></tr></thead><tbody>' +
+      FEED.map(function (r) { return '<tr><td><b>' + r[0] + '</b></td><td>' + e(r[1]) + '</td><td>' + e(r[2]) + '</td><td>' + r[3] + '</td><td>' + e(r[4]) + '</td><td>' + r[5] + '</td></tr>'; }).join('') + '</tbody></table></div>' +
+      '<h4 class="b8-h4">Call graph excerpt from the reachability tool</h4><div class="table-wrap"><table class="data"><thead><tr><th scope="col">Code</th><th scope="col">Where the checkout API reaches it</th></tr></thead><tbody>' +
+      CALLS.map(function (r) { return '<tr><td><code>' + e(r[0]) + '</code></td><td>' + e(r[1]) + '</td></tr>'; }).join('') + '</tbody></table></div>' +
+      '<h4 class="b8-h4">Triage worksheet</h4><div class="table-wrap"><table class="data"><thead><tr><th scope="col">Advisory</th><th scope="col">Version affected?</th><th scope="col">Reachable?</th></tr></thead><tbody>' +
+      FEED.map(function (r) { return '<tr><td>' + r[0] + '</td><td>' + yn(r[0], 'affected', ['Yes', 'No']) + '</td><td>' + yn(r[0], 'reachable', ['Yes', 'No', 'Not applicable']) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  }
+  function policyTab() {
+    return '<div class="lb-doc"><p class="eyebrow">Document 1</p><h4>Lumenrow Standard SR-3: secure release (excerpt)</h4><ul>' +
+      '<li><b>3.1 Code.</b> Every merge needs a peer review that checks authorization, input handling, and secrets. SAST runs on every commit and blocks findings rated High or Critical.</li>' +
+      '<li><b>3.2 Secrets.</b> The secrets scan runs on every commit and blocks any finding. A committed secret is treated as exposed: revoke and rotate it, then move it to the vault.</li>' +
+      '<li><b>3.3 Components.</b> Every build generates an SBOM. SCA runs against the SBOM and blocks advisories rated High or Critical. Medium and Low advisories get a ticket with a 30-day and 90-day fix target. A blocking advisory may be waived only if the vulnerable code is shown to be unreachable, with the product owner’s written risk acceptance.</li>' +
+      '<li><b>3.4 Integrity.</b> The pipeline signs the release artifact and its SBOM. Deployment verifies the signature and refuses unsigned or altered artifacts.</li>' +
+      '<li><b>3.5 Staging.</b> DAST runs against staging and blocks findings rated High or Critical.</li>' +
+      '<li><b>3.6 Memory safety.</b> New components that parse untrusted input are written in a memory-safe language. Existing C code is fixed with bounded operations and scheduled for replacement on the roadmap.</li>' +
+      '<li><b>3.7 Release decision.</b> The release manager holds any release with an open blocking finding. Releases follow the SSDF practices adopted in the secure development policy.</li></ul></div>' +
+      '<div class="lb-doc"><p class="eyebrow">Document 2</p><h4>Release context</h4><ul>' +
+      '<li><b>Lumenrow Payments:</b> a payment processor for 9,000 small merchants. The checkout API handles card-not-present payments, refunds, payouts, and merchant settings.</li>' +
+      '<li><b>Release:</b> checkout API 4.2.0, planned for Thursday. Product owner: Anika Sorensen. Release manager: Tobias Lindgren. You are the application security lead reviewing the release.</li>' +
+      '<li><b>Fix availability:</b> libyamlite 2.1.3, jsonpath-mini 0.3.2, and imgthumb 1.4.5 are published, and upgrades for the first two pass the unit tests in a test branch.</li></ul></div>';
+  }
+
+  window.B8 = {
+    SAMPLES: SAMPLES, FINDINGS: FINDINGS, GATES: GATES, SR3: SR3, run: run, gaps: gaps, FLAWS: FLAWS,
+    workbench: function (root, api) {
+      root.innerHTML = '<div class="lb-tool"><div class="lb-tabs" role="tablist" aria-label="Workbench tools">' +
+        '<button role="tab" id="tb8-code" aria-controls="pn8-code" aria-selected="true">Code review</button>' +
+        '<button role="tab" id="tb8-gate" aria-controls="pn8-gate" aria-selected="false" tabindex="-1">Pipeline gates</button>' +
+        '<button role="tab" id="tb8-sbom" aria-controls="pn8-sbom" aria-selected="false" tabindex="-1">SBOM and advisories</button>' +
+        '<button role="tab" id="tb8-pol" aria-controls="pn8-pol" aria-selected="false" tabindex="-1">Policy and context</button></div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn8-code" aria-labelledby="tb8-code">' + codeTab(api) + '</div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn8-gate" aria-labelledby="tb8-gate" hidden><div id="b8-gatebox">' + gateTab(api) + '</div></div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn8-sbom" aria-labelledby="tb8-sbom" hidden>' + sbomTab(api) + '</div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn8-pol" aria-labelledby="tb8-pol" hidden>' + policyTab() + '</div></div>';
+      var tabs = [].slice.call(root.querySelectorAll('[role=tab]'));
+      function sel(t) { tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }); api.note('tab', t.id); }
+      tabs.forEach(function (t, i) { t.addEventListener('click', function () { sel(t); }); t.addEventListener('keydown', function (ev) { if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') { var n = tabs[(i + (ev.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; sel(n); n.focus(); } }); });
+      if (api.note('tab')) { var tt = document.getElementById(api.note('tab')); if (tt) sel(tt); }
+      function redrawGates(focusId) { root.querySelector('#b8-gatebox').innerHTML = gateTab(api); if (focusId) { var f = document.getElementById(focusId); if (f) f.focus(); } }
+      root.addEventListener('change', function (ev) {
+        var t = ev.target;
+        if (t.dataset.rv) { var rv = api.note('review') || {}; rv[t.dataset.rv] = +t.value; api.note('review', rv); return; }
+        if (t.dataset.gon) { var c = cfg(api); c[t.dataset.gon].on = t.checked; api.note('gates', c); redrawGates(t.id); return; }
+        if (t.dataset.gthr) { var c2 = cfg(api); c2[t.dataset.gthr].thr = +t.value; api.note('gates', c2); redrawGates(t.id); return; }
+        if (t.dataset.tri) { var tr = api.note('triage') || {}; tr[t.dataset.tri] = tr[t.dataset.tri] || {}; tr[t.dataset.tri][t.dataset.k] = t.value; api.note('triage', tr); }
+      });
+      root.addEventListener('click', function (ev) {
+        var b = ev.target.closest('button'); if (!b) return;
+        if (b.id === 'b8-run') { api.note('ran', { cfg: cfg(api), at: Date.now() }); root.querySelector('#b8-result').innerHTML = resultHTML(api); return; }
+        if (b.id === 'b8-reset') { api.note('gates', JSON.parse(JSON.stringify(DEFAULT))); api.note('ran', null); redrawGates('b8-run'); }
+      });
+    }
+  };
+
+  /* Report: add the code review worksheet and the last pipeline run */
+  function decorate() {
+    var rep = document.querySelector('.px-report'), A = window.LAB_API; if (!rep || rep.querySelector('#b8-rep') || !A) return;
+    var rv = A.note('review') || {}, R = A.note('ran'), tr = A.note('triage') || {};
+    var rows = SAMPLES.map(function (s) { return '<tr><td>' + s.id + '. ' + e(s.title) + '</td><td>' + e(FLAWS[rv[s.id] || 0]) + '</td></tr>'; }).join('');
+    var runTxt = R ? (function () { var r = run(R.cfg), n = r.filter(function (x) { return x.st !== 'blk'; }); var g = gaps(R.cfg); return n.length + ' of 9 findings would reach production (' + n.map(function (x) { return x.f.id; }).join(', ') + '). ' + (g.length ? 'Gaps against SR-3: ' + g.join(' ') : 'The configuration meets SR-3.'); })() : 'The pipeline was not run.';
+    var tri = Object.keys(tr).sort().map(function (k) { return k + ': affected ' + (tr[k].affected || 'not set') + ', reachable ' + (tr[k].reachable || 'not set'); }).join('; ');
+    var html = '<div id="b8-rep"><h3>Code review worksheet</h3><div class="table-wrap"><table class="data"><thead><tr><th>Sample</th><th>Your finding</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<h3>Last pipeline run</h3><p class="px-refl">' + e(runTxt) + '</p><h3>Advisory triage</h3><p class="px-refl">' + e(tri || 'No triage recorded.') + '</p></div>';
+    var hs = rep.querySelectorAll('h3'), anchor = null;
+    for (var i = 0; i < hs.length; i++) if (/Answers recorded/.test(hs[i].textContent)) anchor = hs[i];
+    if (anchor) anchor.insertAdjacentHTML('beforebegin', html);
+  }
+  document.addEventListener('DOMContentLoaded', function () { var app = document.getElementById('app'); if (app) new MutationObserver(decorate).observe(app, { childList: true, subtree: true }); });
+
+  /* Automated test hook: configure SR-3 and run */
+  window.LAB_TEST_UNLOCK = function () { var A = window.LAB_API; if (!A) return; A.note('gates', JSON.parse(JSON.stringify(SR3))); A.note('ran', { cfg: JSON.parse(JSON.stringify(SR3)), at: Date.now() }); };
+  window.LAB_SELFTEST = function () {
+    var P = [], r = run(SR3), esc = r.filter(function (x) { return x.st !== 'blk'; }).map(function (x) { return x.f.id; }).join(',');
+    if (esc !== 'F2,F7') P.push('SR-3 escapes ' + esc + ', expected F2,F7');
+    if (gaps(SR3).length) P.push('SR-3 config reports gaps');
+    if (!gaps(DEFAULT).length) P.push('default config should have gaps');
+    var d = run(DEFAULT).filter(function (x) { return x.st !== 'blk'; }).length; if (d < 6) P.push('default pipeline should leak most findings, leaks ' + d);
+    return { problems: P, defaultEscapes: d };
+  };
+})();
+</script>
+
+<script>
+window.LAB = {
+  id: 'B8',
+  title: 'Secure Code and Pipeline Review',
+  accent: 'Pipeline Review',
+  domain: 'Domain 8 (11.2%)',
+  time: '60 min',
+  level: 'Advanced',
+  lessonHref: 'lesson08.html#s3',
+  lessonLabel: 'Lesson 8, Secure Coding and Source-Code Weaknesses',
+  kus: ['Secure Programming Practices (SPP)', 'Software Assurance (SAS)', 'Supply Chain Security (SCS)'],
+  lede: 'Review a payment processor’s release from the code up. Find the flaws in seven short code samples, configure the CI/CD gates to the company’s secure release standard, read the SBOM against an advisory feed, decide what is reachable, and make the call: release or hold.',
+  workbenchTitle: 'Release review workbench',
+  ticket: {
+    number: 'APPSEC-2027-0418',
+    priority: 'Release blocker review',
+    from: 'Tobias Lindgren, Release Manager, Lumenrow Payments',
+    to: 'Application security lead (you)',
+    subject: 'Checkout API 4.2.0: security sign-off needed before Thursday',
+    due: 'Release decision by Wednesday 17:00',
+    body: '<p>Lumenrow Payments processes card payments for about 9,000 small merchants. Checkout API 4.2.0 is scheduled for Thursday. Before I can ship it, Standard SR-3 needs a security sign-off from you.</p>' +
+      '<p>Three things are on your desk. First, seven code changes in the release branch, flagged by the team for a security read. Second, our pipeline: an audit last quarter found that it does not meet SR-3, and nobody has fixed it. Third, the SBOM from last night’s build and this week’s advisory feed, which has several hits on our components.</p>' +
+      '<p>I need to know what must be fixed, how the gates should be set, which advisories actually matter for us, and whether we <b>release or hold</b>. If we hold, tell me exactly what clears the hold. Then put it in a short memo for the product owner, Anika Sorensen, who owns the risk.</p>'
+  },
+  howTo: 'Work the four workbench tabs in order. <b>Code review</b>: read each sample and record your finding in its worksheet. <b>Pipeline gates</b>: set each gate to meet SR-3 from the <b>Policy and context</b> tab, then select <b>Run pipeline</b> to see which seeded findings are blocked and which reach production. <b>SBOM and advisories</b>: match the feed to component versions, then use the call graph to judge reachability. Every checklist item can be checked and retried; revealing a debrief before an item is verified forfeits its points. Use <b>Keep the facts in view</b> to open the SR-3 tab in a second window while you work.',
+  workIntro: 'Read the code, configure and run the pipeline, and triage the SBOM on the workbench tabs. Then complete the checklist. The <b>Policy and context</b> tab holds Standard SR-3, the rules your decisions are graded against.',
+  checklist: [
+    { id: 'flaws', type: 'set', points: 10, short: 'Samples to fix', title: 'Code review: samples that must be fixed before merge',
+      label: 'Sample IDs that contain a security flaw, separated by commas', placeholder: 'For example: S1, S2',
+      task: 'Which code samples contain a security flaw that must be fixed before this release? Two samples are controls with no flaw. Enter the sample IDs.',
+      answer: ['S1', 'S3', 'S4', 'S6', 'S7'],
+      hint: 'For each sample, ask where the input comes from and what the code trusts. Parameter binding, an explicit permission check, and a length-bounded copy are signs of safe code.',
+      debrief: '<p>Five samples need fixes. <b>S1</b> builds SQL by joining strings, so a crafted status value changes the query: SQL injection. <b>S3</b> checks that the caller is signed in, but not that the account belongs to the caller; with sequential IDs, any merchant can read any account. <b>S4</b> commits a live API key to a repository forty people can read. <b>S6</b> passes an uploaded file to the full <code>load()</code> parser, which can build arbitrary objects from untrusted input: unsafe deserialization. <b>S7</b> copies a label of unlimited length into a 32-byte buffer with <code>strcpy</code>: a buffer overflow.</p><p><b>S2</b> and <b>S5</b> are the controls. S2 checks permission and binds the parameter. S5 uses <code>snprintf</code> with the caller’s buffer size and a precision limit, so it cannot write past the end. Good reviewers recognize safe patterns as well as unsafe ones, so they do not spend fix time where none is needed.</p>',
+      reviewNote: 'Review for input trust: injection, authorization, secrets, deserialization, and bounds.' },
+    { id: 'sqli', type: 'choice', points: 8, short: 'S1 fix', title: 'S1: the right fix for the order search',
+      task: 'What is the <b>best</b> fix for the flaw in S1?',
+      options: ['Escape every single quote in the status value before joining it into the query string.', 'Use a parameterized query so merchant_id and status are bound as data, never as SQL.', 'Add a web application firewall rule that blocks requests containing SQL keywords.', 'Limit the status parameter to 20 characters so long injected strings are cut off.'],
+      answer: 1,
+      hint: 'The fix should remove the cause, so that input can never be read as code, rather than trying to filter dangerous input.',
+      debrief: '<p>A parameterized query (a prepared statement) sends the SQL and the values separately, so the database never treats input as part of the command. That removes the cause for both parameters at once, which is why S2 is the safe control. Escaping quotes misses numeric injection in merchant_id and breaks with encodings. A WAF rule is a compensating control that attackers routinely bypass, and a length limit only shortens the attack.</p><p>On the exam, the best answer fixes the code at its source. Input validation and a WAF are good layers, but they are not the fix.</p>',
+      reviewNote: 'Fix injection with parameterized queries; filtering and WAF rules are compensating layers.' },
+    { id: 'authz', type: 'choice', points: 8, short: 'S3 fix', title: 'S3: the missing control',
+      task: 'S3 requires a signed-in user. What control is missing, and how should it be fixed?',
+      options: ['Object-level authorization: on the server, confirm the signed-in user owns the account before returning it.', 'Encoding: replace the numeric account ID in the URL with a base64 string so IDs are not guessable.', 'Transport security: require HTTPS on the endpoint so account details cannot be read in transit.', 'Rate limiting: allow each user only a few account requests per minute to slow down enumeration.'],
+      answer: 0,
+      hint: 'Authentication answers who the caller is. What question does the endpoint never ask?',
+      debrief: '<p>The endpoint authenticates the user but never authorizes the request: it does not check that the account belongs to the caller. The fix is a server-side ownership or permission check on every object lookup, the same pattern as <code>user.can_view()</code> in S2. Encoding the ID is obscurity, not control. HTTPS protects the data in transit to the wrong person. Rate limiting slows the attack but still returns other merchants’ data.</p><p>Notice that no automated gate in the pipeline catches this flaw. Authorization logic depends on business rules, which is why SR-3 requires a peer review that checks authorization and why threat modeling matters.</p>',
+      reviewNote: 'Authentication is not authorization; check object ownership on the server for every request.' },
+    { id: 'mem', type: 'choice', points: 8, short: 'S7 fix', title: 'S7: memory safety',
+      task: 'S7 is in C, in the terminal driver. Which response <b>best</b> meets SR-3 3.6?',
+      options: ['Turn on stack canaries in the compiler, which detect the overwrite, and close the finding.', 'Enable address space layout randomization on the build server so the overflow is harder to use.', 'Stop all feature work and rewrite the whole terminal driver in a memory-safe language this month.', 'Replace strcpy with a bounded copy that checks length now, and write new parsers in a memory-safe language.'],
+      answer: 3,
+      hint: 'SR-3 3.6 has two parts: what to do with existing C code and what to do with new components.',
+      debrief: '<p>The immediate fix is a bounded copy that checks the source length against the destination size, as S5 does with <code>snprintf</code>. The durable fix addresses the class of flaw: new components that parse untrusted input are written in a memory-safe language, and the old C code is scheduled for replacement. Memory-safety errors such as buffer overflows have been a leading source of serious vulnerabilities for decades, and memory-safe languages remove most of them by design.</p><p>Canaries and ASLR are exploit mitigations; they make the bug harder to use but leave it in place, and ASLR on a build server protects nothing in production. A crash rewrite of the whole driver trades a known small fix for a large, risky project.</p>',
+      reviewNote: 'Fix with bounded operations now; move new untrusted-input code to memory-safe languages.' },
+    { id: 'gates', type: 'set', points: 12, short: 'Pipeline escapes', title: 'Pipeline: findings that still reach production under SR-3',
+      label: 'Finding IDs that are not blocked, separated by commas', placeholder: 'For example: F1, F2',
+      task: 'Configure every gate on the <b>Pipeline gates</b> tab to meet SR-3, confirm the run reports that the configuration meets SR-3, and run the pipeline. Which seeded findings are <b>not blocked</b> and would still reach production? Enter the finding IDs.',
+      answer: ['F2', 'F7'],
+      hint: 'SR-3 sets SAST, SCA, and DAST to block High and above, the secrets scan to block any finding, and turns on SBOM generation and signing. Remember that SCA reads the SBOM.',
+      debrief: '<p>With the gates set to SR-3, seven findings are blocked and two pass. <b>F7</b>, the Medium imgthumb advisory, passes by design: SR-3 tickets Medium advisories with a 30-day fix target rather than blocking the release. <b>F2</b>, the missing authorization in S3, passes because no automated gate detects it. Today’s pipeline, by contrast, leaks most of the findings: the secrets scan, SBOM, and DAST are off, SAST only warns, and SCA silently skips because there is no SBOM to read.</p><p>Gates catch known patterns at scale and shift detection left, to the commit and build stages where fixes are cheapest. They do not replace review. The finding that matters most in this release is the one only a person reading the code would catch.</p>',
+      reviewNote: 'Set gates to policy and remember what automation cannot see: logic and authorization flaws.' },
+    { id: 'match', type: 'number', points: 10, short: 'Affected components', title: 'SBOM: advisories that match a component version',
+      unit: 'advisories', tol: 0,
+      task: 'Compare the advisory feed with the component versions in the SBOM. How many of the six advisories apply to a version in this build?',
+      answer: 3,
+      hint: 'Check each advisory’s affected range against the exact version in the SBOM. A component being present is not enough; the version must fall in the range.',
+      debrief: '<p>Three advisories match: <b>ADV-2027-0142</b> (libyamlite 2.1.0 is below 2.1.3), <b>ADV-2027-0388</b> (imgthumb 1.4.2 is in 1.4.0 up to 1.4.4), and <b>ADV-2027-0451</b> (jsonpath-mini 0.3.1). The other three name components that are present in versions outside the affected range: logfmtx 1.12.0, httpkeel 2.6.0, and cryptwell 5.0.3.</p><p>This is what an SBOM is for. Without a component list with exact versions, the team would be guessing whether each new advisory applies. Two of the three matches are transitive dependencies the developers never chose directly, which is why SBOMs list them.</p>',
+      reviewNote: 'Match advisories by exact version range, including transitive components.' },
+    { id: 'reach', type: 'set', points: 10, short: 'Reachable advisories', title: 'SBOM: advisories whose vulnerable code is reachable',
+      label: 'Advisory IDs, separated by commas', placeholder: 'For example: ADV-2027-0000',
+      task: 'Of the matching advisories, which ones are <b>reachable</b>: the checkout API actually calls the vulnerable code? Use the call graph excerpt and enter the advisory IDs.',
+      answer: ['ADV-2027-0142', 'ADV-2027-0451'],
+      hint: 'For each matching advisory, find the vulnerable function in the call graph and ask whether a checkout API request can reach it.',
+      debrief: '<p><b>ADV-2027-0142</b> is reachable: S6 passes merchant uploads straight to <code>libyamlite.load()</code>, the exact function the advisory names. <b>ADV-2027-0451</b> is reachable too: the checkout API uses <code>fastroute.query_filter()</code> on merchant-supplied filter expressions, which reaches the vulnerable jsonpath-mini code. <b>ADV-2027-0388</b> is not: <code>imgthumb.thumbnail()</code> is only called by a docgen feature the checkout API never uses.</p><p>Reachability turns a long advisory list into a short priority list. It does not make an unreachable advisory disappear: SR-3 still tickets the imgthumb upgrade, because code paths change and the next feature might reach it.</p>',
+      reviewNote: 'Prioritize advisories whose vulnerable code is reachable; still track the rest.' },
+    { id: 'sign', type: 'choice', points: 8, short: 'Signing and SBOM', title: 'Why sign the artifact and its SBOM',
+      task: 'SR-3 3.4 requires the pipeline to sign the release artifact and its SBOM, and deployment to verify the signature. What does this give Lumenrow?',
+      options: ['It encrypts the container image so an attacker who copies it cannot read the source code.', 'It certifies that the release has no known vulnerabilities, so later scans are no longer needed.', 'It lets deployment confirm the artifact came from this pipeline unchanged, with a trusted component list.', 'It replaces software composition analysis, because a signed SBOM is checked by the supplier instead.'],
+      answer: 2,
+      hint: 'A digital signature proves origin and integrity. What does it not prove?',
+      debrief: '<p>A signature lets deployment verify two facts before anything runs: the artifact was built by Lumenrow’s pipeline, and nothing changed it afterward. A signed SBOM gives Lumenrow and its merchants a trustworthy component list to check against future advisories. Together they defend against tampering in the supply chain between build and production, a core goal of the Secure Software Development Framework.</p><p>Signing is not encryption, and it says nothing about whether the code is free of flaws. Scanning still has to happen, and the SBOM is what makes the next advisory quick to assess.</p>',
+      reviewNote: 'Signing proves origin and integrity; it does not prove the code is secure or replace scanning.' },
+    { id: 'decide', type: 'choice', points: 8, short: 'Release or hold', title: 'The release decision',
+      task: 'Based on your review, what should you recommend to the release manager and the product owner?',
+      options: ['Release on Thursday and schedule the fixes for the next sprint, because each change is small.', 'Hold: fix S1, S3, S4, S6, and S7, upgrade libyamlite and jsonpath-mini, rotate the key, and rerun the gates.', 'Hold until every advisory, including the unreachable imgthumb Medium, is fixed and every gate is clean.', 'Release, because the reachable advisories are in third-party code, so the suppliers carry that risk.'],
+      answer: 1,
+      hint: 'SR-3 3.7 says what an open blocking finding means. Which findings block, and which can be ticketed?',
+      debrief: '<p>The release has open blocking findings, so SR-3 requires a hold, with exact conditions to clear it: fix the five flawed samples, revoke and rotate the exposed key, upgrade the two reachable High and Critical components (both fixes pass tests already), and rerun the pipeline to confirm. The imgthumb Medium does not block; it gets a ticket with a 30-day target, recorded in the memo. Holding for every Medium overshoots the policy and delays fixes merchants need.</p><p>Releasing now ships a reachable Critical deserialization flaw and an authorization hole in a payment system. Third-party code does not move the risk: Lumenrow chose the component, and Lumenrow’s merchants carry the consequences. The product owner accepts residual risk; the security lead makes it visible.</p>',
+      reviewNote: 'Hold on open blocking findings, state the exact conditions to clear the hold, and ticket the rest.' },
+    { id: 'memo', type: 'text', points: 18, short: 'Release memo', title: 'Release memo to the product owner', reportTitle: 'Release memo',
+      task: 'Write a short memo to Anika Sorensen, the product owner. State the decision and what clears it, the residual risk she is being asked to accept, and the pipeline and process changes that keep this from recurring.',
+      fields: [
+        { key: 'dec', label: 'Decision and the conditions that clear it', min: 60, placeholder: 'Release or hold, and the specific fixes, upgrades, and checks required.' },
+        { key: 'risk', label: 'Residual risk for the product owner to accept, with fix targets', min: 40, placeholder: 'What remains after the hold clears, and when it will be fixed.' },
+        { key: 'chg', label: 'Pipeline and process changes', min: 40, placeholder: 'Changes to gates, review, or the development policy.' }
+      ],
+      hint: 'Use your gate run, the SBOM triage, and the code review. The memo should be readable by someone who will not open the code.',
+      debrief: '<p><b>Model memo.</b> <b>Decision:</b> hold checkout API 4.2.0. The hold clears when (1) S1 uses parameterized queries, S3 checks account ownership on the server, S6 uses <code>safe_load()</code>, and S7 uses a bounded copy; (2) the exposed payout key is revoked, rotated, and moved to the vault; (3) libyamlite is upgraded to 2.1.3 and jsonpath-mini to 0.3.2; and (4) the release branch passes the pipeline configured to SR-3 with a signed artifact and SBOM. Estimated delay: two to three working days.</p><p><b>Residual risk:</b> ADV-2027-0388 (imgthumb, Medium) remains; it is not reachable from the checkout API today. Ticketed for upgrade to 1.4.5 within 30 days under SR-3 3.3, for your acceptance. <b>Changes:</b> the pipeline is reconfigured to SR-3 permanently, with the secrets scan, SBOM, signing, and DAST turned on and thresholds at High; peer review adds an authorization checklist item; and the terminal driver’s C parsing code goes on the roadmap for a memory-safe rewrite. Your wording will differ; check that each condition is specific and testable and that the risk owner is named.</p>',
+      reviewNote: 'A release memo states the decision, the testable conditions, the residual risk and its owner, and the fixes to the process.' }
+  ],
+  workbench: function (root, api) { B8.workbench(root, api); }
+};
+</script>
+<script src="lab.js"></script>
+</body>
+</html>

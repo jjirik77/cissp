@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4: Communication and Network Security | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 4</span></p>
+    <span class="lesson-badge-lg">Day 3, Morning &bull; Domain 4</span>
+    <h1>Communication and <span>Network Security</span></h1>
+    <p class="lesson-lede">Every attack and every defense crosses a network. Domain 4 asks how to design that network so a failure in one place stays in one place, how to choose channels that protect data in motion, and how to place each control at the layer where it actually works.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 3, 9:00 to 12:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~3 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>12.8%</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">Design the network, then defend it</h2>
+    <div class="rule"></div>
+    <p class="lead">Domain 4 is the most technical domain for many candidates, but the exam still tests judgment more than packet trivia. You need the layered models to reason about where an attack happens and where a control belongs. You need the architecture concepts to contain damage. And you need to know which protocol protects a channel and which one only appears to.</p>
+    <p class="lead">This lesson covers the OSI and TCP/IP models and addressing, secure and converged protocols, network architecture and segmentation, wireless and cellular networks, network components and devices, secure communication channels, and the common network attacks.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>The best network answer is usually a design decision, not a device. Segmentation, least privilege between zones, and encrypted channels by default solve whole classes of problems. Buying one more box solves one.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Map</strong> protocols, devices, attacks, and controls to the OSI and TCP/IP layers. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Compare</strong> IPsec modes, TLS, and SSH and choose the right secure channel for a need. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Explain</strong> the risks of multilayer and converged protocols such as DNP3, Modbus, iSCSI, and VoIP. <em class="bloom-tag">Bloom: Understand</em></span></li>
+      <li><span><strong>Design</strong> segmentation for north-south and east-west traffic using VLANs, VPCs, and microsegmentation. <em class="bloom-tag">Bloom: Create</em></span></li>
+      <li><span><strong>Select</strong> wireless, NAC, and remote access controls that fit a stated requirement. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Build</strong> a classroom activity that has students place attacks and controls on the stack. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Encapsulation</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Each layer wraps the data from the layer above in its own header (and sometimes a trailer) on the way down the stack. The receiver removes them in reverse order.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">ESP Tunnel Mode</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">IPsec mode that encrypts the entire original IP packet and adds a new outer IP header. The usual choice for site-to-site VPNs.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Converged Protocol</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A specialty protocol carried over standard IP networks, such as iSCSI for storage or VoIP for voice. Cheaper to run, but it inherits IP&rsquo;s threats.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">East-West Traffic</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Traffic between systems inside the data center or cloud. North-south traffic enters or leaves the environment.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Microsegmentation</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Fine-grained policy that controls traffic between individual workloads, often with distributed firewalls or overlays. A core zero trust technique.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Software-Defined Networking (SDN)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">An architecture that separates the control plane (decisions) from the data plane (forwarding) and manages the network through a central controller and APIs.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">802.1X</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Port-based network access control. A supplicant asks an authenticator (switch or access point) for access, and an authentication server, usually RADIUS, decides.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Software-Defined Security</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Security policy defined in software and enforced through controllers and APIs across SDN, cloud, and virtual networks, often managed as code.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">SAE</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Simultaneous Authentication of Equals, the WPA3-Personal handshake that replaces the WPA2 pre-shared key exchange and resists offline password guessing.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. Models and Addressing</a></li>
+          <li><a href="#s2">2. Secure, Multilayer, and Converged Protocols</a></li>
+          <li><a href="#s3">3. Architecture and Segmentation</a></li>
+          <li><a href="#s4">4. Wireless and Cellular Networks</a></li>
+          <li><a href="#s5">5. Securing Network Components</a></li>
+          <li><a href="#s6">6. Secure Channels and Network Attacks</a></li>
+          <li><a href="#s7">7. Interactive: OSI Stack Mapper</a></li>
+          <li><a href="#s8">8. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>Models and Addressing</h3></div>
+          <p>The OSI model has seven layers. The TCP/IP model has four. Neither describes the wire exactly, but both give a shared language for where things happen. The exam uses OSI layer numbers often, so learn them both ways: by number and by name.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>OSI layer</th><th>TCP/IP layer</th><th>Unit (PDU)</th><th>Examples</th></tr></thead>
+            <tbody>
+              <tr><td class="term">7 Application</td><td rowspan="3">Application</td><td>Data</td><td>HTTP, DNS, SMTP, SNMP, LDAP</td></tr>
+              <tr><td class="term">6 Presentation</td><td>Data</td><td>Character encoding, compression, JPEG, MIME</td></tr>
+              <tr><td class="term">5 Session</td><td>Data</td><td>RPC, NetBIOS session service, SOCKS</td></tr>
+              <tr><td class="term">4 Transport</td><td>Transport (host-to-host)</td><td>Segment (TCP) or datagram (UDP)</td><td>TCP, UDP</td></tr>
+              <tr><td class="term">3 Network</td><td>Internet</td><td>Packet</td><td>IPv4, IPv6, ICMP, IPsec, OSPF, BGP</td></tr>
+              <tr><td class="term">2 Data Link</td><td rowspan="2">Network access (link)</td><td>Frame</td><td>Ethernet, ARP, 802.1Q VLAN tags, PPP</td></tr>
+              <tr><td class="term">1 Physical</td><td>Bits</td><td>Copper, fiber, radio, hubs, repeaters</td></tr>
+            </tbody>
+          </table></div>
+          <p>TCP is connection oriented. It opens with a three-way handshake (SYN, SYN-ACK, ACK), numbers its bytes, and retransmits what is lost. UDP sends datagrams with no handshake and no delivery guarantee, which suits DNS queries, streaming, and voice.</p>
+          <h4>IPv4, IPv6, and cast types</h4>
+          <ul class="detail">
+            <li><strong>IPv4:</strong> 32-bit addresses, private ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) behind NAT, and broadcast for local discovery.</li>
+            <li><strong>IPv6:</strong> 128-bit addresses, no broadcast, built-in support for IPsec (no longer mandatory), and neighbor discovery in place of ARP. Many networks run IPv6 without monitoring it, which leaves a blind spot.</li>
+            <li><strong>Unicast</strong> goes to one host, <strong>broadcast</strong> to every host on a segment (IPv4 only), <strong>multicast</strong> to a subscribed group, and <strong>anycast</strong> to the nearest of several hosts that share an address, a common design for DNS and CDNs.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>If a question asks where an attack or control &ldquo;operates,&rdquo; translate it to the PDU. Frames and MAC addresses mean layer 2. Packets and IP addresses mean layer 3. Ports and segments mean layer 4.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129521;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>OSI Model Fundamentals</strong>: walk the seven layers and what each one adds.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/OSIFun/OSI_Fundamentals.html" target="_blank" rel="noopener noreferrer">OSI Fundamentals <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Secure, Multilayer, and Converged Protocols</h3></div>
+          <h4>Secure protocols</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Protocol</th><th>What it protects</th><th>Key points</th></tr></thead>
+            <tbody>
+              <tr><td class="term">IPsec AH</td><td>Integrity and origin authentication of IP packets</td><td>No encryption. Breaks through NAT because it covers the IP header.</td></tr>
+              <tr><td class="term">IPsec ESP</td><td>Confidentiality, integrity, and authentication</td><td>Transport mode protects the payload host to host. Tunnel mode wraps the whole packet for gateway to gateway VPNs.</td></tr>
+              <tr><td class="term">IKE</td><td>Key exchange for IPsec</td><td>Negotiates security associations, usually with Diffie-Hellman. IKEv2 is current.</td></tr>
+              <tr><td class="term">TLS 1.2 and 1.3</td><td>Application sessions such as HTTPS</td><td>TLS 1.3 removes weak ciphers, requires forward secrecy, and encrypts more of the handshake. SSL and TLS 1.0 and 1.1 are deprecated.</td></tr>
+              <tr><td class="term">SSH</td><td>Remote administration and file transfer</td><td>Replaces Telnet, rlogin, and FTP. Use key-based authentication and verify host keys.</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Multilayer protocols</h4>
+          <p>Some protocols carry other protocols inside them. Industrial protocols such as <strong>DNP3</strong> and <strong>Modbus</strong> were designed for closed serial networks and now ride on TCP/IP. They often lack authentication and encryption, and their traffic can pass through firewalls that only look at ports. Tunneling of any kind can also create covert channels that slip past filters. The defense is deep packet inspection that understands the protocol, strict segmentation of operational networks, and allowlisting of the specific commands each device needs.</p>
+          <h4>Converged protocols</h4>
+          <ul class="detail">
+            <li><strong>iSCSI:</strong> block storage over IP. Isolate it on its own network and use CHAP or IPsec, since storage traffic is high value.</li>
+            <li><strong>Fibre Channel over Ethernet (FCoE):</strong> storage frames directly over Ethernet, not routable over IP.</li>
+            <li><strong>VoIP:</strong> voice over IP using SIP for signaling and RTP for media. Protect it with SIP over TLS and SRTP, and put phones on a voice VLAN.</li>
+            <li><strong>InfiniBand over Ethernet and Compute Express Link:</strong> high-speed interconnects for clusters and memory pooling in data centers. They trade isolation for speed, so physical and logical access to the fabric matters.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Converged means cheaper and simpler, but it also means the storage or voice system now shares the risks of the IP network. The expected answer is almost always to separate it logically and encrypt it.</div>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>Architecture and Segmentation</h3></div>
+          <p>Secure design principles from Domain 3 apply directly to networks: least privilege between zones, defense in depth, fail securely, and zero trust. The goal is containment. A compromise in one zone should not reach the next zone without crossing a control.</p>
+          <h4>Transport architecture and performance</h4>
+          <ul class="detail">
+            <li><strong>Planes:</strong> the data plane forwards traffic, the control plane decides paths (routing protocols), and the management plane configures devices. Protect the management plane with an out-of-band network and strong authentication.</li>
+            <li><strong>Switching:</strong> store-and-forward switches receive the whole frame and check its frame check sequence before forwarding. Cut-through switches start forwarding after reading the destination address, which is faster but passes corrupt frames.</li>
+            <li><strong>Performance metrics:</strong> bandwidth (capacity), throughput (actual delivery), latency (delay), jitter (variation in delay, harmful to voice), and signal-to-noise ratio (quality on wireless and copper links).</li>
+          </ul>
+          <h4>Segmentation</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Approach</th><th>Examples</th><th>Use it for</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Physical</td><td>Separate hardware, out-of-band management, air gaps</td><td>The highest assurance, such as safety systems or classified networks</td></tr>
+              <tr><td class="term">Logical</td><td>VLANs, VPNs, virtual routing and forwarding, virtual domains</td><td>Separating departments, voice, guests, and storage on shared hardware</td></tr>
+              <tr><td class="term">Micro</td><td>Distributed firewalls, overlays, host-based policy</td><td>Controlling east-west traffic between individual workloads</td></tr>
+            </tbody>
+          </table></div>
+          <p>Perimeter firewalls watch <strong>north-south</strong> traffic. Most lateral movement after a breach is <strong>east-west</strong>, which a perimeter never sees. Microsegmentation closes that gap.</p>
+          <h4>Modern network architectures</h4>
+          <ul class="detail">
+            <li><strong>Edge networks:</strong> ingress and egress filtering at the boundary, and peering agreements with other networks.</li>
+            <li><strong>Content Delivery Networks (CDN):</strong> distributed caches that improve performance and absorb DDoS traffic.</li>
+            <li><strong>SDN, SD-WAN, and NFV:</strong> central controllers and APIs program the network, SD-WAN steers branch traffic over several links, and network functions virtualization runs firewalls and routers as software. The controller becomes a high-value target.</li>
+            <li><strong>Virtual private cloud (VPC):</strong> an isolated network inside a public cloud, controlled by security groups, network ACLs, and route tables.</li>
+            <li><strong>Monitoring and management:</strong> network observability (flow data, telemetry), traffic shaping, capacity management, and fault detection.</li>
+          </ul>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128992;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>VLAN</strong>: see how virtual LANs split one switch into separate broadcast domains.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/vlan/vlan.html" target="_blank" rel="noopener noreferrer">VLAN <span class="ext">&#8599;</span></a></div>
+          </div>
+          <h4>Software-defined security</h4>
+          <p>When the network is programmable, security can be too. <strong>Software-defined security</strong> expresses security policy in software and enforces it through controllers and APIs, not through hand-configured boxes. A policy such as &ldquo;payroll servers accept traffic only from the payroll application tier&rdquo; is written once and pushed to every enforcement point, whether that point is an SDN switch, an NFV firewall, a cloud security group in a VPC, or a host-based agent that implements micro-segmentation.</p>
+          <ul class="detail">
+            <li><strong>Policy as code:</strong> rules live in version control, go through peer review and change management, and deploy automatically. The same review that protects application code now protects the firewall rule base.</li>
+            <li><strong>Policy follows the workload:</strong> rules attach to identities, tags, or labels, not IP addresses, so a virtual machine or container keeps its protection when it moves or scales.</li>
+            <li><strong>Consistency and speed:</strong> one policy enforced in many places removes configuration drift, and a quarantine rule can reach every enforcement point in seconds.</li>
+            <li><strong>New risks:</strong> the controller and its API become the most valuable targets. Protect them with strong authentication, least privilege, separation of the management plane, and logging of every policy change. A bad change pushed centrally fails everywhere at once, so test and stage changes.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>If a question asks how to keep segmentation consistent across on-premises, cloud, and virtual workloads, look for centrally defined, software-enforced policy. If it asks for the biggest new risk of SDN or software-defined security, the answer is usually compromise of the controller or its management API.</div>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Wireless and Cellular Networks</h3></div>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Wi-Fi security</th><th>Authentication</th><th>Encryption</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="term">WEP</td><td>Shared key</td><td>RC4 with a weak IV</td><td>Broken. Never use.</td></tr>
+              <tr><td class="term">WPA2-Personal</td><td>Pre-shared key</td><td>AES-CCMP</td><td>Acceptable with a long passphrase; vulnerable to offline guessing.</td></tr>
+              <tr><td class="term">WPA2-Enterprise</td><td>802.1X with EAP and RADIUS</td><td>AES-CCMP</td><td>Strong when server certificates are validated.</td></tr>
+              <tr><td class="term">WPA3</td><td>SAE (Personal) or 802.1X (Enterprise)</td><td>AES-CCMP or GCMP; 192-bit mode for Enterprise</td><td>Current best practice; adds forward secrecy and protected management frames.</td></tr>
+            </tbody>
+          </table></div>
+          <p>For enterprise Wi-Fi, the EAP method matters. <strong>EAP-TLS</strong> uses certificates on both sides and is the strongest common choice. <strong>PEAP</strong> and <strong>EAP-TTLS</strong> build a TLS tunnel and then send a password inside it, so clients must validate the server certificate or an evil twin can collect credentials.</p>
+          <h4>Other wireless and cellular</h4>
+          <ul class="detail">
+            <li><strong>Bluetooth:</strong> short range, risks include bluejacking (unsolicited messages) and bluesnarfing (data theft). Disable discovery and require pairing.</li>
+            <li><strong>Zigbee:</strong> low-power mesh for IoT and building systems, secured with AES but often deployed with weak key handling.</li>
+            <li><strong>Satellite:</strong> wide coverage with high latency; links can be intercepted, so encrypt end to end.</li>
+            <li><strong>Cellular 4G and 5G:</strong> stronger subscriber protection in 5G, network slicing for separate virtual networks, and private 5G for campuses. Rogue base stations remain a concern on older generations.</li>
+          </ul>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128246;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Wireless Security</strong> and <strong>Extensible Authentication Protocol</strong>: the protections that keep a wireless network yours.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/WirelessSec/WirelessSecurity.html" target="_blank" rel="noopener noreferrer">Wireless Security <span class="ext">&#8599;</span></a> <a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/EAP/EAP.html" target="_blank" rel="noopener noreferrer">EAP <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>Securing Network Components</h3></div>
+          <h4>Devices and where they work</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Device</th><th>Layer</th><th>What it decides on</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Hub, repeater</td><td>1</td><td>Nothing. Repeats bits to every port.</td></tr>
+              <tr><td class="term">Switch, bridge</td><td>2</td><td>MAC addresses and VLAN tags.</td></tr>
+              <tr><td class="term">Router</td><td>3</td><td>IP addresses and routes; ACLs can filter.</td></tr>
+              <tr><td class="term">Packet filter firewall</td><td>3 and 4</td><td>Addresses, ports, and protocol, one packet at a time.</td></tr>
+              <tr><td class="term">Stateful firewall</td><td>3 and 4</td><td>Connection state; only allows replies to sessions it saw start.</td></tr>
+              <tr><td class="term">Application proxy, WAF</td><td>7</td><td>Content of the application protocol, such as HTTP requests.</td></tr>
+              <tr><td class="term">Next-generation firewall</td><td>3 to 7</td><td>Applications, users, and threat signatures in one device.</td></tr>
+            </tbody>
+          </table></div>
+          <p>An <strong>IDS</strong> detects and alerts. An <strong>IPS</strong> sits inline and blocks. Both may use signatures (known patterns) or anomaly detection (deviation from a baseline). <strong>NAT</strong> and port address translation hide internal addressing and conserve IPv4 space, but NAT is not a security control by itself.</p>
+          <h4>Other component controls</h4>
+          <ul class="detail">
+            <li><strong>Transmission media:</strong> protect cables physically, prefer fiber where tapping or interference is a concern, and keep signal quality within specification.</li>
+            <li><strong>Network access control (NAC):</strong> checks a device&rsquo;s identity and posture (patches, antivirus, configuration) before granting access, often through 802.1X, and can quarantine devices that fail.</li>
+            <li><strong>Endpoint security:</strong> host firewalls, anti-malware, and endpoint detection, since the endpoint is where users and attackers meet.</li>
+            <li><strong>Operation of infrastructure:</strong> redundant power, warranty and support contracts, and spare parts keep the network available.</li>
+          </ul>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129521;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Firewalls</strong>: how packet filtering, stateful, and application firewalls differ.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/Firewalls/Firewalls.html" target="_blank" rel="noopener noreferrer">Firewalls <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>Secure Channels and Network Attacks</h3></div>
+          <h4>Secure communication channels</h4>
+          <ul class="detail">
+            <li><strong>Voice, video, and collaboration:</strong> encrypt media and signaling, require meeting authentication and waiting rooms, control recording and screen sharing, and treat video meeting rooms (the shared conference room systems with cameras, microphones, and touch panels) as managed endpoints that need patching, hardening, and network segmentation.</li>
+            <li><strong>Remote access for network administration:</strong> administrative access goes through a hardened jump host or bastion with MFA, session recording, and a separate management network, never directly from a laptop to a device&rsquo;s management interface.</li>
+            <li><strong>Remote working:</strong> staff work from home networks the organization does not control. Protect the endpoint (managed device, disk encryption, EDR, automatic patching), the connection (an always-on VPN, or zero trust network access that grants per-application access after checking identity and device posture), and the data (DLP, no local storage of sensitive files). Treat the home network as untrusted, and train people on shared-device and public Wi-Fi risks.</li>
+            <li><strong>Data communications:</strong> backhaul and satellite links between sites, encrypted end to end because the carrier is outside your control.</li>
+            <li><strong>Third-party connectivity:</strong> telecom providers and hardware support vendors get dedicated, monitored, least-privilege connections defined by contract, not a standing VPN account.</li>
+          </ul>
+          <h4>Common network attacks</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Attack</th><th>How it works</th><th>Primary defense</th></tr></thead>
+            <tbody>
+              <tr><td class="term">SYN flood</td><td>Many half-open TCP connections exhaust the server&rsquo;s table.</td><td>SYN cookies, rate limiting, upstream scrubbing</td></tr>
+              <tr><td class="term">DDoS</td><td>Many sources, often a botnet or reflection, overwhelm capacity.</td><td>CDN or DDoS scrubbing service, anycast, capacity</td></tr>
+              <tr><td class="term">IP spoofing</td><td>Forged source addresses hide the attacker or enable reflection.</td><td>Ingress and egress filtering, unicast reverse path forwarding</td></tr>
+              <tr><td class="term">ARP poisoning</td><td>Forged ARP replies redirect local traffic.</td><td>Dynamic ARP inspection, static entries for critical hosts</td></tr>
+              <tr><td class="term">DNS cache poisoning</td><td>Forged answers send users to the wrong address.</td><td>DNSSEC, randomized source ports, patched resolvers</td></tr>
+              <tr><td class="term">Adversary-in-the-middle</td><td>The attacker relays and reads or alters traffic.</td><td>Mutual authentication, TLS with certificate validation</td></tr>
+              <tr><td class="term">VLAN hopping</td><td>Switch spoofing or double tagging reaches another VLAN.</td><td>Disable trunk negotiation, change the native VLAN</td></tr>
+            </tbody>
+          </table></div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129309;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Three-way Handshake, DoS, and DDoS</strong>: see how the TCP handshake works and how floods abuse it.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/handshake/threeway_handshake1_audio.html" target="_blank" rel="noopener noreferrer">Handshake and DoS <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Interactive: OSI Stack Mapper</h3></div>
+          <p>Use <strong>Explore</strong> to study each layer and step a web request down the stack as each layer adds its header. Then switch to <strong>Map it</strong> and place twelve protocols, devices, and attacks on the layer where they operate.</p>
+
+          <style>
+            .lesson-content>*{min-width:0;}
+            .os-tabs{display:flex;gap:.4rem;margin-bottom:.8rem;flex-wrap:wrap;}
+            .os-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:1rem;align-items:start;}
+            .os-stack{display:flex;flex-direction:column;gap:.3rem;}
+            .os-layer{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;padding:.5rem .65rem;border:1px solid var(--border);border-radius:5px;background:var(--card-bg);font-family:Arial,sans-serif;font-size:.82rem;color:var(--text-primary);cursor:pointer;}
+            .os-layer:hover{border-color:var(--gold);}
+            .os-layer[aria-pressed="true"]{background:var(--gold);color:#fff;border-color:var(--gold);}
+            .os-layer[aria-pressed="true"] .os-pdu{color:#dfe7f7;}
+            .os-num{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--gold-pale);color:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8rem;}
+            .os-layer[aria-pressed="true"] .os-num{background:#fff;}
+            .os-pdu{margin-left:auto;font-size:.7rem;color:var(--text-muted);}
+            .os-det h6{font-family:Georgia,serif;font-size:1rem;margin:0 0 .4rem;color:var(--text-primary);}
+            .os-det dl{display:grid;grid-template-columns:auto 1fr;gap:.3rem .7rem;margin:0;font-family:Arial,sans-serif;font-size:.8rem;line-height:1.45;}
+            .os-det dt{font-weight:700;color:var(--gold);}
+            .os-det dd{margin:0;color:var(--text-secondary);}
+            .os-enc{margin-top:.8rem;}
+            .os-pkt{display:flex;flex-wrap:wrap;gap:2px;margin:.5rem 0;min-height:2.2rem;font-family:'Courier New',monospace;font-size:.72rem;}
+            .os-pkt span{padding:.4rem .45rem;border-radius:3px;color:#fff;white-space:nowrap;}
+            .os-h7{background:#1e3a8a;}.os-h4{background:#047857;}.os-h3{background:#b45309;}.os-h2{background:#56647f;}.os-t2{background:#56647f;}.os-bits{background:#0f1b3d;}
+            .os-enc p{font-family:Arial,sans-serif;font-size:.78rem;color:var(--text-secondary);margin:.2rem 0 .5rem;line-height:1.5;}
+            .os-row{display:flex;align-items:center;gap:.6rem;padding:.4rem .55rem;border:1px solid var(--border);border-radius:5px;background:var(--card-bg);margin-bottom:.35rem;font-family:Arial,sans-serif;font-size:.8rem;color:var(--text-primary);flex-wrap:wrap;}
+            .os-row .nm{flex:1 1 160px;}
+            .os-row .tg{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:.05rem .35rem;border-radius:3px;background:var(--gold-pale);color:var(--gold);margin-left:.3rem;}
+            .os-row.ok{border-color:var(--correct);background:var(--correct-bg);}
+            .os-row.bad{border-color:var(--wrong);background:var(--wrong-bg);}
+            .os-row .fb{flex-basis:100%;font-size:.74rem;color:var(--text-secondary);display:none;}
+            .os-row.ok .fb,.os-row.bad .fb{display:block;}
+            .os-maplist{display:grid;grid-template-columns:1fr 1fr;gap:0 .7rem;}
+            @media (max-width:760px){.os-grid{grid-template-columns:1fr;}.os-maplist{grid-template-columns:1fr;}}
+          </style>
+
+          <div class="iw" id="os-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; explore and map the stack</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="os-tabs" role="tablist" aria-label="Mapper mode">
+                <button type="button" class="iw-btn" role="tab" id="os-tab-x" aria-selected="true" aria-pressed="true" aria-controls="os-px">Explore</button>
+                <button type="button" class="iw-btn" role="tab" id="os-tab-m" aria-selected="false" aria-pressed="false" aria-controls="os-pm">Map it</button>
+              </div>
+              <div id="os-px" role="tabpanel" aria-labelledby="os-tab-x">
+                <div class="os-grid">
+                  <div class="os-stack" id="os-stack"></div>
+                  <div>
+                    <div class="iw-panel os-det" id="os-det" aria-live="polite"></div>
+                    <div class="iw-panel os-enc">
+                      <h5 class="iw-h5">Encapsulate a web request</h5>
+                      <div class="os-pkt" id="os-pkt" aria-live="polite"></div>
+                      <p id="os-encmsg"></p>
+                      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+                        <button type="button" class="iw-btn" id="os-down">Step down &#8595;</button>
+                        <button type="button" class="iw-btn" id="os-up">Step up &#8593;</button>
+                        <button type="button" class="iw-btn jade" id="os-er">Reset</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="os-pm" role="tabpanel" aria-labelledby="os-tab-m" hidden>
+                <p class="iw-lead">Choose a layer for each item, then check. Attacks go on the layer whose mechanism they abuse.</p>
+                <div class="os-maplist" id="os-map"></div>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem">
+                  <button type="button" class="iw-btn" id="os-check">Check my map</button>
+                  <button type="button" class="iw-btn jade" id="os-mr">Reset</button>
+                </div>
+                <div class="iw-verdict" id="os-verdict"><span class="iw-pill" id="os-pill">Ready</span><span id="os-coach">Place all twelve items, then check.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>The layer tells you the control. A layer 2 attack such as ARP poisoning needs a layer 2 control such as dynamic ARP inspection, and a perimeter firewall at layer 3 will never see it. When a question pairs an attack with a defense, check that both sit at the same layer.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('os-root'); if(!root) return;
+            var $=function(id){return root.querySelector('#'+id);};
+            var L={
+              7:{n:'Application',pdu:'Data',pr:'HTTP, DNS, SMTP, SNMP, LDAP, SIP',dv:'Application proxy, web application firewall',at:'SQL injection, cross-site scripting, DNS cache poisoning, phishing',ct:'WAF, input validation, DNSSEC, secure coding'},
+              6:{n:'Presentation',pdu:'Data',pr:'Character encoding (ASCII, Unicode), compression, JPEG, MIME',dv:'Gateways that translate formats',at:'Malformed files and encoding tricks that bypass filters',ct:'Canonicalize input before validating, file type checks'},
+              5:{n:'Session',pdu:'Data',pr:'RPC, NetBIOS session service, SOCKS',dv:'Circuit-level gateway',at:'Session hijacking, session replay',ct:'Strong, random session tokens; timeouts; reauthentication'},
+              4:{n:'Transport',pdu:'Segment or datagram',pr:'TCP, UDP',dv:'Stateful firewall',at:'SYN flood, port scanning, TCP session hijacking',ct:'SYN cookies, stateful inspection, rate limiting'},
+              3:{n:'Network',pdu:'Packet',pr:'IPv4, IPv6, ICMP, IPsec, OSPF, BGP',dv:'Router, layer 3 switch, packet filter firewall',at:'IP spoofing, ICMP floods, route hijacking',ct:'Ingress and egress filtering, uRPF, IPsec, route authentication'},
+              2:{n:'Data Link',pdu:'Frame',pr:'Ethernet, ARP, 802.1Q, PPP, 802.11 MAC',dv:'Switch, bridge, wireless access point',at:'ARP poisoning, MAC flooding, VLAN hopping',ct:'Dynamic ARP inspection, port security, 802.1X'},
+              1:{n:'Physical',pdu:'Bits',pr:'Copper, fiber, radio, connectors',dv:'Hub, repeater, cabling',at:'Wiretapping, jamming, cable cuts',ct:'Physical security, conduit, fiber, shielding'}
+            };
+            var cur=7;
+            var stack=$('os-stack');
+            [7,6,5,4,3,2,1].forEach(function(n){
+              var b=document.createElement('button'); b.type='button'; b.className='os-layer'; b.dataset.n=n;
+              b.setAttribute('aria-pressed',n===cur?'true':'false');
+              b.innerHTML='<span class="os-num">'+n+'</span><span>'+L[n].n+'</span><span class="os-pdu">'+L[n].pdu+'</span>';
+              b.addEventListener('click',function(){pick(n);});
+              stack.appendChild(b);
+            });
+            function pick(n){cur=n;[].forEach.call(stack.children,function(b){b.setAttribute('aria-pressed',+b.dataset.n===n?'true':'false');});
+              var d=L[n]; $('os-det').innerHTML='<h6>Layer '+n+': '+d.n+'</h6><dl><dt>PDU</dt><dd>'+d.pdu+'</dd><dt>Protocols</dt><dd>'+d.pr+'</dd><dt>Devices</dt><dd>'+d.dv+'</dd><dt>Attacks</dt><dd>'+d.at+'</dd><dt>Controls</dt><dd>'+d.ct+'</dd></dl>';}
+            var ENC=[
+              {html:'<span class="os-h7">HTTP GET /grades</span>',msg:'Layers 7 to 5: the browser builds an HTTP request. With HTTPS, TLS encrypts this data before it goes lower.',lay:7},
+              {html:'<span class="os-h4">TCP :51544&#8594;:443</span><span class="os-h7">HTTP GET /grades</span>',msg:'Layer 4: TCP adds source and destination ports and sequence numbers. The unit is now a segment.',lay:4},
+              {html:'<span class="os-h3">IP 10.20.5.14&#8594;203.0.113.8</span><span class="os-h4">TCP :443</span><span class="os-h7">HTTP</span>',msg:'Layer 3: IP adds source and destination addresses. The unit is now a packet, and routers decide on this header.',lay:3},
+              {html:'<span class="os-h2">ETH MAC hdr</span><span class="os-h3">IP</span><span class="os-h4">TCP</span><span class="os-h7">HTTP</span><span class="os-t2">FCS</span>',msg:'Layer 2: Ethernet adds MAC addresses and a frame check sequence trailer. The unit is now a frame, and switches decide on this header.',lay:2},
+              {html:'<span class="os-bits">0110 1001 0010 1110 1011 0001 &hellip;</span>',msg:'Layer 1: the frame becomes signals on copper, light in fiber, or radio. The receiver reverses every step.',lay:1}
+            ];
+            var step=0;
+            function enc(){var e=ENC[step];$('os-pkt').innerHTML=e.html;$('os-encmsg').textContent='Step '+(step+1)+' of 5. '+e.msg;$('os-down').disabled=step===4;$('os-up').disabled=step===0;pick(e.lay);}
+            $('os-down').addEventListener('click',function(){if(step<4){step++;enc();}});
+            $('os-up').addEventListener('click',function(){if(step>0){step--;enc();}});
+            $('os-er').addEventListener('click',function(){step=0;enc();});
+            // tabs
+            var tx=$('os-tab-x'), tm=$('os-tab-m');
+            function tab(m){var x=m==='x';tx.setAttribute('aria-selected',x);tx.setAttribute('aria-pressed',x);tm.setAttribute('aria-selected',!x);tm.setAttribute('aria-pressed',!x);$('os-px').hidden=!x;$('os-pm').hidden=x;}
+            tx.addEventListener('click',function(){tab('x');}); tm.addEventListener('click',function(){tab('m');});
+            [tx,tm].forEach(function(t){t.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();var o=t===tx?tm:tx;o.focus();o.click();}});});
+            // map
+            var ITEMS=[
+              ['HTTP','Protocol',7,'HTTP is an application protocol.'],
+              ['DNS cache poisoning','Attack',7,'It forges DNS answers, an application layer service.'],
+              ['JPEG and ASCII encoding','Format',6,'Data formats and encoding belong to presentation.'],
+              ['Session hijacking with a stolen token','Attack',5,'It takes over an established session, the session layer&rsquo;s job.'],
+              ['TCP SYN flood','Attack',4,'It abuses the TCP handshake at the transport layer.'],
+              ['Router','Device',3,'Routers forward packets by IP address.'],
+              ['IP spoofing','Attack',3,'It forges the source address in the IP header.'],
+              ['IPsec','Protocol',3,'IPsec protects IP packets at the network layer.'],
+              ['ARP poisoning','Attack',2,'ARP maps IP to MAC addresses on the local link.'],
+              ['Switch','Device',2,'Switches forward frames by MAC address.'],
+              ['Wiretapping a cable','Attack',1,'It taps the physical signal.'],
+              ['Hub','Device',1,'Hubs repeat bits with no addressing at all.']
+            ];
+            var map=$('os-map');
+            ITEMS.forEach(function(it,i){
+              var r=document.createElement('div'); r.className='os-row';
+              var opts='<option value="">Layer?</option>'+[7,6,5,4,3,2,1].map(function(n){return '<option value="'+n+'">'+n+' '+L[n].n+'</option>';}).join('');
+              r.innerHTML='<span class="nm">'+it[0]+'<span class="tg">'+it[1]+'</span></span><label class="sr-only" for="os-s'+i+'">Layer for '+it[0]+'</label><select id="os-s'+i+'">'+opts+'</select><span class="fb"></span>';
+              map.appendChild(r);
+            });
+            function verdict(c,p,m){$('os-verdict').className='iw-verdict '+c;$('os-pill').className='iw-pill '+c;$('os-pill').textContent=p;$('os-coach').textContent=m;}
+            $('os-check').addEventListener('click',function(){
+              var right=0,blank=0;
+              ITEMS.forEach(function(it,i){var r=map.children[i],v=+r.querySelector('select').value;
+                if(!v){blank++;r.className='os-row';return;}
+                var ok=v===it[2]; if(ok) right++;
+                r.className='os-row '+(ok?'ok':'bad');
+                r.querySelector('.fb').innerHTML=(ok?'Correct. ':'Layer '+it[2]+' ('+L[it[2]].n+'). ')+it[3];});
+              if(blank){verdict('warn','Incomplete',right+' correct so far. '+blank+' item(s) still need a layer.');return;}
+              verdict(right===12?'good':right>=9?'warn':'bad','Score '+right+' / 12',right===12?'Every item is on the right layer.':'Read the feedback on each red row, change your answer, and check again.');
+            });
+            $('os-mr').addEventListener('click',function(){[].forEach.call(map.children,function(r){r.className='os-row';r.querySelector('select').value='';});verdict('','Ready','Place all twelve items, then check.');});
+            enc();
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s8">
+          <div class="cs-head"><span class="cs-num">8</span><h3>Faculty Teaching Segment</h3></div>
+          <p>Students often memorize the OSI layers without ever using them. Domain 4 sticks when they use the layers to reason about real traffic and real defenses.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> give teams a flat campus network diagram with a breach scenario. Each team redesigns it into zones (students, staff, servers, OT, guests, management), writes the allowed flows between zones, and explains how the redesign would have contained the breach.</li>
+            <li><strong>Rubric criteria:</strong> zones that follow function and sensitivity, least-privilege flows between zones, east-west controls named, a secure channel chosen for each remote connection, and a one-paragraph business justification.</li>
+            <li><strong>Lab idea:</strong> capture a web request in Wireshark on an isolated lab network and have students label each header with its layer, then compare HTTP and HTTPS captures to see what TLS hides and what it does not.</li>
+            <li><strong>Course fit:</strong> this domain anchors a networking or network defense course. It supports the CAE-CD Basic Networking (BNW) and Network Defense (NDF) Knowledge Units.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>Use the Map it tab as an exit ticket. The items students miss most, usually session hijacking and DNS poisoning, show you which layers need another pass the next class.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 1</span></div><h3>OSI Model</h3><p>The seven layers in order, with what each layer is responsible for.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/osimodel1/osimodel1.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: OSI Model (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 1</span></div><h3>OSI Model Functions</h3><p>Match functions to the layer that performs them.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/OSI_Functions/OSI_Functions.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: OSI Model Functions (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 1</span></div><h3>OSI Model Fundamentals</h3><p>Encapsulation and the units of data at each layer.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/OSIFun/OSI_Fundamentals.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: OSI Model Fundamentals (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 1</span></div><h3>Addresses in Networking</h3><p>MAC, IP, and port addresses and the layer each one belongs to.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/networkaddressing/EMate_understanding_addresses.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Addresses in Networking (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 1</span></div><h3>IPv6</h3><p>IPv6 addressing, notation, and how it differs from IPv4.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/IPv6/IPv6.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: IPv6 (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 1</span></div><h3>IPv6 Challenge</h3><p>Test yourself on IPv6 address formats and shortening rules.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/IPv6Challenge/IPv6Challenge.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: IPv6 Challenge (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 2</span></div><h3>Network Services</h3><p>Common services such as DNS and DHCP and the ports they use.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/NetworkSvcs/NetworkSvcs.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Network Services (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 3</span></div><h3>Routing Basics</h3><p>How routers choose paths between networks.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/routing_basics/routing_basics.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Routing Basics (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 3</span></div><h3>VLAN</h3><p>Virtual LANs, trunking, and logical segmentation on a switch.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/vlan/vlan.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: VLAN (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 4</span></div><h3>Wireless Technologies</h3><p>Wi-Fi standards, bands, and the basics of wireless networking.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/WiFi/WiFi.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Wireless Technologies (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Wireless Security</h3><p>WEP, WPA2, WPA3, and the attacks each one does or does not stop.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/WirelessSec/WirelessSecurity.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Wireless Security (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Extensible Authentication Protocol</h3><p>EAP methods and how 802.1X authenticates devices to a network.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/EAP/EAP.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Extensible Authentication Protocol (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 5</span></div><h3>Network Devices</h3><p>Hubs, switches, routers, and firewalls and the layer each works at.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/NetworkDevices/NetworkDevices.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Network Devices (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 5</span></div><h3>Firewalls</h3><p>Packet filtering, stateful, and application firewalls compared.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/Firewalls/Firewalls.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Firewalls (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 5</span></div><h3>NAT/PAT</h3><p>How address and port translation work, and why NAT is not a firewall.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/NAT/NAT.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: NAT/PAT (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 6</span></div><h3>Virtual Private Networks</h3><p>VPN types, tunneling, and when to use site-to-site or remote access.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/vpn/vpn.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Virtual Private Networks (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 6</span></div><h3>Three-way Handshake, DoS, DDoS</h3><p>The TCP handshake and the flooding attacks that abuse it.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/handshake/threeway_handshake1_audio.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Three-way Handshake, DoS, DDoS (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 6</span></div><h3>Spoofing Attacks</h3><p>IP, MAC, ARP, and DNS spoofing and how each is detected.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/spoofing1/spoofing1.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Spoofing Attacks (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 6</span></div><h3>Protocol Analysis</h3><p>Read captured traffic and identify what each protocol reveals.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/ProtocolAnalysis/ProtocolAnalysis.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Protocol Analysis (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Self-checking practice for this lesson, ready to use with your own students. Each item ends with a report you can print or save as a PDF.</p>
+    <div class="pl-grid">
+      <article class="pl-card"><div class="pl-top"><span class="pl-type">CISSP Practice &middot; A5</span><span class="pl-time">&#9201; 35 min</span></div><h3><a href="activity05.html">Networks by Layer</a></h3><p>Place protocols and devices on the OSI layers, match attacks to the control that stops them, and choose secure channels.</p><div class="pl-foot"><span class="pl-level">Foundational</span><a class="pl-open" href="activity05.html" aria-label="Open activity A5: Networks by Layer">Open &#8594;</a></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B4</span><span class="pl-time">&#9201; 60 min</span></div><h3><a href="lab04.html">Network Segmentation and Firewall Design</a></h3><p>Zone a fictional network, write ordered ACL rules, then run simulated test packets and see which rule matches.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="lab04.html" aria-label="Open lab B4: Network Segmentation and Firewall Design">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q1.</span>Two campuses need an encrypted connection between their gateways that also hides internal IP addresses from the carrier. Which configuration BEST meets the need?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> IPsec ESP in tunnel mode</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> IPsec AH in transport mode</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> IPsec ESP in transport mode</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> SSH port forwarding on one server</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> Tunnel mode encrypts the entire original packet, including the internal addresses, and adds a new outer header between the gateways. AH provides no encryption, and transport mode leaves the original IP header visible.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q2.</span>An attacker on the same switch sends forged replies so that the default gateway&rsquo;s traffic is sent to the attacker&rsquo;s machine. At which OSI layer does this attack operate?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> Layer 1, Physical</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> Layer 3, Network</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> Layer 2, Data Link</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> Layer 7, Application</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> This is ARP poisoning. ARP maps IP addresses to MAC addresses on the local link, so the attack lives at layer 2. Dynamic ARP inspection on the switch is the matching control.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q3.</span>After a breach, investigators find the attacker moved from a web server to a database server in the same data center without crossing the perimeter firewall. What would MOST effectively limit this in the future?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> A second perimeter firewall from a different vendor</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> Microsegmentation that controls east-west traffic between workloads</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> Network address translation on the internet connection</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> A larger internet circuit</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> The movement was east-west, inside the environment. Perimeter controls and NAT only see north-south traffic. Microsegmentation applies policy between individual workloads.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q4.</span>A small office uses a shared Wi-Fi passphrase and worries about attackers capturing the handshake and guessing the passphrase offline. Which change BEST addresses this?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> Hide the SSID</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> Enable MAC address filtering</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> Switch from WPA2-Personal to WEP</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> Move to WPA3-Personal, which uses SAE</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> SAE replaces the WPA2 pre-shared key handshake and resists offline dictionary attacks. Hiding the SSID and MAC filtering are easily bypassed, and WEP is broken.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q5.</span>A water utility carries Modbus traffic over its TCP/IP network. What is the PRIMARY security concern with this multilayer protocol?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> Modbus requires too much bandwidth for IP networks.</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> It lacks native authentication, and port-based firewalls cannot see the commands it carries.</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> It encrypts traffic so strongly that monitoring is impossible.</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> It only works over wireless links.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Industrial protocols were built for closed networks and often accept any well-formed command. Carried over IP, they need segmentation and protocol-aware inspection that can allowlist specific commands.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q6.</span>A web server is overwhelmed by half-open TCP connections from many spoofed addresses. Which control on the server MOST directly addresses this attack?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> A web application firewall rule for SQL injection</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> DNSSEC on the domain</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> Port security on the access switch</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> SYN cookies</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> This is a SYN flood. SYN cookies let the server answer without holding state for each half-open connection. The other controls target different layers and attacks.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q7.</span>A college defines its segmentation rules once in a central controller, stores them in version control, and pushes them to cloud security groups, virtual firewalls, and host agents. What is the MOST important control to add to this design?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> Strong authentication, least privilege, and change logging for the controller and its management API</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> A second perimeter firewall at the internet edge</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> Static IP addresses for every workload so rules never change</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> Disabling the API and configuring each enforcement point by hand</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> In software-defined security the controller and its API can change policy everywhere at once, so they become the highest-value target. Protecting and auditing them is the priority. Hand configuration (D) gives up the consistency the design provides, and static addresses (C) defeat policy that follows the workload.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q8.</span>Staff now work from home on networks the college does not manage, and they reach several internal applications. Which approach BEST protects this remote working arrangement?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> Require staff to buy home routers from an approved list</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> Give each worker a full network-level VPN with access to every internal subnet</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> Use managed devices and zero trust network access that grants per-application access after checking identity and device posture</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> Allow access only during business hours</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> The home network is untrusted and outside your control, so protect the endpoint and grant access per application after verifying the user and the device. A flat VPN (B) extends the internal network to every home. Router lists (A) and time limits (D) do little against a compromised endpoint.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson03.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 3: Security Architecture and Engineering</span></a>
+    <a href="lesson05.html" class="next"><span class="pager-dir">Next &#8594;</span><span class="pager-name">Lesson 5: Identity and Access Management</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

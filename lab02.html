@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>B2 Data Classification and Handling | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+<style>
+.b2-meter { border: 1px solid var(--border); border-radius: 6px; background: #fff; padding: .9rem 1rem; margin-bottom: 1rem; }
+.b2-meter h4 { font: 700 .7rem Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); margin: 0 0 .5rem; }
+.b2-mrow { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+.b2-mbig { flex: 0 0 auto; font: 900 2rem Arial, sans-serif; color: var(--text-primary); }
+.b2-mbar { flex: 1 1 260px; min-width: 0; }
+.b2-bar { height: 14px; background: var(--section-alt); border-radius: 7px; overflow: hidden; }
+.b2-bar i { display: block; height: 100%; background: #047857; border-radius: 7px; transition: width .2s; }
+.b2-bar.lo i { background: #b45309; }
+.b2-mnote { font: .8rem/1.5 Arial, sans-serif; color: var(--text-secondary); margin: .45rem 0 0; }
+.b2-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+.b2-chip { font: 700 .68rem Arial, sans-serif; border: 1px solid var(--border); border-radius: 3px; padding: .15rem .4rem; color: var(--text-secondary); background: #fff; }
+.b2-chip.ok { color: #155e3a; border-color: #15803d; background: var(--correct-bg); }
+.b2-chip.bad { color: #7a3d00; border-color: #b45309; background: #fdf0dc; }
+.b2-inv { font: .76rem/1.4 Arial, sans-serif; min-width: 1320px; }
+.b2-inv td, .b2-inv th { vertical-align: top; }
+.b2-inv th[scope=row] { min-width: 10rem; background: var(--blue-pale); color: var(--text-primary); text-transform: none; letter-spacing: normal; font: 700 .8rem/1.35 Arial, sans-serif; }
+.b2-inv th[scope=row] .sub { text-transform: none; letter-spacing: normal; }
+.b2-inv .sub { display: block; color: var(--text-muted); font-size: .7rem; font-weight: 400; margin-top: .15rem; }
+.b2-inv select { font: .74rem Arial, sans-serif; padding: .2rem; border: 1px solid var(--border); border-radius: 3px; background: #fff; color: var(--text-primary); width: 100%; min-width: 10.5rem; }
+.b2-inv select.bad { border-color: #b45309; background: #fffaf2; }
+.b2-inv td.ck { white-space: nowrap; text-align: center; }
+.b2-flag { display: block; font-size: .68rem; color: #7a3d00; font-weight: 700; margin-top: .2rem; }
+.b2-cnapp { display: inline-block; font: 700 .6rem Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; background: var(--wrong); color: #fff; border-radius: 3px; padding: .05rem .3rem; margin-left: .25rem; }
+.b2-cards { display: flex; flex-wrap: wrap; gap: .8rem; }
+.b2-card { flex: 1 1 300px; min-width: 0; border: 1px solid var(--border); border-radius: 4px; background: #fff; padding: .75rem .85rem; font: .8rem/1.55 Arial, sans-serif; color: var(--text-secondary); }
+.b2-card h5 { font: 700 .92rem Georgia, serif; color: var(--text-primary); margin: 0 0 .4rem; }
+.b2-card dl { margin: 0; }
+.b2-card dt { font-weight: 700; color: var(--text-primary); margin-top: .35rem; }
+.b2-card dd { margin: 0; }
+.b2-alert { border-left: 4px solid var(--wrong); background: var(--wrong-bg); padding: .5rem .7rem; margin-top: .5rem; border-radius: 0 3px 3px 0; }
+.b2-inv select:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This lab needs JavaScript enabled.</p></noscript></div>
+
+<script>
+/* ===================== Inventory data (fixed) =====================
+   Amberlane Credit Union data store inventory, Data Handling Standard DH-2.
+   Keyed answers follow from the facts and the DH-2 rules; set answers are computed. */
+(function () {
+  var P = [
+    { k: 'marsh', nm: 'Delphine Marsh', t: 'VP Member Services', biz: true },
+    { k: 'reyes', nm: 'Joaquin Reyes', t: 'VP Lending', biz: true },
+    { k: 'shah', nm: 'Priyanka Shah', t: 'VP Digital Banking', biz: true },
+    { k: 'greer', nm: 'Tamsin Greer', t: 'Director, Member Contact Center', biz: true },
+    { k: 'obi', nm: 'Celeste Obi', t: 'Chief Marketing Officer', biz: true },
+    { k: 'cole', nm: 'Bettina Cole', t: 'VP Branch Operations', biz: true },
+    { k: 'hart', nm: 'Sunniva Hart', t: 'Chief Risk Officer', biz: true },
+    { k: 'anand', nm: 'Ravi Anand', t: 'Chief Information Security Officer', biz: true },
+    { k: 'corbin', nm: 'Nate Corbin', t: 'IT Infrastructure Manager', biz: false },
+    { k: 'vaughan', nm: 'Ines Vaughan', t: 'Cloud Platform Lead', biz: false },
+    { k: 'park', nm: 'Theo Park', t: 'Data Science Lead', biz: false }
+  ];
+  var CUS = ['IT Infrastructure', 'Cloud Platform team', 'Data Science Platform team', 'Security Operations', 'IT End User Services', 'Vendor under contract'];
+  var CLS = ['Restricted', 'Confidential', 'Internal', 'Public'];
+  var RET = ['7 years after account closure', '7 years after loan payoff', '1 year', '2 years after last contact, or sooner on consent withdrawal', '3 years', 'Until the model is retired, no more than 3 years', 'Until superseded', 'Do not retain local copies (the source system governs)'];
+  var DLP = ['Block and alert', 'Allow only encrypted to approved partners', 'Monitor and log', 'No DLP rule'];
+  var SAN = ['Clear', 'Purge', 'Destroy'];
+  // disp: reuse = stays inside Amberlane; leave = leaves Amberlane control; cloud = cloud or SaaS storage
+  var DS = [
+    { id: 'DS1', nm: 'Core banking database', where: 'Leased storage array, Amberlane data center',
+      data: 'Member names, Social Security numbers, account numbers, balances, and transaction history.',
+      eol: 'The array is leased and goes back to the leasing company in June 2027 after migration. Its SSDs support cryptographic erase, and the vendor tool produces a verification report.',
+      disp: 'leave', purgeable: true, own: 'marsh', cus: 0, cls: 0, ret: 0 },
+    { id: 'DS2', nm: 'Loan origination platform', where: 'Quillmark Lending Cloud (software as a service)',
+      data: 'Loan applications, credit reports, income documents, and Social Security numbers.',
+      eol: 'The contract ends in December 2027. The contract requires Quillmark to purge Amberlane data and certify it in writing.',
+      disp: 'cloud', purgeable: true, own: 'reyes', cus: 5, cls: 0, ret: 1 },
+    { id: 'DS3', nm: 'Mobile banking backend', where: 'Container workloads and a managed database in Amberlane&rsquo;s cloud account, monitored by the CNAPP',
+      data: 'Sign-in identifiers, device tokens, account numbers, and transaction history.',
+      eol: 'The environment is decommissioned when the new app ships. Storage is provider managed; the encryption keys are in Amberlane&rsquo;s key management service.',
+      disp: 'cloud', purgeable: true, own: 'shah', cus: 1, cls: 0, ret: 0, cnapp: true },
+    { id: 'DS4', nm: 'Contact center call recordings', where: 'Network attached storage, Amberlane data center',
+      data: 'Recorded member calls. To verify identity, members read out their account number and the last four digits of their Social Security number.',
+      eol: 'After the recordings move to a new platform, the drives will be reused inside Amberlane as a departmental file share.',
+      disp: 'reuse', purgeable: true, own: 'greer', cus: 0, cls: 0, ret: 2 },
+    { id: 'DS5', nm: 'Marketing workstations with newsletter exports', where: 'Four shared laptops in the marketing team',
+      data: 'Exports of the member newsletter list: names, email addresses, opt-in status, and preferred branch. No account numbers or other identifiers.',
+      eol: 'The laptops are being reimaged and reissued inside the marketing team.',
+      disp: 'reuse', purgeable: true, own: 'obi', cus: 4, cls: 1, ret: 3 },
+    { id: 'DS6', nm: 'Harborview branch teller workstations', where: 'Twelve retired PCs from the Harborview branch, now in IT storage',
+      data: 'Cached copies of member statements as PDF files, pulled from the core banking system.',
+      eol: 'Retired asset. The branch closed after a flood, and none of the twelve PCs will boot; the drives are water damaged and sanitization software cannot run. The PCs are going to an e-waste recycler.',
+      disp: 'leave', purgeable: false, own: 'cole', cus: 4, cls: 0, ret: 7 },
+    { id: 'DS7', nm: 'Fraud model training set', where: 'Cloud data lake in Amberlane&rsquo;s cloud account',
+      data: 'Eighteen months of card and transfer transactions used to train the AI fraud detection model. Member names are removed. Account numbers and merchant IDs are kept so the model can learn patterns for each account.',
+      eol: 'The data set is deleted when the model is retired. Storage is provider managed; the encryption keys are in Amberlane&rsquo;s key management service.',
+      disp: 'cloud', purgeable: true, own: 'hart', cus: 2, cls: 0, ret: 5 },
+    { id: 'DS8', nm: 'Security log archive', where: 'Tape library, Amberlane data center (SIEM cold storage)',
+      data: 'Usernames, source IP addresses, and event types from security monitoring. Passwords are never logged.',
+      eol: 'Expired tapes are rewritten in the same library.',
+      disp: 'reuse', purgeable: true, own: 'anand', cus: 3, cls: 1, ret: 4 },
+    { id: 'DS9', nm: 'Public website content', where: 'Larkfield Web Hosting, a managed hosting vendor',
+      data: 'Published rates, branch hours, and news releases, all approved for release by marketing.',
+      eol: 'The hosting contract ends in March 2027. Larkfield reformats the server for other customers.',
+      disp: 'leave', purgeable: true, own: 'obi', cus: 5, cls: 3, ret: 6 }
+  ];
+  function dlpFor(c) { return c; } // DH-2 section 3 maps classification index to DLP index one to one
+  function sanFor(c, ds) {
+    if (c === 0 && !ds.purgeable) return 2;
+    if (ds.disp === 'reuse') return c === 0 ? 1 : 0;
+    return c <= 1 ? 1 : 0; // leaving control, cloud, or SaaS
+  }
+  DS.forEach(function (d) { d.dlp = dlpFor(d.cls); d.san = sanFor(d.cls, d); });
+  function pk(k) { for (var i = 0; i < P.length; i++) if (P[i].k === k) return P[i]; return null; }
+  window.B2DATA = {
+    P: P, CUS: CUS, CLS: CLS, RET: RET, DLP: DLP, SAN: SAN, DS: DS, dlpFor: dlpFor, sanFor: sanFor, pk: pk,
+    answers: {
+      restricted: DS.filter(function (d) { return d.cls === 0; }).map(function (d) { return d.id; }),
+      vendor: DS.filter(function (d) { return d.cus === 5; }).map(function (d) { return d.id; }),
+      purge: DS.filter(function (d) { return d.san === 1; }).map(function (d) { return d.id; })
+    }
+  };
+})();
+</script>
+
+<script>
+(function () {
+  var X = window.B2DATA, api0 = null;
+  function A(k) { return function () { return X.answers[k]; }; }
+  window.LAB = {
+    id: 'B2',
+    title: 'Data Classification and Handling',
+    accent: 'Classification',
+    domain: 'Domain 2 (12%)',
+    time: '60 min',
+    level: 'Intermediate',
+    lessonHref: 'lesson02.html#s1',
+    lessonLabel: 'Lesson 2, Identify and Classify Information and Assets',
+    lede: 'Every protection decision starts with knowing what the data is and who answers for it. Work through a credit union&rsquo;s data store inventory, assign owners, custodians, classification, retention, DLP rules, and end-of-life sanitization, and watch the compliance meter as your choices line up with policy.',
+    workbenchTitle: 'Inventory workbench',
+    kus: ['Privacy (PRI)', 'Cybersecurity Planning and Management (CPM)', 'Policy, Legal, Ethics, and Compliance (PLE)'],
+    ticket: {
+      number: 'DGC-2027-031',
+      priority: 'Normal priority',
+      from: 'Wren Halloran, Chief Privacy and Compliance Officer, Amberlane Credit Union',
+      to: 'Information security analyst, Data Governance Office (you)',
+      subject: 'Data store inventory for the governance committee and the examiners',
+      due: 'Draft before the May 20 data governance committee',
+      body: '<p>Amberlane Credit Union serves 140,000 members from nine branches and a mobile app. Our examiners have asked to see that every major data store has an accountable owner, a classification, a retention period, and a disposal method that matches our Data Handling Standard, DH-2.</p>' +
+        '<p>Please work the nine stores in the inventory. Several are changing this year: a leased array is going back, a branch is closed, a hosting contract ends, and the data science team has built a new training set for the fraud model. The cloud team also forwarded a CNAPP alert on the mobile backend that I would like your view on.</p>' +
+        '<p>Then give me a short summary for the committee: what is Restricted, where ownership was unclear, how each retiring store will be disposed of, and anything that needs action now.</p>'
+    },
+    howTo: 'The <b>Inventory</b> tab has a row for each data store with menus for owner, custodian, classification, retention, DLP rule, and end-of-life method. Read each store in <b>Data store facts</b> and apply <b>Policy DH-2</b>. The compliance meter tests every row for completeness and for consistency with DH-2; it cannot tell you whether a classification is right, so read the facts. Check each checklist item when you are ready. Revealing a debrief before an item is verified earns 0 points for that item.',
+    workIntro: 'Classification follows the most sensitive element in a store. Owners are accountable business leaders; custodians are the teams that operate the storage.',
+    checklist: [
+      { id: 'restricted', type: 'set', points: 14, short: 'Restricted stores', title: 'Stores classified Restricted',
+        task: 'Classify every store in the inventory. Which stores are <b>Restricted</b> under DH-2? Enter the store IDs.',
+        label: 'Store IDs', placeholder: 'e.g., DS1',
+        answer: A('restricted'),
+        hint: 'Look for any of the Restricted identifiers in each store&rsquo;s data, including copies and recordings. Removing names does not remove the other identifiers.',
+        debrief: '<p>Six stores are Restricted: <b>DS1</b> (Social Security and account numbers), <b>DS2</b> (credit reports and Social Security numbers), <b>DS3</b> (account numbers), <b>DS4</b> (account numbers and partial Social Security numbers spoken on recorded calls), <b>DS6</b> (cached member statements), and <b>DS7</b> (account numbers kept in the training set). DS5 and DS8 are Confidential, and DS9 is Public.</p><p>Two are easy to miss. Call recordings are data too, and identifiers spoken aloud are still identifiers. Cached copies on retired PCs take the class of their source, so they need the same care as the core system.</p>',
+        reviewNote: 'Classify by the most sensitive element, including recordings, caches, and copies.' },
+      { id: 'ai', type: 'choice', points: 10, short: 'AI training set', title: 'Classify the fraud model training set (DS7)',
+        task: 'The data science team says DS7 is safe to share with a model vendor because member names were removed. How should DS7 be classified?',
+        options: ['Internal, because the names were removed', 'Confidential, because the data is de-identified', 'Restricted, because account numbers remain and the data is not de-identified', 'Public, once the model has been trained'],
+        answer: 2,
+        hint: 'Read DH-2 section 1 on what removing names does and does not change.',
+        debrief: '<p><b>Restricted.</b> Removing names is not de-identification when account numbers stay in the data, because an account number points straight back to a member. DH-2 says the class does not drop while any Restricted identifier remains, and the set would also trigger breach notification if it leaked.</p><p>AI training sets often start as copies of production data and drift out of governance. Classify them like the source, record them in the inventory, and decide retention up front. If the vendor truly needs the data, the answer is a contract and real de-identification, such as tokenized account numbers, not a reclassification.</p>',
+        reviewNote: 'A data set stays Restricted while any direct identifier remains, even with names removed.' },
+      { id: 'owner7', type: 'choice', points: 10, short: 'Owner of DS7', title: 'Choose the owner of DS7',
+        task: 'Who should be the data owner for DS7, the fraud model training set? Try the owner menu in the inventory first.',
+        options: ['Sunniva Hart, Chief Risk Officer', 'Theo Park, Data Science Lead', 'Ines Vaughan, Cloud Platform Lead', 'Ravi Anand, Chief Information Security Officer'],
+        answer: 0,
+        hint: 'Which leader runs the fraud program the model serves, and would answer to the board for how its data is used?',
+        debrief: '<p><b>Sunniva Hart</b> owns the fraud program, so she owns its data: she decides who may use it, how long it is kept, and whether a vendor may see it. Theo Park&rsquo;s team builds the model and operates the data lake, which makes it the custodian. The Cloud Platform Lead runs the underlying infrastructure, and the CISO advises on protection but does not own business data.</p><p>A common exam trap is to name the person closest to the data. The owner is the person accountable for it.</p>',
+        reviewNote: 'The data owner is the accountable business leader; the builders and operators are custodians.' },
+      { id: 'vendor', type: 'set', points: 8, short: 'Vendor custodians', title: 'Stores with a vendor as custodian',
+        task: 'For which stores is the custodian a <b>vendor under contract</b>? Enter the store IDs.',
+        label: 'Store IDs', placeholder: 'e.g., DS1',
+        answer: A('vendor'),
+        hint: 'Which stores are operated outside Amberlane, by another company? Cloud storage in Amberlane&rsquo;s own account is still operated by an Amberlane team.',
+        debrief: '<p><b>DS2</b> (Quillmark Lending Cloud) and <b>DS9</b> (Larkfield Web Hosting) are operated by vendors. DS3 and DS7 run in a cloud provider, but in Amberlane&rsquo;s own account, operated by Amberlane teams, so the custodians are the Cloud Platform team and the Data Science Platform team.</p><p>Outsourcing custody never moves ownership. Amberlane&rsquo;s owners remain accountable, which is why the Quillmark contract must require purge and written certification at the end.</p>',
+        reviewNote: 'Vendors can be custodians; accountability stays with the data owner.' },
+      { id: 'purge', type: 'set', points: 12, short: 'Purge stores', title: 'Stores whose end-of-life method is Purge',
+        task: 'Apply DH-2 section 4 to each store&rsquo;s end-of-life plan. Which stores must be <b>purged</b>? Enter the store IDs.',
+        label: 'Store IDs', placeholder: 'e.g., DS1',
+        answer: A('purge'),
+        hint: 'Work out where each medium goes (stays inside, leaves Amberlane control, or is cloud storage), then apply the class. Check whether purge is even possible for each.',
+        debrief: '<p>Five stores need <b>Purge</b>: <b>DS1</b> (Restricted array leaving Amberlane, cryptographic erase with a verification report), <b>DS2</b> (SaaS; vendor purge with certification), <b>DS3</b> and <b>DS7</b> (cloud; cryptographic erase by destroying the keys in Amberlane&rsquo;s key service), and <b>DS4</b> (Restricted drives reused inside Amberlane). <b>Clear</b> is enough for DS5 and DS8, Confidential media that stays inside, and for DS9, Public content. DS6 must be <b>destroyed</b>.</p><p>Cloud storage is the case candidates miss. You cannot shred the provider&rsquo;s drives, so cryptographic erase is the purge: if the keys are gone, the data is unreadable.</p>',
+        reviewNote: 'Sanitization depends on the class, where the media goes, and whether purge can be verified.' },
+      { id: 'destroy', type: 'choice', points: 10, short: 'Retired PCs', title: 'Dispose of the Harborview workstations (DS6)',
+        task: 'The twelve Harborview PCs are going to an e-waste recycler. What must happen to their drives first?',
+        options: ['Clear them by reimaging with a standard image', 'Purge them with cryptographic erase', 'Hand them to the recycler, which shreds everything it receives', 'Destroy the drives, by shredding or disintegration, and keep a certificate of destruction'],
+        answer: 3,
+        hint: 'Can any software method run on these drives? What does DH-2 require when Restricted media cannot be purged and verified?',
+        debrief: '<p><b>Destroy</b>, and keep the certificate of destruction in the asset record. The drives hold Restricted statements, they are leaving Amberlane&rsquo;s control, and flood damage means no clear or purge method can run and be verified. Reimaging and cryptographic erase both need a working drive.</p><p>Trusting the recycler is not a control unless the contract requires destruction and a certificate for each serial number. Retired assets are where data most often walks out of an organization unnoticed, which is why the 2027 outline calls out asset retirement explicitly.</p>',
+        reviewNote: 'Restricted media that cannot be purged and verified must be destroyed, with a certificate.' },
+      { id: 'year', type: 'number', points: 8, short: 'Retention year', title: 'Retention for a closed account',
+        task: 'Member account 40-1187 in DS1 was closed on March 14, 2025. Under the DH-2 retention schedule, through what <b>year</b> must Amberlane keep that account&rsquo;s records?',
+        answer: 2032, tol: 0, unit: '',
+        hint: 'Find the schedule line for member account records and count from the closure date, not from today.',
+        debrief: '<p>Member account records are kept <b>7 years after account closure</b>, so the records for an account closed in March 2025 are kept until March 2032, then disposed of under the schedule. Keeping data longer than the schedule is not safer: it increases breach exposure and discovery cost, and it can breach privacy commitments.</p>',
+        reviewNote: 'Retention runs from the trigger event in the schedule; dispose on time, not never.' },
+      { id: 'cnapp', type: 'choice', points: 12, short: 'CNAPP alert', title: 'Respond to the CNAPP alert on DS3',
+        task: 'Read alert CN-2291 in the DS3 facts. What should happen first?',
+        options: ['Close the alert, because the snapshot is encrypted at rest', 'Revoke the share, preserve the logs, and open an incident with the data owner, because Restricted data may have left Amberlane&rsquo;s control', 'Reclassify DS3 as Confidential so the alert drops to medium severity', 'Delete the snapshot and its CNAPP logs to remove the exposure'],
+        answer: 1,
+        hint: 'Who can read a snapshot that has been shared with another account, and what does that mean for the class of data inside it?',
+        debrief: '<p><b>Revoke the share, preserve the evidence, and open an incident.</b> A snapshot shared with an unknown external account can be copied by that account and decrypted with the keys the share grants, so encryption at rest is no comfort. The data is Restricted, so the incident process decides whether this is a reportable breach, and Priyanka Shah, as owner, must be told.</p><p>Deleting the logs destroys the evidence that answers the key question: did anyone copy the snapshot? Reclassifying data to quiet an alert is never acceptable. This is also a pipeline lesson: the deployment script that created the share should fail a CNAPP check before it ever runs again.</p>',
+        reviewNote: 'Contain exposure, preserve evidence, and involve the owner; never reclassify to lower an alert.' },
+      { id: 'memo', type: 'text', points: 16, short: 'Committee summary', title: 'Write the summary for the data governance committee', reportTitle: 'Data governance committee summary',
+        task: 'Write the summary Wren will take to the committee. Use store IDs and keep it to facts and decisions.',
+        fields: [
+          { key: 'cls', label: 'Classification results', min: 40, placeholder: 'What is Restricted, and any classification that surprised the owners.' },
+          { key: 'own', label: 'Ownership and custody', min: 40, placeholder: 'Owners confirmed, ownership corrected, and vendor custodians.' },
+          { key: 'disp', label: 'Retention and disposal plan', min: 50, placeholder: 'Each retiring store and its sanitization method, with evidence to keep.' },
+          { key: 'now', label: 'Actions needed now', min: 40, placeholder: 'The CNAPP alert, the AI training set, and anything else urgent.' }
+        ],
+        hint: 'A committee member should finish the summary knowing what is Restricted, who owns it, how retiring stores will be disposed of, and what needs a decision this month.',
+        debrief: '<p><b>Model summary.</b> <b>Classification:</b> six of nine stores are Restricted (DS1, DS2, DS3, DS4, DS6, DS7). Call recordings (DS4) and the fraud model training set (DS7) were not previously treated as Restricted; DS7 keeps account numbers, so it is not de-identified. <b>Ownership:</b> each store now has an accountable business owner; DS7 moves from the data science lead to the Chief Risk Officer, with Data Science Platform as custodian. Quillmark (DS2) and Larkfield (DS9) are vendor custodians under contract. <b>Disposal:</b> DS1 array purged by cryptographic erase with the vendor verification report before return; DS2 purged and certified by Quillmark at contract end; DS3 and DS7 purged by key destruction in the key service; DS4 drives purged before reuse; DS5 and DS8 cleared; DS9 cleared by Larkfield; DS6 drives destroyed with certificates for all twelve serial numbers. <b>Now:</b> CN-2291 is an open incident: the external share of the DS3 snapshot is revoked, logs are preserved, and the incident team is assessing notification; the deployment script gets a CNAPP gate. The model vendor request for DS7 is on hold until the data is tokenized and a contract is in place.</p>',
+        reviewNote: 'A governance summary reports classification, accountability, disposal evidence, and open actions.' }
+    ],
+
+    workbench: function (root, api) {
+      api0 = api;
+      var esc = api.esc;
+      root.innerHTML = '<div class="lb-tool"><div class="lb-tabs" role="tablist" aria-label="Workbench tools">' +
+        '<button role="tab" id="tb-iv" aria-controls="pn-iv" aria-selected="true">Inventory</button>' +
+        '<button role="tab" id="tb-fa" aria-controls="pn-fa" aria-selected="false" tabindex="-1">Data store facts</button>' +
+        '<button role="tab" id="tb-po" aria-controls="pn-po" aria-selected="false" tabindex="-1">Policy DH-2</button>' +
+        '<button role="tab" id="tb-pe" aria-controls="pn-pe" aria-selected="false" tabindex="-1">People and teams</button></div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-iv" aria-labelledby="tb-iv"></div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-fa" aria-labelledby="tb-fa" hidden>' + FACTS(esc) + '</div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-po" aria-labelledby="tb-po" hidden>' + POLICY() + '</div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-pe" aria-labelledby="tb-pe" hidden>' + PEOPLE(esc) + '</div></div>';
+      var tabs = [].slice.call(root.querySelectorAll('[role=tab]'));
+      function sel(t) { tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }); api.note('tab', t.id); }
+      tabs.forEach(function (t, i) { t.addEventListener('click', function () { sel(t); }); t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; sel(n); n.focus(); } }); });
+      if (api.note('tab')) { var tt = document.getElementById(api.note('tab')); if (tt) sel(tt); }
+
+      var F = [['own', 'Owner'], ['cus', 'Custodian'], ['cls', 'Classification'], ['ret', 'Retention'], ['dlp', 'DLP rule'], ['san', 'End-of-life method']];
+      var FN = {}; F.forEach(function (f) { FN[f[0]] = f[1]; });
+      function inv() { return api.note('inv') || {}; }
+      function val(d, k) { var r = inv()[d.id] || {}; return r[k] == null ? null : r[k]; }
+      function checks(d) {
+        var o = val(d, 'own'), c = val(d, 'cls'), out = [];
+        var person = o ? X.pk(o) : null;
+        out.push({ k: 'own', ok: !!(person && person.biz), msg: !o ? 'No owner' : (person && !person.biz ? 'Owner is a custodian role, not a business leader' : '') });
+        out.push({ k: 'cus', ok: val(d, 'cus') != null, msg: val(d, 'cus') == null ? 'No custodian' : '' });
+        out.push({ k: 'cls', ok: c != null, msg: c == null ? 'Not classified' : '' });
+        out.push({ k: 'ret', ok: val(d, 'ret') != null, msg: val(d, 'ret') == null ? 'No retention period' : '' });
+        var dl = val(d, 'dlp');
+        out.push({ k: 'dlp', ok: c != null && dl != null && dl === X.dlpFor(c), msg: dl == null ? 'No DLP rule' : (c == null ? 'Classify first' : (dl !== X.dlpFor(c) ? 'DLP rule does not match DH-2 for this class' : '')) });
+        var sn = val(d, 'san');
+        out.push({ k: 'san', ok: c != null && sn != null && sn === X.sanFor(c, d), msg: sn == null ? 'No end-of-life method' : (c == null ? 'Classify first' : (sn !== X.sanFor(c, d) ? 'Method does not match DH-2 section 4 for this class and plan' : '')) });
+        return out;
+      }
+      function draw(focusSel) {
+        var pn = document.getElementById('pn-iv');
+        var all = X.DS.map(function (d) { return { d: d, c: checks(d) }; });
+        var pass = 0, total = 0, byF = {};
+        F.forEach(function (f) { byF[f[0]] = 0; });
+        all.forEach(function (r) { r.c.forEach(function (x) { total++; if (x.ok) { pass++; byF[x.k]++; } }); });
+        var pct = Math.round(100 * pass / total);
+        function sel(d, k, opts) {
+          var v = val(d, k), c = checks(d).filter(function (x) { return x.k === k; })[0];
+          return '<select id="b2-' + k + '-' + d.id + '" data-d="' + d.id + '" data-k="' + k + '" class="' + (v != null && !c.ok ? 'bad' : '') + '" aria-label="' + d.id + ' ' + esc(FN[k]) + '"><option value="">Choose</option>' +
+            opts.map(function (o) { return '<option value="' + o[0] + '"' + (String(v) === String(o[0]) ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select>';
+        }
+        var ppl = X.P.map(function (p) { return [p.k, p.nm + ', ' + p.t]; });
+        function idx(a) { return a.map(function (x, i) { return [i, x]; }); }
+        var h = '<div class="b2-meter" data-popout="Compliance meter" aria-live="polite"><h4>DH-2 compliance meter</h4><div class="b2-mrow"><div class="b2-mbig">' + pct + '%</div><div class="b2-mbar"><div class="b2-bar' + (pct < 60 ? ' lo' : '') + '" role="img" aria-label="' + pass + ' of ' + total + ' policy checks pass"><i style="width:' + pct + '%"></i></div>' +
+          '<p class="b2-mnote"><b>' + pass + ' of ' + total + '</b> policy checks pass across nine stores. The meter checks completeness, owner roles, and whether DLP and end-of-life choices fit the class you chose. It does not check the class itself.</p></div></div>' +
+          '<div class="b2-chips">' + F.map(function (f) { return '<span class="b2-chip ' + (byF[f[0]] === 9 ? 'ok' : 'bad') + '">' + f[1] + ': ' + byF[f[0]] + '/9</span>'; }).join('') + '</div></div>' +
+          '<div class="table-wrap"><table class="data b2-inv"><caption class="sr-only">Amberlane data store inventory</caption><thead><tr><th scope="col">Store</th>' + F.map(function (f) { return '<th scope="col">' + f[1] + '</th>'; }).join('') + '<th scope="col">Checks</th></tr></thead><tbody>' +
+          all.map(function (r) {
+            var d = r.d, n = r.c.filter(function (x) { return x.ok; }).length, msgs = r.c.filter(function (x) { return !x.ok && x.msg && val(d, x.k) != null; }).map(function (x) { return x.msg; });
+            return '<tr><th scope="row">' + d.id + ' ' + esc(d.nm) + (d.cnapp ? '<span class="b2-cnapp">CNAPP alert</span>' : '') + '<span class="sub">' + d.where + '</span></th>' +
+              '<td>' + sel(d, 'own', ppl) + '</td><td>' + sel(d, 'cus', idx(X.CUS)) + '</td><td>' + sel(d, 'cls', idx(X.CLS)) + '</td><td>' + sel(d, 'ret', idx(X.RET)) + '</td><td>' + sel(d, 'dlp', idx(X.DLP)) + '</td><td>' + sel(d, 'san', idx(X.SAN)) + '</td>' +
+              '<td class="ck"><b>' + n + ' / 6</b>' + msgs.map(function (m) { return '<span class="b2-flag">' + esc(m) + '</span>'; }).join('') + '</td></tr>';
+          }).join('') + '</tbody></table></div>';
+        pn.innerHTML = h;
+        pn.querySelectorAll('select').forEach(function (e) {
+          e.addEventListener('change', function () {
+            var o = Object.assign({}, inv()), r = Object.assign({}, o[e.dataset.d] || {});
+            r[e.dataset.k] = e.value === '' ? null : (e.dataset.k === 'own' ? e.value : +e.value);
+            o[e.dataset.d] = r; api.note('inv', o); draw('#' + e.id);
+          });
+        });
+        if (focusSel) { var f = document.querySelector(focusSel); if (f) f.focus(); }
+      }
+      draw();
+    },
+    onReset: function () { }
+  };
+
+  function FACTS(esc) {
+    return '<div class="b2-cards">' + X.DS.map(function (d) {
+      return '<div class="b2-card"><h5>' + d.id + ' ' + esc(d.nm) + '</h5><dl><dt>Where</dt><dd>' + d.where + '</dd><dt>Data</dt><dd>' + d.data + '</dd><dt>End of life</dt><dd>' + d.eol + '</dd></dl>' +
+        (d.cnapp ? '<div class="b2-alert"><b>CNAPP alert CN-2291, high severity.</b> Six days ago a deployment script shared a snapshot of the DS3 managed database with an external cloud account that Amberlane does not own. The share is still active. The snapshot is encrypted at rest, and the share grants use of the key.</div>' : '') +
+        (d.id === 'DS1' ? '<p style="margin:.5rem 0 0"><b>Retention example:</b> member account 40-1187 was closed on March 14, 2025.</p>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  function POLICY() {
+    return '<div class="lb-doc"><h4>Section 1. Classification</h4><ul>' +
+      '<li><b>Restricted:</b> any store holding Social Security numbers, account or card numbers, credit reports, or credentials and keys, or any data whose disclosure would trigger breach notification. Removing names does not lower the class while any of these identifiers remain.</li>' +
+      '<li><b>Confidential:</b> member personal information without the identifiers above (names, contact details, preferences), and internal security records.</li>' +
+      '<li><b>Internal:</b> staff-only operating information with no member personal information.</li>' +
+      '<li><b>Public:</b> information approved for public release.</li>' +
+      '<li>A store takes the class of its most sensitive element. Copies, caches, exports, and recordings take the class of what they contain.</li></ul></div>' +
+      '<div class="lb-doc"><h4>Section 2. Roles</h4><ul>' +
+      '<li>The <b>data owner</b> is the business leader accountable for the data and the process it serves. The owner approves classification, access, retention, and disposal.</li>' +
+      '<li>The <b>custodian</b> is the team that operates the storage and applies controls for the owner. A vendor can be a custodian; ownership never leaves Amberlane.</li></ul></div>' +
+      '<div class="lb-doc"><h4>Section 3. DLP rules by class</h4><ul>' +
+      '<li>Restricted: <b>Block and alert</b> on any transfer outside Amberlane.</li>' +
+      '<li>Confidential: <b>Allow only encrypted to approved partners</b>.</li>' +
+      '<li>Internal: <b>Monitor and log</b>.</li>' +
+      '<li>Public: <b>No DLP rule</b>.</li></ul></div>' +
+      '<div class="lb-doc"><h4>Section 4. End-of-life sanitization (based on NIST SP 800-88)</h4><ul>' +
+      '<li><b>Media that stays inside Amberlane</b> for reuse: Clear for Public, Internal, and Confidential; Purge for Restricted.</li>' +
+      '<li><b>Media or storage that leaves Amberlane control</b> (returned, sold, recycled, or a contract ends): Purge for Confidential and Restricted; Clear for Public and Internal.</li>' +
+      '<li><b>Cloud and SaaS storage</b> counts as leaving control. Purge by cryptographic erase (destroy the keys) or by a vendor purge with written certification.</li>' +
+      '<li>Restricted media that <b>cannot be purged and verified</b> must be <b>destroyed</b>, with a certificate of destruction for each serial number.</li></ul></div>' +
+      '<div class="lb-doc"><h4>Schedule A. Retention</h4><div class="table-wrap"><table class="data"><tbody>' +
+      '<tr><th scope="row">Member account and transaction records</th><td>7 years after account closure</td></tr>' +
+      '<tr><th scope="row">Loan files</th><td>7 years after loan payoff</td></tr>' +
+      '<tr><th scope="row">Call recordings</th><td>1 year</td></tr>' +
+      '<tr><th scope="row">Marketing contact data</th><td>2 years after last contact, or sooner on consent withdrawal</td></tr>' +
+      '<tr><th scope="row">Security logs</th><td>3 years</td></tr>' +
+      '<tr><th scope="row">AI and analytics training sets</th><td>Until the model is retired, no more than 3 years</td></tr>' +
+      '<tr><th scope="row">Published web content</th><td>Until superseded</td></tr>' +
+      '<tr><th scope="row">Local copies of system data on endpoints</th><td>Do not retain local copies (the source system governs)</td></tr></tbody></table></div></div>';
+  }
+  function PEOPLE(esc) {
+    return '<div class="lb-doc"><h4>Business leaders</h4><ul>' + X.P.filter(function (p) { return p.biz; }).map(function (p) { return '<li><b>' + esc(p.nm) + '</b>, ' + esc(p.t) + '</li>'; }).join('') + '</ul></div>' +
+      '<div class="lb-doc"><h4>Technology leads</h4><ul>' + X.P.filter(function (p) { return !p.biz; }).map(function (p) { return '<li><b>' + esc(p.nm) + '</b>, ' + esc(p.t) + '</li>'; }).join('') + '</ul></div>' +
+      '<div class="lb-doc"><h4>Custodian teams</h4><ul>' + X.CUS.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></div>' +
+      '<div class="lb-doc"><h4>Who runs what</h4><ul>' +
+      '<li>Fraud detection is part of the risk program run by the Chief Risk Officer. The data science team builds and runs the fraud model for that program.</li>' +
+      '<li>Marketing owns the newsletter list and the public website content.</li>' +
+      '<li>The Harborview branch reported to VP Branch Operations.</li>' +
+      '<li>The security office owns its monitoring records.</li></ul></div>';
+  }
+})();
+</script>
+<script src="lab.js"></script>
+</body>
+</html>

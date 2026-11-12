@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 9: Capstone | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 9</span></p>
+    <span class="lesson-badge-lg">Day 5, Afternoon &bull; All Domains</span>
+    <h1>Capstone: Exam Strategy and <span>Faculty PD</span></h1>
+    <p class="lesson-lede">Eight domains studied one at a time become one exam answered all at once. This capstone pulls the week together: how a single scenario crosses domains, how to read questions under pressure, how to plan the final weeks and exam day, and how to carry CISSP into the courses you teach and the Knowledge Units your program documents.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 5, 1:00 to 5:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~3.5 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>All domains</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">From eight domains to one decision</h2>
+    <div class="rule"></div>
+    <p class="lead">The exam rarely labels a question by domain. A scenario about a ransomware attack can test business impact analysis, backup design, network segmentation, privileged accounts, and incident response in five consecutive items. Candidates who studied in silos see five unrelated topics. Candidates who studied the system see one organization with one set of priorities.</p>
+    <p class="lead">This lesson has two halves. The first prepares you for the exam: synthesis, tactics, the final weeks, and exam day. The second prepares you to teach: mapping the domains to your courses and to the CAE Cyber Defense Knowledge Units, and leaving with a 90-day plan.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>In a cross-domain scenario, ask what the organization needs most right now. The domain that answers that question usually holds the best answer.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Analyze</strong> a single scenario for the decisions it raises in several domains. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Apply</strong> question tactics to BEST, FIRST, and MOST items. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Evaluate</strong> your own readiness by domain, weighted by exam weight. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Map</strong> the eight domains to your courses and to CAE-CD Knowledge Units. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Design</strong> a 90-day plan that covers exam study and curriculum work. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Cross-Domain Scenario</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A single situation that raises questions in several domains at once, such as an incident that tests continuity, access, and operations.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Distractor</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A wrong option written to look right, often a true statement that does not answer the question asked.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Weighted Readiness</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A self-assessment that counts each domain by its share of the exam, so a gap in a heavy domain counts more than one in a light domain.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Knowledge Unit (KU)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A defined body of topics and outcomes in the NCAE-C program. Colleges map courses to KUs to earn and keep CAE designation.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">CAE-CD</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">National Center of Academic Excellence in Cyber Defense, a designation for programs that meet NCAE-C requirements.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Foundational KUs</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The three KUs every CAE-CD program covers: IT Systems Components, Cybersecurity Fundamentals, and Cybersecurity Principles.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Curriculum Crosswalk</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A table that shows which courses, labs, and assessments cover which outcomes, domains, or KUs.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Spaced Retrieval</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Recalling material from memory at increasing intervals. It builds longer retention than rereading.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. One Scenario, Many Domains</a></li>
+          <li><a href="#s2">2. Question Tactics</a></li>
+          <li><a href="#s3">3. The Final Weeks and Exam Day</a></li>
+          <li><a href="#s4">4. Interactive: Readiness Radar and KU Mapper</a></li>
+          <li><a href="#s5">5. Mapping CISSP to Your Curriculum</a></li>
+          <li><a href="#s6">6. Your 90-Day Plan</a></li>
+          <li><a href="#s7">7. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>One Scenario, Many Domains</h3></div>
+          <p>Consider one event. A community college is hit by ransomware on the first day of registration. Every domain has something to say about it.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Domain</th><th>The question it raises</th></tr></thead>
+            <tbody>
+              <tr><td class="term">1. Governance and Risk</td><td>Did the BIA set an RTO for registration, and did leadership accept the residual risk?</td></tr>
+              <tr><td class="term">2. Asset Security</td><td>Which data was encrypted or stolen, how was it classified, and who owns it?</td></tr>
+              <tr><td class="term">3. Architecture</td><td>Were backups isolated from production by design, and was the attacker&rsquo;s zero-day entry point in the threat model?</td></tr>
+              <tr><td class="term">4. Network Security</td><td>Did segmentation contain the spread, or could it move east and west freely?</td></tr>
+              <tr><td class="term">5. IAM</td><td>Which privileged account did the attacker use, and would phishing-resistant passwordless sign-in or risk-adaptable access control have stopped it?</td></tr>
+              <tr><td class="term">6. Assessment</td><td>Had anyone tested a full restore against the RTO?</td></tr>
+              <tr><td class="term">7. Operations</td><td>Did EDR and SOAR contain the spread, were backups immutable, and did the team preserve evidence and notify the right parties?</td></tr>
+              <tr><td class="term">8. Software</td><td>Was the entry point a vulnerable open source component that an SBOM and software composition analysis would have flagged?</td></tr>
+            </tbody>
+          </table></div>
+          <p>The exam will not ask all eight questions. It will ask one, and the scenario will contain details that belong to the other seven. Your task is to find the question being asked and ignore the rest.</p>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129513;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Cybersecurity Scenario</strong>: work through a scenario that draws on several areas of security at once.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/cyber_scenario/cyber_scenario.html" target="_blank" rel="noopener noreferrer">Cybersecurity Scenario <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Question Tactics</h3></div>
+          <ul class="detail">
+            <li><strong>Read the last line first.</strong> It tells you what is asked and often who is asking. Then read the scenario for the facts that matter.</li>
+            <li><strong>Find the role.</strong> A question asked of a CISO wants a governance answer. A question asked of an analyst may want a procedural one.</li>
+            <li><strong>Mark the qualifier.</strong> BEST and MOST want the widest benefit. FIRST wants the earliest sound step. PRIMARY wants the main purpose.</li>
+            <li><strong>Eliminate the technical fix.</strong> An option that changes a system without assessment, approval, or process is usually a distractor.</li>
+            <li><strong>Watch for absolutes.</strong> Options with &ldquo;always,&rdquo; &ldquo;never,&rdquo; or &ldquo;guarantees&rdquo; are rarely correct in a risk-based field.</li>
+            <li><strong>Choose between the last two.</strong> When two options remain, pick the one that addresses the cause, protects people, or follows governance.</li>
+          </ul>
+          <div class="compare-2col">
+            <div><b>Technician answer</b>&ldquo;Block the IP address at the firewall.&rdquo; Fast, specific, and it treats one symptom.</div>
+            <div><b>Leader answer</b>&ldquo;Follow the incident response plan to contain and assess the scope.&rdquo; Slower to say, and it covers the whole problem.</div>
+          </div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>You cannot return to an item on the adaptive exam, so answer each one completely before moving on. Do not guess quickly with a plan to come back. There is no coming back.</div>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>The Final Weeks and Exam Day</h3></div>
+          <h4>The final two weeks</h4>
+          <ul class="detail">
+            <li><strong>Weeks before:</strong> take a full-length timed practice exam, then spend most of your remaining time on the two weakest high-weight domains.</li>
+            <li><strong>Every day:</strong> fifteen minutes of flashcards from all domains. Retrieval beats rereading.</li>
+            <li><strong>The last three days:</strong> review notes and the mindset filters. Stop learning new material; consolidate what you know.</li>
+            <li><strong>The night before:</strong> sleep matters more than one more chapter.</li>
+          </ul>
+          <h4>Exam day</h4>
+          <ul class="detail">
+            <li>Arrive early with two forms of identification that match your registration exactly.</li>
+            <li>Expect a secure test center check-in, a locker for belongings, and possibly a palm vein or photo scan.</li>
+            <li>Pace at about 70 seconds per item and take an optional break if you need it; the clock keeps running.</li>
+            <li>You receive a provisional result at the center. An official result follows from ISC2.</li>
+          </ul>
+          <h4>After you pass</h4>
+          <p>Submit the endorsement application within nine months. An active ISC2 credential holder attests to your experience, or ISC2 acts as endorser. Then start the CPE cycle: 120 credits over three years, about 40 a year, plus the annual maintenance fee. Verify current requirements at isc2.org.</p>
+          <h4>Topics to review twice</h4>
+          <p>The current outline added topics that many older study guides cover lightly or not at all. Give them a second pass in the final weeks:</p>
+          <ul class="detail">
+            <li><strong>Artificial intelligence:</strong> ethics in AI (Domain 1), AI threats such as adversarial AI, model poisoning, and deepfakes (Domain 3), and ML and AI based security tools (Domain 7).</li>
+            <li><strong>Emerging technology:</strong> post-quantum cryptography, quantum computing, OT and ICS, and autonomous systems (Domain 3), and CNAPP (Domain 2).</li>
+            <li><strong>Identity:</strong> passwordless authentication with FIDO, WebAuthn, and passkeys, and risk-adaptable access control (Domain 5).</li>
+            <li><strong>Operations:</strong> SOAR, EDR and XDR, immutable and encrypted backups, and MTTR and MTBF metrics (Domain 7).</li>
+            <li><strong>Software:</strong> SSDF and SBOM requirements, shift left, and memory-safe languages (Domain 8), plus software-defined security (Domain 4).</li>
+          </ul>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Interactive: Readiness Radar and KU Mapper</h3></div>
+          <p>The radar turns a self-rating into a weighted readiness score and names your highest-value study targets. The mapper shows which CAE-CD Knowledge Units and CISSP domains a set of courses covers. Both are planning aids, not predictions of an exam result.</p>
+
+          <style>
+            .rr-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem;}
+            .rr-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:1rem;align-items:start;}
+            .rr-sl{display:grid;grid-template-columns:minmax(0,1fr) 92px 1.4rem;gap:.5rem;align-items:center;margin-bottom:.45rem;font-family:Arial,sans-serif;font-size:.76rem;color:var(--text-secondary);}
+            .rr-sl b{font-family:'Arial Narrow',Arial,sans-serif;color:var(--gold);font-size:.9rem;text-align:right;}
+            .rr-sl .w{color:var(--text-muted);font-size:.68rem;}
+            .rr-wt{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin:.2rem 0 .7rem;font-family:Arial,sans-serif;font-size:.74rem;color:var(--text-muted);}
+            .rr-score{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.4rem;}
+            .rr-score .v{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:2rem;color:var(--gold);line-height:1;}
+            .rr-score .k{font-family:Arial,sans-serif;font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;}
+            .rr-tg{font-family:Arial,sans-serif;font-size:.78rem;color:var(--text-secondary);line-height:1.5;padding-left:1rem;margin:.3rem 0 0;}
+            .rr-tg li{margin:.3rem 0;}
+            .rr-tg a{color:var(--gold);font-weight:700;}
+            .km-c{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;}
+            .km-c label{display:flex;gap:.4rem;align-items:flex-start;padding:.35rem .5rem;border:1px solid var(--border);border-radius:5px;background:var(--card-bg);font-size:.76rem;color:var(--text-secondary);cursor:pointer;line-height:1.3;}
+            .km-c label:hover{border-color:var(--gold);}
+            .km-c input{accent-color:var(--gold);margin-top:.1rem;}
+            .km-g{margin-bottom:.6rem;}
+            .km-g h6{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-primary);margin:0 0 .3rem;}
+            .km-g h6 span{color:var(--text-muted);font-weight:700;}
+            .km-chips{display:flex;flex-wrap:wrap;gap:.3rem;}
+            .km-chip{font-family:Arial,sans-serif;font-size:.68rem;padding:.18rem .45rem;border-radius:3px;border:1px dashed var(--border);color:var(--text-muted);background:var(--card-bg);}
+            .km-chip.on{border:1px solid var(--jade);background:var(--jade-pale);color:var(--jade-dark);font-weight:700;}
+            .km-chip.d.on{border-color:var(--gold);background:var(--gold-pale);color:var(--gold);}
+            .km-note{font-family:Arial,sans-serif;font-size:.72rem;color:var(--text-muted);line-height:1.5;margin-top:.4rem;}
+            @media (max-width:760px){.rr-grid{grid-template-columns:1fr;}.km-c{grid-template-columns:1fr;}}
+          </style>
+
+          <div class="iw" id="rr-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; assess and plan</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="rr-tabs" role="tablist" aria-label="Capstone tools">
+                <button type="button" class="iw-btn" role="tab" id="rr-tab1" aria-selected="true" aria-pressed="true" aria-controls="rr-p1">Readiness radar</button>
+                <button type="button" class="iw-btn jade" role="tab" id="rr-tab2" aria-selected="false" aria-pressed="false" aria-controls="rr-p2">KU curriculum mapper</button>
+              </div>
+
+              <div id="rr-p1" role="tabpanel" aria-labelledby="rr-tab1">
+                <div class="rr-grid">
+                  <div class="iw-panel">
+                    <h5 class="iw-h5">Rate each domain, 1 to 5</h5>
+                    <p class="iw-lead">1 means new to you. 5 means you could teach it tomorrow. Each domain shows its exam weight.</p>
+                    <div id="rr-sliders"></div>
+                  </div>
+                  <div class="iw-panel">
+                    <div class="rr-score"><span class="v" id="rr-v">0%</span><span class="k">Weighted readiness</span></div>
+                    <canvas id="rr-cv" width="420" height="320" role="img" aria-label="Radar chart of self-rated readiness in the eight CISSP domains"></canvas>
+                    <div class="iw-verdict" id="rr-verdict" aria-live="polite"><span class="iw-pill" id="rr-pill">-</span><span id="rr-coach"></span></div>
+                    <h5 class="iw-h5">Your two highest-value study targets</h5>
+                    <ol class="rr-tg" id="rr-tg" aria-live="polite"></ol>
+                  </div>
+                </div>
+              </div>
+
+              <div id="rr-p2" role="tabpanel" aria-labelledby="rr-tab2" hidden>
+                <div class="rr-grid">
+                  <div class="iw-panel">
+                    <h5 class="iw-h5">Courses in your program</h5>
+                    <p class="iw-lead">Check the courses you teach or offer. The mapping uses typical course content; adjust it to your own syllabi.</p>
+                    <div class="km-c" id="km-c"></div>
+                  </div>
+                  <div class="iw-panel" aria-live="polite">
+                    <div id="km-out"></div>
+                    <p class="km-note">Requirements change by designation cycle. Check the current CAE-CD designation requirements and the KU document for the exact KUs and counts your program needs.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>Rate yourself a 3 in Domain 1 and a 3 in Domain 8. Domain 1 ranks first, but only by a little, because the weights are flat. Now drop Domain 8 to a 2: it jumps ahead. With weights this close, the size of the gap matters more than the weight. In the mapper, notice how quickly a governance course and a network defense course fill the core KUs, and which domains no course touches yet.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('rr-root'); if(!root) return;
+            var $=function(id){return root.querySelector('#'+id);};
+            var D=[
+              {s:'D1',n:'Governance and Risk',w:13.6,l:'lesson01.html',tip:'Rework the ALE examples and the risk responses, then the policy hierarchy and ethics in AI.'},
+              {s:'D2',n:'Asset Security',w:12,l:'lesson02.html',tip:'Drill data roles, data states, and sanitization choices.'},
+              {s:'D3',n:'Architecture and Engineering',w:12.8,l:'lesson03.html',tip:'Review the security models, match cryptographic controls to goals, and add post-quantum, OT, and AI threats.'},
+              {s:'D4',n:'Network Security',w:12.8,l:'lesson04.html',tip:'Map protocols, devices, and attacks to OSI layers; review segmentation.'},
+              {s:'D5',n:'Identity and Access',w:13.6,l:'lesson05.html',tip:'Compare the access control models, including RAdAC, trace a federated sign-in, and review passkeys.'},
+              {s:'D6',n:'Assessment and Testing',w:11.2,l:'lesson06.html',tip:'Match each test type to the question it answers; review audit types.'},
+              {s:'D7',n:'Security Operations',w:12.8,l:'lesson07.html',tip:'Put incident response phases in order, compare recovery sites, and review SOAR, EDR, and immutable backups.'},
+              {s:'D8',n:'Software Development',w:11.2,l:'lesson08.html',tip:'Review SDLC security activities, SSDF and SBOM requirements, and common flaws with their fixes.'}
+            ];
+            var R=[3,3,3,3,3,3,3,3], wk='w';
+            var box=$('rr-sliders');
+            D.forEach(function(d,i){
+              var row=document.createElement('div'); row.className='rr-sl';
+              row.innerHTML='<label for="rr-s'+i+'">'+d.s+' '+d.n+' <span class="w" id="rr-w'+i+'"></span></label><input type="range" id="rr-s'+i+'" min="1" max="5" step="1" value="3"><b id="rr-b'+i+'">3</b>';
+              box.appendChild(row);
+              row.querySelector('input').addEventListener('input',function(){R[i]=+this.value;row.querySelector('b').textContent=this.value;paint();});
+            });
+            var cv=$('rr-cv'), ctx=cv.getContext('2d');
+            function resize(){var w=Math.min(cv.parentElement.clientWidth||320,460),dpr=window.devicePixelRatio||1,h=Math.round(w*0.78);cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);cv._w=w;cv._h=h;}
+            function draw(){
+              var w=cv._w||320,h=cv._h||250,cx=w/2,cy=h/2+4,rad=Math.min(w,h)/2-30;ctx.clearRect(0,0,w,h);
+              function pt(i,v){var a=-Math.PI/2+i*2*Math.PI/8;return [cx+Math.cos(a)*rad*v/5,cy+Math.sin(a)*rad*v/5];}
+              ctx.strokeStyle='#d6dde9';ctx.lineWidth=1;
+              for(var k=1;k<=5;k++){ctx.beginPath();for(var i=0;i<8;i++){var p=pt(i,k);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.closePath();ctx.stroke();}
+              ctx.font='bold 11px Arial,sans-serif';ctx.fillStyle='#26365a';ctx.textAlign='center';ctx.textBaseline='middle';
+              for(i=0;i<8;i++){var e=pt(i,5),q=pt(i,5.9);ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(e[0],e[1]);ctx.stroke();ctx.fillText(D[i].s+' '+D[i][wk]+'%',q[0],q[1]);}
+              ctx.strokeStyle='#b45309';ctx.setLineDash([4,3]);ctx.beginPath();for(i=0;i<8;i++){p=pt(i,4);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.closePath();ctx.stroke();ctx.setLineDash([]);
+              ctx.fillStyle='rgba(30,58,138,.18)';ctx.strokeStyle='#1e3a8a';ctx.lineWidth=2;ctx.beginPath();
+              for(i=0;i<8;i++){p=pt(i,R[i]);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.closePath();ctx.fill();ctx.stroke();
+              for(i=0;i<8;i++){p=pt(i,R[i]);ctx.fillStyle=R[i]<=2?'#b91c1c':R[i]>=4?'#047857':'#1e3a8a';ctx.beginPath();ctx.arc(p[0],p[1],3.5,0,Math.PI*2);ctx.fill();}
+            }
+            function paint(){
+              var tot=0,sc=0;
+              D.forEach(function(d,i){tot+=d[wk];sc+=d[wk]*(R[i]-1)/4;root.querySelector('#rr-w'+i).textContent='('+d[wk]+'%)';});
+              var pct=Math.round(sc/tot*100); $('rr-v').textContent=pct+'%';
+              var low=R.some(function(r){return r<=2;});
+              var cls,pill,msg;
+              if(pct>=80&&!low){cls='good';pill='Schedule it';msg='Strong across the board. Take a timed practice exam to confirm, then book a date.';}
+              else if(pct>=60){cls='warn';pill='Close';msg=low?'Solid overall, but at least one domain is rated 2 or lower. The adaptive exam samples every domain, so close that gap first.':'Within reach. Four to six focused weeks on the targets below should close the gap.';}
+              else{cls='bad';pill='Build the base';msg='Plan eight to twelve weeks. Work the targets below first, then rotate through every domain.';}
+              $('rr-verdict').className='iw-verdict '+cls;$('rr-pill').className='iw-pill '+cls;$('rr-pill').textContent=pill;$('rr-coach').textContent=msg+' The dashed ring marks a rating of 4.';
+              var gaps=D.map(function(d,i){return {d:d,g:d[wk]*(5-R[i]),r:R[i]};}).filter(function(x){return x.r<5;}).sort(function(a,b){return b.g-a.g||a.r-b.r;}).slice(0,2);
+              $('rr-tg').innerHTML=gaps.length?gaps.map(function(x){return '<li><a href="'+x.d.l+'">'+x.d.s+' '+x.d.n+'</a>, rated '+x.r+', worth '+x.d[wk]+'% of the exam. '+x.d.tip+'</li>';}).join(''):'<li>Every domain is rated 5. Spend your time on timed practice and the newer outline topics.</li>';
+              draw();
+            }
+            
+            // ---- KU mapper ----
+            var KU={
+              found:[['ISC','IT Systems Components'],['CSF','Cybersecurity Fundamentals'],['CSP','Cybersecurity Principles']],
+              tech:[['BSP','Basic Scripting and Programming'],['BNW','Basic Networking'],['NDF','Network Defense'],['BCY','Basic Cryptography'],['OSC','Operating Systems Concepts']],
+              non:[['CTH','Cyber Threats'],['PLE','Policy, Legal, Ethics, and Compliance'],['SPM','Security Program Management'],['SRA','Security Risk Analysis'],['CPM','Cybersecurity Planning and Management']],
+              opt:[['PRI','Privacy'],['ACR','Advanced Cryptography'],['BCD','Business Continuity and Disaster Recovery'],['DFS','Digital Forensics'],['VLA','Vulnerability Analysis'],['PTT','Penetration Testing'],['IAC','IA Compliance'],['SPP','Secure Programming Practices'],['SAS','Software Assurance'],['SCS','Supply Chain Security'],['CSE','Cybersecurity Ethics']]
+            };
+            var C=[
+              ['Introduction to Cybersecurity',['CSF','CSP','CTH'],['D1','D2','D7']],
+              ['IT Fundamentals and Hardware',['ISC'],['D3','D7']],
+              ['Networking Fundamentals',['BNW','ISC'],['D4']],
+              ['Operating Systems (Windows and Linux)',['OSC','ISC'],['D3','D5']],
+              ['Scripting and Programming',['BSP','SPP'],['D8']],
+              ['Network Defense (Security+ level)',['NDF','BCY','CTH'],['D4','D5','D7']],
+              ['Cryptography',['BCY','ACR'],['D3']],
+              ['Governance, Risk, and Compliance',['PLE','SPM','SRA','CPM','IAC'],['D1','D2','D6']],
+              ['Business Continuity and DR',['BCD'],['D1','D7']],
+              ['Digital Forensics',['DFS'],['D7']],
+              ['Ethical Hacking',['VLA','PTT'],['D6']],
+              ['Secure Software Development',['SPP','SAS','SCS'],['D8']],
+              ['Privacy and Cyber Ethics',['PRI','CSE','PLE'],['D1','D2']]
+            ];
+            var cb=$('km-c');
+            C.forEach(function(c,i){var l=document.createElement('label');l.innerHTML='<input type="checkbox" value="'+i+'"'+(i<3?' checked':'')+'><span>'+c[0]+'</span>';cb.appendChild(l);l.querySelector('input').addEventListener('change',km);});
+            function km(){
+              var ku={},dm={};
+              [].slice.call(cb.querySelectorAll('input:checked')).forEach(function(x){var c=C[+x.value];c[1].forEach(function(k){ku[k]=1;});c[2].forEach(function(d){dm[d]=1;});});
+              function grp(t,arr){var n=arr.filter(function(a){return ku[a[0]];}).length;return '<div class="km-g"><h6>'+t+' <span>'+n+' of '+arr.length+'</span></h6><div class="km-chips">'+arr.map(function(a){return '<span class="km-chip'+(ku[a[0]]?' on':'')+'" title="'+a[1]+'">'+a[0]+': '+a[1]+(ku[a[0]]?' ✓':'')+'</span>';}).join('')+'</div></div>';}
+              var dn=D.filter(function(d){return dm[d.s];}).length;
+              $('km-out').innerHTML=grp('Foundational KUs',KU.found)+grp('Technical core KUs',KU.tech)+grp('Non-technical core KUs',KU.non)+grp('Optional KUs',KU.opt)+
+                '<div class="km-g"><h6>CISSP domains touched <span>'+dn+' of 8</span></h6><div class="km-chips">'+D.map(function(d){return '<span class="km-chip d'+(dm[d.s]?' on':'')+'">'+d.s+(dm[d.s]?' ✓':'')+'</span>';}).join('')+'</div></div>';
+            }
+            function tab(n){
+              [1,2].forEach(function(k){var t=$('rr-tab'+k),on=k===n;t.setAttribute('aria-selected',on);t.setAttribute('aria-pressed',on);$('rr-p'+k).hidden=!on;});
+              if(n===1){resize();draw();}
+            }
+            $('rr-tab1').addEventListener('click',function(){tab(1);});
+            $('rr-tab2').addEventListener('click',function(){tab(2);});
+            window.addEventListener('resize',function(){resize();draw();});
+            resize(); paint(); km();
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>Mapping CISSP to Your Curriculum</h3></div>
+          <p>CISSP is a professional credential, not a course outline, but its domains make a strong spine for a program review. Each domain points to courses you likely teach already and to the CAE-CD Knowledge Units those courses document. The KU names below come from the current CAE-CD Knowledge Units document published by NCAE-C.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Domain</th><th>Typical courses</th><th>CAE-CD KUs</th></tr></thead>
+            <tbody>
+              <tr><td class="term">1. Governance and Risk</td><td>Intro to Cybersecurity; GRC; Policy</td><td>Cyber Threats (CTH), Security Risk Analysis (SRA), Policy, Legal, Ethics, and Compliance (PLE), Cybersecurity Planning and Management (CPM)</td></tr>
+              <tr><td class="term">2. Asset Security</td><td>GRC; Privacy; Data Management</td><td>Privacy (PRI), PLE, CPM</td></tr>
+              <tr><td class="term">3. Architecture</td><td>Cryptography; Systems Security; OS</td><td>Basic Cryptography (BCY), Advanced Cryptography (ACR), IT Systems Components (ISC)</td></tr>
+              <tr><td class="term">4. Network Security</td><td>Networking; Network Defense</td><td>Basic Networking (BNW), Network Defense (NDF)</td></tr>
+              <tr><td class="term">5. IAM</td><td>OS Administration; Network Defense</td><td>Cybersecurity Principles (CSP), Operating Systems Concepts (OSC)</td></tr>
+              <tr><td class="term">6. Assessment</td><td>Ethical Hacking; Auditing</td><td>Vulnerability Analysis (VLA), IA Compliance (IAC)</td></tr>
+              <tr><td class="term">7. Operations</td><td>Incident Response; Forensics; BC and DR</td><td>NDF, Digital Forensics (DFS), Business Continuity and Disaster Recovery (BCD)</td></tr>
+              <tr><td class="term">8. Software</td><td>Programming; Secure Coding</td><td>Secure Programming Practices (SPP), Software Assurance (SAS), Supply Chain Security (SCS)</td></tr>
+            </tbody>
+          </table></div>
+          <p>The foundational KUs (IT Systems Components, Cybersecurity Fundamentals, and Cybersecurity Principles) run under every domain. A first-semester course that covers them sets up the rest of the sequence.</p>
+          <div class="tip"><span class="tip-label">&#128161; Faculty Tip</span>Each CISSP Security Lab in this workshop lists the KUs it supports. Adopting a lab in your course gives you a ready line for your KU mapping and the evidence a reviewer expects to see.</div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>Your 90-Day Plan</h3></div>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Window</th><th>Exam study</th><th>Teaching and curriculum</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Days 1 to 30</td><td>Use the readiness radar. Study the two weakest high-weight domains. Five hours a week, flashcards daily.</td><td>Pick one course and map it to domains and KUs. Choose one lab or activity to adopt.</td></tr>
+              <tr><td class="term">Days 31 to 60</td><td>Rotate through every domain. Take one timed practice exam and log every miss by domain.</td><td>Pilot the lab or activity with students. Collect the printed reports as evidence.</td></tr>
+              <tr><td class="term">Days 61 to 90</td><td>Second timed practice exam. Close remaining gaps. Schedule the exam.</td><td>Update the course crosswalk. Share results with your program lead or CAE point of contact.</td></tr>
+            </tbody>
+          </table></div>
+          <p>Write the plan down before you leave today and name one colleague who will check in with you at day 30. A plan with a witness is far more likely to be followed.</p>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#127919;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Career Exploration</strong>: cybersecurity roles and pathways to use when you advise students about credentials.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/NSA+Ring+Project/index.html" target="_blank" rel="noopener noreferrer">Career Exploration <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Faculty Teaching Segment</h3></div>
+          <p>The capstone pattern works in any program: one rich scenario, several lenses, and a short written defense.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> give student teams the ransomware scenario from Section 1. Each team takes two domains, answers the questions those domains raise, and presents a joint recommendation to a mock leadership panel.</li>
+            <li><strong>Rubric criteria:</strong> accurate use of domain concepts, links between domains, a prioritized recommendation, and communication suited to executives.</li>
+            <li><strong>Activity idea:</strong> students use the KU mapper on your own program and identify one gap. They propose a module, lab, or eMate that would fill it.</li>
+            <li><strong>Course fit:</strong> a capstone or seminar course. It supports the Cybersecurity Planning and Management, Security Program Management, and Business Continuity and Disaster Recovery KUs, and the cross-domain tabletop in Lab B7.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>End the workshop as you would end a course: each participant states one exam date target and one change to a course this term. Saying it aloud makes it real.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 1</span></div><h3>Cybersecurity Scenario</h3><p>A scenario that draws on several areas of security, good practice for cross-domain thinking.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cyber_scenario/cyber_scenario.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cybersecurity Scenario (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Cyber Scramble</h3><p>A vocabulary game for quick review of security terms across domains.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cyberscramble/cyberscramble.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cyber Scramble (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Hacker Hangman</h3><p>A word game warm-up on security terminology for the start of a review session.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/hangman/hangman.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Hacker Hangman (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 6</span></div><h3>Career Exploration</h3><p>Cybersecurity career paths and roles for advising students on credentials and next steps.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/NSA+Ring+Project/index.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Career Exploration (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+
+    <h3 class="h2" style="font-size:1.25rem;margin-top:2.2rem">Student-ready resources for your intro courses</h3>
+    <p class="em-note">These eMates sit below CISSP depth, so they are not part of the exam lessons. They work well in first-year networking, systems, and security courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>Introduction to Subnetting</h3><p>The idea of subnetting and why networks are divided.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/intro_subnetting/intro_subnetting.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Introduction to Subnetting (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>Class A Subnetting</h3><p>Subnetting practice with Class A networks.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/classA/classA.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Class A Subnetting (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>Class B Subnetting</h3><p>Subnetting practice with Class B networks.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/classB/classB.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Class B Subnetting (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>Class C Subnetting</h3><p>Subnetting practice with Class C networks.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/subnetting/subnetting.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Class C Subnetting (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>Network Classes</h3><p>The classful address ranges and how to recognize them.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/network_classes2/network_classes2.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Network Classes (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>IP Addressing: Binary to Decimal</h3><p>Convert IPv4 addresses between binary and dotted decimal.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/binaryIP/binaryIP.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: IP Addressing: Binary to Decimal (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>VLSM</h3><p>Variable length subnet masks for efficient address plans.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/VLSM/VLSM.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: VLSM (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>VLSM Challenge</h3><p>A challenge round that applies VLSM to a design problem.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/VLSM_challenge/VLSM_challenge.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: VLSM Challenge (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>Cabling Standards</h3><p>Common cable types and wiring standards.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/CablingStds/CablingStds.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cabling Standards (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>MAC Addressing</h3><p>Hardware addresses and how devices find each other on a local network.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/macaddressing/EMate_pizzaparty_exercise_102918.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: MAC Addressing (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>File Systems</h3><p>How operating systems organize and store data on disk.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/filesystems/filesystemsv2.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: File Systems (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>Windows CLI</h3><p>Essential Windows command-line skills.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/WindowsCLI_1/WindowsCLI_1.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Windows CLI (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Intro courses</span></div><h3>Principles of Modern Communication</h3><p>The building blocks of how data is communicated.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/PrinciplesModCom/PrinciplesModCom.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Principles of Modern Communication (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Intro courses</span></div><h3>Cyber Hat Match</h3><p>Match white, gray, and black hat roles to their behavior.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/hatmatch/hatmatch.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cyber Hat Match (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Intro courses</span></div><h3>Cryptocurrency</h3><p>How digital currencies work, as context for blockchain discussions.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cryptocurrency/cryptocurrency.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cryptocurrency (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">The capstone practice is a full exam rehearsal, plus the cross-domain tabletop for teams. The practice exam is in development.</p>
+    <div class="pl-grid">
+      <article class="pl-card pl-soon"><div class="pl-top"><span class="pl-type">Exam Prep &middot; Practice Exam</span><span class="pl-time">&#9201; 3 hrs</span></div><h3>CISSP Practice Exam</h3><p>A timed, domain-weighted rehearsal built to the adaptive experience: one item at a time, no going back, and a domain-by-domain score report.</p><div class="pl-foot"><span class="pl-level">Advanced</span><span class="pl-open is-soon" aria-disabled="true">Coming soon</span></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B7</span><span class="pl-time">&#9201; 75 min</span></div><h3><a href="lab07.html">Incident Response Tabletop</a></h3><p>Timed injects, team decisions, evidence handling, and an impact clock in classroom team mode. A strong cross-domain capstone.</p><div class="pl-foot"><span class="pl-level">Advanced</span><a class="pl-open" href="lab07.html" aria-label="Open lab B7: Incident Response Tabletop">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q1.</span>After a ransomware attack, a college took four days to restore registration, although the BIA set a 24-hour RTO. Which gap MOST likely caused the miss?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> The firewall rules were too permissive.</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> The registration data was not classified.</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> Restoration had never been tested against the RTO.</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> The application code was not reviewed.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> The question is about recovery time, not prevention. Only a tested restore shows whether the RTO can be met. The other gaps may explain how the attack happened, not why recovery was slow.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q2.</span>A college plans to use an AI model to flag students at risk of dropping out, trained on advising notes and grades. Which step should the CISO recommend FIRST?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> Confirm the lawful basis and owner for the data, and assess the model for bias and explainability before use.</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> Encrypt the training data with a post-quantum algorithm.</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> Deploy the model and monitor its results for a semester.</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> Buy an AI-based security tool to protect the model.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> This touches ethics in AI (Domain 1) and data ownership and privacy (Domain 2). Governance comes first: a lawful basis, an accountable owner, and a check that the model is fair and explainable. The other options are controls or tools chosen before the question of whether the use is appropriate.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q3.</span>Two options on a question would both reduce the risk described. One reconfigures a server; the other updates the policy and assigns an owner. Which approach usually leads to the BEST answer?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> Choose the most technically specific option.</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> Choose the fastest option to implement.</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> Choose the cheapest option.</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> Choose the option that addresses governance and the root cause.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> The leader&rsquo;s answer fixes why the risk exists and assigns accountability. A single server change treats one instance of the problem.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q4.</span>A lab has students hash files, encrypt data with AES, and verify a digital signature. Which CAE-CD Knowledge Unit does it MOST directly support?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> Basic Networking (BNW)</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> Basic Cryptography (BCY)</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> Cyber Threats (CTH)</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> Digital Forensics (DFS)</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Hashing, symmetric encryption, and signatures are the core of Basic Cryptography. Advanced Cryptography (ACR) would add topics such as protocol design and cryptanalysis.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q5.</span>Which three Knowledge Units are foundational for every CAE-CD program?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> IT Systems Components, Cybersecurity Fundamentals, and Cybersecurity Principles</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> Basic Networking, Basic Cryptography, and Network Defense</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> Cyber Threats, Security Risk Analysis, and Privacy</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> Digital Forensics, Vulnerability Analysis, and Software Assurance</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> The current KUs name IT Systems Components (ISC), Cybersecurity Fundamentals (CSF), and Cybersecurity Principles (CSP) as foundational. The others belong to the technical core, non-technical core, or optional KUs.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q6.</span>Ransomware encrypted a college&rsquo;s servers and its online backup volume. The incident review asks which single change would BEST ensure recovery next time. Which change addresses the root cause?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> Run backups twice as often.</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> Add a SOAR playbook that emails the help desk when encryption starts.</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> Keep immutable or offline backup copies that the production environment cannot alter, and test restores against the RTO.</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> Buy a larger backup appliance on the same network.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> The backups failed because the attacker could reach and encrypt them. Immutable or offline copies (Domain 7) remove that path, and restore testing (Domain 6) proves they work. More frequent or larger backups on a reachable system fail the same way, and an alert alone does not restore anything.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q7.</span>Which exam-day habit fits the adaptive format BEST?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> Answer quickly and mark hard items to revisit at the end.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> Give each item a complete read and a final answer before moving on.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> Skip items from your weakest domain.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> Spend extra time early, since early items are worth more.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> You cannot skip or return to items, so each answer is final. Pace at about 70 seconds per item and commit.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q8.</span>A faculty member passes the exam and has the required experience. What must they do to become certified?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> Nothing; certification is automatic after a pass.</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> Earn 120 CPEs before applying.</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> Retake the exam within one year.</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> Complete the endorsement process within nine months of passing.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> Endorsement confirms the experience and agreement to the Code of Ethics. CPEs begin after certification, not before.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson08.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 8: Software Development Security</span></a>
+    <a href="index.html#lessons" class="next"><span class="pager-dir">Finish &#8594;</span><span class="pager-name">Back to Workshop Home</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

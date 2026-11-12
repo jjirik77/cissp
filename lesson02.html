@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2: Asset Security | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 2</span></p>
+    <span class="lesson-badge-lg">Day 2, Morning &bull; Domain 2</span>
+    <h1>Asset <span>Security</span></h1>
+    <p class="lesson-lede">You cannot protect what you have not found, and you cannot protect it well until you know what it is worth. Domain 2 follows information and assets from creation to destruction: who owns them, how they are classified and handled, how long they are kept, and how they are made unrecoverable at the end.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 2, 9:00 to 11:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~2 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>12%</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">Know it, own it, protect it, retire it</h2>
+    <div class="rule"></div>
+    <p class="lead">Asset security is the bridge between governance and technology. Domain 1 decides how much risk is acceptable. Domain 2 applies that decision to specific information and equipment. Classification tells people how much protection something needs. Ownership tells them who decides. Handling rules, retention schedules, and sanitization methods turn those decisions into daily practice.</p>
+    <p class="lead">This lesson covers classification and inventory, handling and provisioning, the data life cycle and data roles, retention and remanence, media sanitization, and the controls that protect data in each of its states.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>The owner decides; the custodian carries it out. When a question asks who classifies data, approves access, or accepts the risk for an information asset, the answer is the data owner, not the IT team that runs the system.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Classify</strong> information and assets by the impact of their loss, and explain how classification drives handling. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Distinguish</strong> the data roles: owner, controller, custodian, processor, and subject. <em class="bloom-tag">Bloom: Understand</em></span></li>
+      <li><span><strong>Select</strong> protection methods for data at rest, in transit, and in use, including DLP, DRM, and CASB. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Choose</strong> Clear, Purge, or Destroy for a given medium, sensitivity, and destination. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Apply</strong> scoping and tailoring to adapt a control baseline. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Design</strong> a classroom data inventory and sanitization exercise with a rubric. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Data Owner</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The manager accountable for a set of data. Classifies it, approves access, and sets protection and retention requirements.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Data Custodian</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The person or team that operates the controls the owner requires: backups, patching, access configuration, and storage.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Data Controller</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">In privacy law, the organization that decides why and how personal data is processed. It carries the main legal duties.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Data Processor</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">An organization that processes personal data on behalf of a controller and only under its instructions, such as a payroll vendor.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Data Remanence</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Residual data that remains on media after deletion or formatting and may still be recoverable.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Purge</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Sanitization that defeats state-of-the-art laboratory recovery, such as degaussing, firmware secure erase, or cryptographic erase.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Cryptographic Erase</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Sanitizing encrypted media by securely destroying the encryption keys, leaving only unreadable ciphertext.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Scoping and Tailoring</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Scoping removes baseline controls that do not apply. Tailoring adjusts the remaining controls to fit the organization.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Data Loss Prevention (DLP)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Tools that find sensitive data and block or alert when it moves somewhere it should not, on endpoints, networks, or in the cloud.</div></div>
+        </div>
+      </button>
+
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">CNAPP</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Cloud-native application protection platform: one tool that combines cloud posture management, workload protection, and entitlement checks across cloud accounts.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. Classify Information and Assets</a></li>
+          <li><a href="#s2">2. Handling and Provisioning</a></li>
+          <li><a href="#s3">3. Data Life Cycle and Data Roles</a></li>
+          <li><a href="#s4">4. Retention, Remanence, and Sanitization</a></li>
+          <li><a href="#s5">5. Data Security Controls</a></li>
+          <li><a href="#s6">6. Interactive: Sanitization Selector</a></li>
+          <li><a href="#s7">7. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>Identify and Classify Information and Assets</h3></div>
+          <p>Classification sorts information by the harm its loss would cause. The point is not the label. The point is that everyone handles a Restricted file the same careful way without having to ask. Classification also saves money, because low-value data does not need high-value controls.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>U.S. government</th><th>Typical commercial</th><th>Harm if disclosed</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Top Secret</td><td>Restricted / Confidential</td><td>Exceptionally grave damage</td></tr>
+              <tr><td class="term">Secret</td><td>Private / Sensitive</td><td>Serious damage</td></tr>
+              <tr><td class="term">Confidential</td><td>Internal</td><td>Damage</td></tr>
+              <tr><td class="term">Unclassified</td><td>Public</td><td>Little or none</td></tr>
+            </tbody>
+          </table></div>
+          <p>Commercial labels vary by organization, so the exam tests the logic, not the words. Classification should be set by the owner, reviewed on a schedule, and lowered or raised when value changes, a step called declassification or reclassification.</p>
+          <h4>Assets beyond data</h4>
+          <ul class="detail">
+            <li><strong>Asset inventory:</strong> tangible assets (servers, laptops, phones, removable media, facilities) and intangible ones (data, software licenses, intellectual property, reputation). An accurate inventory is the precondition for every other control.</li>
+            <li><strong>Asset classification:</strong> a system takes the classification of the most sensitive data it stores or processes.</li>
+            <li><strong>Asset management:</strong> tracking each asset from acquisition through deployment, change, and disposal, usually in a configuration management database (CMDB).</li>
+            <li><strong>Ownership:</strong> every asset has a named owner. An asset with no owner has no one to approve access or accept its risk.</li>
+          </ul>
+          <h4>Policies that hold it together</h4>
+          <ul class="detail">
+            <li><strong>Data management policy:</strong> states how the organization classifies, labels, stores, shares, retains, and disposes of data, and who owns each decision. It is the document that makes classification enforceable rather than optional.</li>
+            <li><strong>Asset management policy:</strong> sets the rules for the asset life cycle: what must be inventoried, who approves acquisition, how assets are tagged and tracked, how long they are kept, and how they are retired.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>When a question asks what to do FIRST in a data protection program, look for inventory or classification. You cannot choose controls for data you have not found and valued.</div>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Handling and Provisioning Assets Securely</h3></div>
+          <p>Handling requirements tell people what each classification means in practice. They cover the whole path an asset travels.</p>
+          <ul class="detail">
+            <li><strong>Marking and labeling:</strong> marking is the human-readable classification on a document or screen. Labeling is often the physical or system tag, including metadata that tools such as DLP can read.</li>
+            <li><strong>Storage:</strong> where each class may live (approved systems, locked cabinets, encrypted volumes) and who may hold copies.</li>
+            <li><strong>Transmission and transport:</strong> encryption in transit, approved couriers, tamper-evident packaging, and logs of who handled media.</li>
+            <li><strong>Provisioning:</strong> giving people and systems only the information and assets their role needs, recorded in the inventory, with ownership and access reviewed over time.</li>
+          </ul>
+          <div class="compare-2col">
+            <div><b>Least privilege</b>Grant the minimum access needed to perform a job. It limits what a compromised account can reach.</div>
+            <div><b>Need to know</b>Even with clearance, access to a specific item requires a business reason to see that item.</div>
+          </div>
+          <h4>Physical and digital assets</h4>
+          <p>Handling rules must cover every form an asset takes, because the same record can exist on paper, on a laptop, and in a cloud service at once.</p>
+          <ul class="detail">
+            <li><strong>Physical assets:</strong> printed records, removable media, and devices. Controls include clean desk rules, locked storage, sign-out logs, escorted transport, and approved destruction bins.</li>
+            <li><strong>Digital or electronic assets:</strong> files, databases, messages, and backups. Controls include access control, classification labels in metadata, DLP, and logging.</li>
+            <li><strong>Data encryption:</strong> encrypt at rest (full-disk, database, or file encryption) and in transit or motion (TLS, IPsec, SSH). Encryption is only as strong as key management: keys stored with the data protect very little.</li>
+            <li><strong>Secure media destruction:</strong> media that held sensitive data leaves the organization only after approved sanitization or destruction, with a record. Section 4 covers the methods.</li>
+          </ul>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>The Data Life Cycle and Data Roles</h3></div>
+          <p>Data moves through a life cycle: create or collect, store, use, share, archive, and destroy. Each stage carries different risks, and each needs an owner&rsquo;s decision about protection.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Role</th><th>Responsibility</th><th>College example</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Owner</td><td>Accountable; classifies, approves access, sets retention.</td><td>The registrar for student records</td></tr>
+              <tr><td class="term">Controller</td><td>Decides purposes and means of processing personal data (privacy law).</td><td>The college itself</td></tr>
+              <tr><td class="term">Custodian</td><td>Operates controls day to day.</td><td>The database administrators</td></tr>
+              <tr><td class="term">Processor</td><td>Processes personal data for the controller under contract.</td><td>A cloud learning platform vendor</td></tr>
+              <tr><td class="term">User</td><td>Uses data under policy for authorized tasks.</td><td>An advisor viewing transcripts</td></tr>
+              <tr><td class="term">Subject</td><td>The person the personal data describes.</td><td>The student</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Life cycle decisions</h4>
+          <ul class="detail">
+            <li><strong>Collection:</strong> collect only what the purpose requires (data minimization) and tell subjects why.</li>
+            <li><strong>Location:</strong> know where data is stored and processed, including cloud regions, because data location decides which laws apply.</li>
+            <li><strong>Maintenance:</strong> keep data accurate and current, and keep copies in sync.</li>
+            <li><strong>Retention and destruction:</strong> keep data as long as law and business need require, then destroy it on schedule.</li>
+          </ul>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128101;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Data Roles</strong>: match owners, custodians, controllers, processors, and subjects to their duties.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/DataRoles/dataroles.html" target="_blank" rel="noopener noreferrer">Data Roles <span class="ext">&#8599;</span></a></div>
+          </div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Under GDPR the controller stays accountable even when a processor does the work. Outsourcing the task does not outsource the obligation.</div>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Retention, Remanence, and Sanitization</h3></div>
+          <p>Keeping data too briefly breaks the law. Keeping it too long creates risk with no benefit, because every extra record is one more thing to breach, disclose in litigation, or protect. A retention schedule sets the period for each record type, and legal holds suspend destruction when litigation is expected.</p>
+          <p>Assets have retention limits too. At <strong>end of life (EOL)</strong> the vendor stops selling a product. At <strong>end of support (EOS)</strong> it stops patching it. Systems past EOS need replacement, isolation, or compensating controls with documented risk acceptance.</p>
+          <p><strong>Asset retention</strong> decides how long an asset stays in service and how long its records stay after it leaves. <strong>Asset retirement</strong> is the controlled exit: the owner approves it, data is migrated or archived under the retention schedule, the media is sanitized and verified, licenses and accounts are released, and only then is the asset removed from the inventory.</p>
+          <h4>Remanence and NIST SP 800-88</h4>
+          <p>Deleting a file removes the pointer, not the data. Formatting usually does the same. NIST SP 800-88, Guidelines for Media Sanitization, defines three levels of sanitization.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Level</th><th>Protects against</th><th>Example methods</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Clear</td><td>Simple, noninvasive recovery with standard tools.</td><td>Overwrite user-addressable storage; factory reset.</td></tr>
+              <tr><td class="term">Purge</td><td>State-of-the-art laboratory recovery.</td><td>Degaussing magnetic media; ATA Secure Erase or NVMe Sanitize; cryptographic erase.</td></tr>
+              <tr><td class="term">Destroy</td><td>Recovery of any kind; the media cannot be reused.</td><td>Shredding, disintegration, pulverizing, melting, incineration.</td></tr>
+            </tbody>
+          </table></div>
+          <ul class="detail">
+            <li><strong>Hard drives (magnetic):</strong> overwriting clears; degaussing purges but also ruins the drive.</li>
+            <li><strong>Solid-state drives and flash:</strong> degaussing does nothing. Overwriting may miss spare and over-provisioned blocks managed by the controller. Use the drive&rsquo;s sanitize command or cryptographic erase to purge, or destroy it to small particles.</li>
+            <li><strong>Magnetic tape:</strong> degauss with a degausser rated for the tape&rsquo;s coercivity, or destroy.</li>
+            <li><strong>Paper:</strong> there is no clear or purge. Cross-cut shred, pulp, or incinerate.</li>
+            <li><strong>Cloud storage:</strong> you cannot touch the provider&rsquo;s disks. Cryptographic erase with keys you control, plus the provider&rsquo;s contractual sanitization attestation, is the practical answer.</li>
+          </ul>
+          <p>After sanitizing, <strong>verify</strong> the result on a sample and record a <strong>certificate of sanitization</strong>: who, what media, which method, and when.</p>
+          <div class="warn tip"><span class="tip-label">&#9888;&#65039; Common mistake</span>Cryptographic erase only works if the media was encrypted from the start with a strong key that was never exposed. Encrypting a drive the day it is retired protects nothing that was written before.</div>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>Data Security Controls and Compliance</h3></div>
+          <p>Controls follow the data through its three states.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>State</th><th>Main risks</th><th>Typical controls</th></tr></thead>
+            <tbody>
+              <tr><td class="term">At rest</td><td>Theft of media, unauthorized access to stores</td><td>Full-disk and database encryption, access control, backups</td></tr>
+              <tr><td class="term">In transit</td><td>Interception, alteration</td><td>TLS, IPsec, SSH, VPNs, message authentication</td></tr>
+              <tr><td class="term">In use</td><td>Memory scraping, screen capture, insider misuse</td><td>Trusted execution environments, memory protection, session controls, screen masking</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Choosing and adapting controls</h4>
+          <ul class="detail">
+            <li><strong>Standards and controls selection:</strong> start from a recognized baseline, such as NIST SP 800-53, ISO/IEC 27002, or the CIS Controls, chosen to fit the organization&rsquo;s obligations.</li>
+            <li><strong>Scoping:</strong> remove controls that do not apply. A baseline wireless control does not apply to a system with no wireless interface.</li>
+            <li><strong>Tailoring:</strong> adjust what remains, such as setting parameters or adding compensating controls, to match the mission and risk.</li>
+          </ul>
+          <h4>Data protection methods</h4>
+          <ul class="detail">
+            <li><strong>Digital rights management (DRM):</strong> persistent controls that travel with a file, such as no printing, no forwarding, or expiry.</li>
+            <li><strong>Data loss prevention (DLP):</strong> discovers sensitive content and blocks or alerts on movement through email, web, removable media, and cloud.</li>
+            <li><strong>Cloud access security broker (CASB):</strong> sits between users and cloud services to give visibility, enforce policy, and find unsanctioned shadow IT.</li>
+            <li><strong>Cloud-native application protection platform (CNAPP):</strong> one platform that combines cloud security posture management, workload protection, and identity and entitlement checks across cloud accounts. For asset security it finds exposed storage buckets, unencrypted databases, and sensitive data in places it should not be.</li>
+          </ul>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129482;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>The Cube</strong>: the McCumber Cube relates data states, security properties, and safeguards in one model.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/cube/cube.html" target="_blank" rel="noopener noreferrer">The Cube <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>Interactive: Media Sanitization Selector</h3></div>
+          <p>Choose a medium, the classification of the data it held, and where it is going next. The selector recommends Clear, Purge, or Destroy, based on the NIST SP 800-88 decision logic, and lists methods that work for that medium. Then test a method to see whether it is sufficient. Switch to Challenge mode for five scored scenarios.</p>
+
+          <style>
+            .ms-modes{display:flex;gap:.5rem;margin-bottom:.8rem;flex-wrap:wrap;}
+            .ms-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:1rem;align-items:start;}
+            .ms-field{margin-bottom:.7rem;}
+            .ms-field label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.25rem;}
+            .ms-field select{width:100%;}
+            .ms-lvl{display:flex;gap:.4rem;margin:.3rem 0 .6rem;}
+            .ms-lvl span{flex:1;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;padding:.5rem .3rem;border:1px solid var(--border);border-radius:4px;color:var(--text-muted);background:var(--card-bg);}
+            .ms-lvl span.on{background:var(--gold);border-color:var(--gold);color:#fff;}
+            .ms-lvl span.on.d{background:var(--wrong);border-color:var(--wrong);}
+            .ms-lvl span.on.c{background:var(--jade);border-color:var(--jade);}
+            .ms-out p{font-family:Arial,sans-serif;font-size:.8rem;color:var(--text-secondary);line-height:1.55;margin:0 0 .45rem;}
+            .ms-out ul{margin:.2rem 0 .5rem 1.1rem;font-family:Arial,sans-serif;font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+            .ms-sc{font-family:Arial,sans-serif;font-size:.84rem;color:var(--text-primary);background:var(--blue-pale);border:1px solid var(--blue-pale-border);border-radius:5px;padding:.6rem .75rem;margin-bottom:.7rem;line-height:1.5;}
+            .ms-sc b{color:var(--gold);}
+            .ms-row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;}
+            .ms-tally{font-family:Arial,sans-serif;font-size:.78rem;color:var(--text-muted);margin-left:auto;}
+            .ms-hide{display:none;}
+            .ms-field select{max-width:100%;min-width:0;}
+            @media (max-width:760px){.ms-grid{grid-template-columns:minmax(0,1fr);}}
+          </style>
+
+          <div class="iw" id="ms-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; choose the sanitization</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="ms-modes" role="group" aria-label="Mode">
+                <button type="button" class="iw-btn" id="ms-m1" aria-pressed="true">Explore</button>
+                <button type="button" class="iw-btn" id="ms-m2" aria-pressed="false">Challenge (5 scenarios)</button>
+              </div>
+
+              <div class="ms-grid">
+                <div class="iw-panel">
+                  <div id="ms-scbox" class="ms-sc ms-hide" aria-live="polite"></div>
+                  <div id="ms-inputs">
+                    <div class="ms-field"><label for="ms-media">Media type</label>
+                      <select id="ms-media">
+                        <option value="hdd">Hard disk drive (magnetic)</option>
+                        <option value="ssd">Solid-state drive</option>
+                        <option value="usb">USB flash drive</option>
+                        <option value="tape">Magnetic backup tape</option>
+                        <option value="paper">Paper records</option>
+                        <option value="phone">Mobile phone</option>
+                        <option value="cloud">Cloud storage volume</option>
+                      </select></div>
+                    <div class="ms-field"><label for="ms-cls">Data classification</label>
+                      <select id="ms-cls">
+                        <option value="0">Public</option>
+                        <option value="1">Internal</option>
+                        <option value="2" selected>Confidential</option>
+                        <option value="3">Restricted</option>
+                      </select></div>
+                    <div class="ms-field"><label for="ms-dest">Destination</label>
+                      <select id="ms-dest">
+                        <option value="reuse">Reuse inside the organization</option>
+                        <option value="leave">Leaving organization control (resale, donation, lease return)</option>
+                        <option value="eol">End of life, disposal</option>
+                      </select></div>
+                  </div>
+                  <div id="ms-chlvl" class="ms-field ms-hide"><label for="ms-pick">Your sanitization level</label>
+                    <select id="ms-pick"><option value="">Choose a level</option><option value="1">Clear</option><option value="2">Purge</option><option value="3">Destroy</option></select></div>
+                  <div class="ms-field"><label for="ms-method">Method to test</label>
+                    <select id="ms-method">
+                      <option value="">Choose a method</option>
+                      <option value="delete">Delete files and format</option>
+                      <option value="overwrite">Overwrite all addressable storage</option>
+                      <option value="reset">Factory reset</option>
+                      <option value="degauss">Degauss</option>
+                      <option value="secure">ATA Secure Erase or NVMe Sanitize</option>
+                      <option value="crypto">Cryptographic erase (destroy the keys)</option>
+                      <option value="shred">Shred or disintegrate</option>
+                      <option value="burn">Incinerate or pulp</option>
+                    </select></div>
+                  <div class="ms-row">
+                    <button type="button" class="iw-btn" id="ms-test">Test method</button>
+                    <button type="button" class="iw-btn jade ms-hide" id="ms-next">Next scenario</button>
+                    <span class="ms-tally" id="ms-tally"></span>
+                  </div>
+                </div>
+                <div class="iw-panel ms-out" aria-live="polite">
+                  <h5 class="iw-h5">Recommendation</h5>
+                  <div class="ms-lvl" id="ms-lvl"><span data-l="1" class="c">Clear</span><span data-l="2">Purge</span><span data-l="3" class="d">Destroy</span></div>
+                  <div id="ms-rec"></div>
+                  <div class="iw-verdict" id="ms-verdict"><span class="iw-pill" id="ms-pill">Ready</span><span id="ms-coach">Pick a method and test it against the recommendation.</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>Three questions drive the answer: how sensitive was the data, where is the media going, and what does this medium physically allow? The same Confidential data needs a Clear for internal reuse, a Purge when a leased laptop goes back to the vendor, and Destroy for a flash drive that cannot be purged reliably. Whatever the level, the job is not done until someone verifies it and signs the certificate.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('ms-root'); if(!root) return;
+            var $=function(id){return root.querySelector('#'+id);};
+            var NAMES={1:'Clear',2:'Purge',3:'Destroy'};
+            var MEDIA={hdd:'hard disk drive',ssd:'solid-state drive',usb:'USB flash drive',tape:'magnetic tape',paper:'paper records',phone:'mobile phone',cloud:'cloud storage volume'};
+            // method strength per media: 0 = not sanitization, 1 Clear, 2 Purge, 3 Destroy, -1 not applicable or ineffective
+            var M={
+              delete:{hdd:0,ssd:0,usb:0,tape:0,paper:-1,phone:0,cloud:0},
+              overwrite:{hdd:1,ssd:1,usb:1,tape:1,paper:-1,phone:-1,cloud:1},
+              reset:{hdd:-1,ssd:-1,usb:-1,tape:-1,paper:-1,phone:1,cloud:-1},
+              degauss:{hdd:2,ssd:-1,usb:-1,tape:2,paper:-1,phone:-1,cloud:-1},
+              secure:{hdd:2,ssd:2,usb:-1,tape:-1,paper:-1,phone:-1,cloud:-1},
+              crypto:{hdd:2,ssd:2,usb:2,tape:-1,paper:-1,phone:2,cloud:2},
+              shred:{hdd:3,ssd:3,usb:3,tape:3,paper:3,phone:3,cloud:-1},
+              burn:{hdd:3,ssd:3,usb:3,tape:3,paper:3,phone:3,cloud:-1}
+            };
+            var MNAME={delete:'Delete and format',overwrite:'Overwrite',reset:'Factory reset',degauss:'Degaussing',secure:'ATA Secure Erase or NVMe Sanitize',crypto:'Cryptographic erase',shred:'Shredding or disintegration',burn:'Incineration or pulping'};
+            var WHY={
+              'degauss-ssd':'Degaussing does nothing to flash memory. Solid-state storage holds charge, not magnetic domains.',
+              'degauss-usb':'Degaussing does nothing to flash memory.',
+              'degauss-phone':'Phones store data in flash memory, which a degausser cannot affect.',
+              'delete':'Deleting and formatting removes pointers, not data. It is not sanitization at any level.',
+              'overwrite-ssd':'Overwriting through the operating system clears an SSD, but it may miss spare and over-provisioned blocks the controller manages. It is not a purge.',
+              'secure-usb':'Most USB flash drives do not support a reliable firmware sanitize command.',
+              'crypto':'Cryptographic erase is only valid if the media was encrypted from the first write with a key that was never exposed. Confirm that before relying on it.',
+              'cloud-phys':'You cannot shred or burn a provider&rsquo;s disks. Use cryptographic erase with keys you control and the provider&rsquo;s contractual sanitization attestation.',
+              'paper':'Paper cannot be cleared or purged. It is destroyed or, if public, recycled.'
+            };
+            function required(media,cls,dest){
+              cls=+cls; var lvl;
+              if(dest==='reuse') lvl = cls>=3?2:1;
+              else if(dest==='leave') lvl = cls===0?1:(cls===3?3:2);
+              else lvl = cls===0?1:(cls===1?2:3);
+              var notes=[];
+              if(media==='paper'){ if(cls===0){notes.push('Public paper needs no sanitization; recycling is acceptable.'); lvl=0;} else { if(lvl<3) notes.push('Paper has no Clear or Purge option, so the requirement rises to Destroy.'); lvl=3; } }
+              if(media==='usb' && lvl===2){ notes.push('USB flash drives rarely support a verifiable purge. Unless the drive was encrypted from the start, destroy it.'); }
+              if(media==='cloud' && lvl===3){ notes.push('Physical destruction is not available to a cloud customer. Cryptographic erase plus the provider&rsquo;s destruction attestation is the accepted equivalent.'); lvl=2; }
+              if(dest==='reuse' && lvl>=1) notes.push('Reuse is only appropriate for a destination at the same or higher sensitivity level.');
+              return {lvl:lvl,notes:notes};
+            }
+            function methodsFor(media,lvl,dest){
+              return Object.keys(M).filter(function(k){var s=M[k][media]; if(k==='degauss'&&media==='hdd'&&dest!=='eol') return false; return s>=lvl && s>0 && (lvl===3 ? s===3 : s<3);}).map(function(k){return MNAME[k];});
+            }
+            function verdict(cls,pill,msg){var v=$('ms-verdict');v.className='iw-verdict '+cls;var p=$('ms-pill');p.className='iw-pill '+cls;p.textContent=pill;$('ms-coach').innerHTML=msg;}
+            function paintLvl(l){[].forEach.call($('ms-lvl').children,function(s){s.classList.toggle('on',+s.dataset.l===l);});}
+            function rec(show){
+              var media=$('ms-media').value, r=required(media,$('ms-cls').value,$('ms-dest').value);
+              if(!show){ paintLvl(-1); $('ms-rec').innerHTML='<p>Hidden in Challenge mode until you check your answer.</p>'; return r; }
+              paintLvl(r.lvl);
+              var h;
+              if(r.lvl===0) h='<p><strong>No sanitization required.</strong></p>';
+              else { var ms=methodsFor(media,r.lvl,$('ms-dest').value);
+                h='<p><strong>'+NAMES[r.lvl]+'</strong> the '+MEDIA[media]+'. Acceptable methods:</p><ul>'+ms.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>'; }
+              h+=r.notes.map(function(n){return '<p>'+n+'</p>';}).join('');
+              if(r.lvl>0) h+='<p>Then <strong>verify</strong> a sample and record a <strong>certificate of sanitization</strong>.</p>';
+              $('ms-rec').innerHTML=h; return r;
+            }
+            function judge(method,media,lvl){
+              if(!method) return {ok:false,cls:'',pill:'Choose',msg:'Choose a method to test.'};
+              var s=M[method][media], key=method+'-'+media, why=WHY[key]||'';
+              if(media==='paper' && s<0) return {ok:false,cls:'bad',pill:'Not possible',msg:WHY.paper};
+              if(media==='cloud' && s<0 && (method==='shred'||method==='burn')) return {ok:false,cls:'bad',pill:'Not possible',msg:WHY['cloud-phys']};
+              if(method==='delete') return {ok:false,cls:'bad',pill:'Insufficient',msg:WHY['delete']};
+              if(s<0) return {ok:false,cls:'bad',pill:'Ineffective',msg:why||(MNAME[method]+' does not apply to a '+MEDIA[media]+'.')};
+              if(lvl===0) return {ok:true,cls:'good',pill:'Acceptable',msg:'No sanitization was required, so any handling works. '+(s===3?'Destroying it is more than needed.':'')};
+              if(s<lvl) return {ok:false,cls:'bad',pill:'Too weak',msg:MNAME[method]+' achieves '+NAMES[s]+' on a '+MEDIA[media]+', but this case requires '+NAMES[lvl]+'. '+why};
+              var extra=method==='crypto'?' '+WHY.crypto:'';
+              if(s===3 && lvl<3) return {ok:true,cls:'warn',pill:'Works, but wasteful',msg:MNAME[method]+' exceeds the requirement. The media cannot be reused, which defeats a reuse or resale plan.'};
+              if(method==='degauss' && media==='hdd' && $('ms-dest').value!=='eol') return {ok:true,cls:'warn',pill:'Purges, but',msg:'Degaussing purges a hard drive, but it also destroys the servo tracks, so the drive cannot be reused or resold.'};
+              return {ok:true,cls:'good',pill:'Sufficient',msg:MNAME[method]+' meets '+NAMES[lvl]+' for a '+MEDIA[media]+'.'+extra};
+            }
+            // Explore mode
+            var mode='explore';
+            function explore(){ var r=rec(true); var m=$('ms-method').value; if(m){var j=judge(m,$('ms-media').value,r.lvl);verdict(j.cls,j.pill,j.msg);} else verdict('','Ready','Pick a method and test it against the recommendation.'); }
+            // Challenge mode
+            var SC=[
+              {t:'A leased staff laptop with a <b>solid-state drive</b> held <b>Confidential</b> advising notes. It goes back to the leasing company next week.',media:'ssd',cls:2,dest:'leave'},
+              {t:'A box of <b>magnetic backup tapes</b> with <b>Restricted</b> financial aid records has reached the end of its retention period.',media:'tape',cls:3,dest:'eol'},
+              {t:'A lab <b>hard disk drive</b> with <b>Internal</b> course files will be reinstalled for another department on campus.',media:'hdd',cls:1,dest:'reuse'},
+              {t:'Printed <b>Confidential</b> admission files are past retention and must be disposed of.',media:'paper',cls:2,dest:'eol'},
+              {t:'A <b>cloud storage volume</b> holding <b>Confidential</b> research data will be released when the contract ends. The college managed its own encryption keys from day one.',media:'cloud',cls:2,dest:'leave'}
+            ];
+            var ci=0, score=0, answered=false;
+            function loadSc(){
+              var s=SC[ci]; answered=false;
+              $('ms-media').value=s.media; $('ms-cls').value=s.cls; $('ms-dest').value=s.dest;
+              $('ms-scbox').innerHTML='<b>Scenario '+(ci+1)+' of 5.</b> '+s.t;
+              $('ms-pick').value=''; $('ms-method').value='';
+              rec(false); verdict('','Your call','Choose a level and a method, then test.');
+              $('ms-test').textContent='Check answer'; $('ms-next').classList.add('ms-hide');
+              $('ms-tally').textContent='Score: '+score+' / '+(ci*2);
+            }
+            function checkSc(){
+              if(answered) return;
+              var pick=+$('ms-pick').value, m=$('ms-method').value;
+              if(!pick||!m){verdict('warn','Incomplete','Choose both a level and a method.');return;}
+              answered=true;
+              var r=rec(true), j=judge(m,$('ms-media').value,r.lvl), pts=0;
+              var lvlOk = pick===r.lvl; if(lvlOk) pts++; if(j.ok && j.cls!=='warn') pts++; else if(j.ok && j.cls==='warn' && r.lvl===3) pts++;
+              score+=pts;
+              verdict(pts===2?'good':pts===1?'warn':'bad', pts+' / 2', (lvlOk?'Level correct: '+NAMES[r.lvl]+'. ':'Required level: '+NAMES[r.lvl]+'. ')+j.msg);
+              $('ms-tally').textContent='Score: '+score+' / '+((ci+1)*2);
+              if(ci<4){$('ms-next').textContent='Next scenario';} else {$('ms-next').textContent='Restart challenge'; verdict(score>=8?'good':'warn','Final: '+score+' / 10',(score>=8?'Strong work. ':'Review the media rules in Section 4, then try again. ')+$('ms-coach').innerHTML);}
+              $('ms-next').classList.remove('ms-hide');
+            }
+            function setMode(m){
+              mode=m; $('ms-m1').setAttribute('aria-pressed',m==='explore'); $('ms-m2').setAttribute('aria-pressed',m==='challenge');
+              $('ms-scbox').classList.toggle('ms-hide',m==='explore'); $('ms-chlvl').classList.toggle('ms-hide',m==='explore');
+              ['ms-media','ms-cls','ms-dest'].forEach(function(id){$(id).disabled=(m==='challenge');});
+              if(m==='challenge'){ci=0;score=0;loadSc();} else {$('ms-test').textContent='Test method';$('ms-next').classList.add('ms-hide');$('ms-tally').textContent='';explore();}
+            }
+            ['ms-media','ms-cls','ms-dest','ms-method'].forEach(function(id){$(id).addEventListener('change',function(){if(mode==='explore')explore();});});
+            $('ms-test').addEventListener('click',function(){ if(mode==='explore') explore(); else checkSc(); });
+            $('ms-next').addEventListener('click',function(){ if(ci<4){ci++;loadSc();} else {ci=0;score=0;loadSc();} });
+            $('ms-m1').addEventListener('click',function(){setMode('explore');});
+            $('ms-m2').addEventListener('click',function(){setMode('challenge');});
+            explore();
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Faculty Teaching Segment</h3></div>
+          <p>Asset security feels abstract until students hold the media and fill in the forms. Make it concrete with real artifacts from a fictional organization.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> give teams a data inventory of ten systems at a fictional college. For each, they name the owner and custodian, assign a classification with a one-line impact rationale, set a retention period, and choose a sanitization method for the media at end of life.</li>
+            <li><strong>Rubric criteria:</strong> owner and custodian correctly separated, classification justified by impact rather than by system type, retention tied to a stated legal or business reason, and a sanitization method valid for the specific medium.</li>
+            <li><strong>Lab idea:</strong> recover &ldquo;deleted&rdquo; files from a USB drive with a free forensic tool, then overwrite the drive and try again. Students see remanence for themselves. Use only drives and synthetic data you supply.</li>
+            <li><strong>Course fit:</strong> this domain fits an introductory security, privacy, or GRC course. It supports the CAE-CD Privacy (PRI), Cybersecurity Planning and Management (CPM), and Policy, Legal, Ethics, and Compliance (PLE) Knowledge Units.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>Run the Challenge mode as a pair activity and ask each pair to write one sentence for every scenario that names the physical reason behind the choice. &ldquo;Flash memory ignores magnets&rdquo; sticks far better than a memorized table.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Data Roles</h3><p>Owners, controllers, custodians, processors, and subjects, and what each is responsible for.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/DataRoles/dataroles.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Data Roles (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Privacy Tenets</h3><p>The core privacy principles behind data minimization, notice, consent, and subject rights.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/privacy/privacy.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Privacy Tenets (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 5</span></div><h3>The Cube</h3><p>The McCumber Cube: data states, security properties, and safeguards in one model.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cube/cube.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: The Cube (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 5</span></div><h3>The Cube Challenge</h3><p>Apply the cube: place scenarios on the right state, property, and safeguard.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cube_challenge/cube_challenge.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: The Cube Challenge (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 4</span></div><h3>Digital Media Handling: Backups</h3><p>Backup media and handling practices, a useful lead-in to retention and sanitization.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/backups/backups.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Digital Media Handling: Backups (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cryptography</span><span class="em-sec">Section 5</span></div><h3>Encrypt Data</h3><p>Encrypting data at rest, the control that also makes cryptographic erase possible.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/EncryptData/EncryptData.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Encrypt Data (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Self-checking practice for this lesson, ready to use with your own students. Each item ends with a report you can print or save as a PDF.</p>
+    <div class="pl-grid">
+      <article class="pl-card"><div class="pl-top"><span class="pl-type">CISSP Practice &middot; A3</span><span class="pl-time">&#9201; 35 min</span></div><h3><a href="activity03.html">Classify, Own, Retain, Destroy</a></h3><p>Assign data roles, classify by impact, and choose retention periods and NIST SP 800-88 sanitization methods.</p><div class="pl-foot"><span class="pl-level">Foundational</span><a class="pl-open" href="activity03.html" aria-label="Open activity A3: Classify, Own, Retain, Destroy">Open &#8594;</a></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B2</span><span class="pl-time">&#9201; 60 min</span></div><h3><a href="lab02.html">Data Classification and Handling</a></h3><p>Work an inventory of data stores: assign owner, custodian, classification, retention, DLP rule, and sanitization method while a live compliance meter tracks your choices.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="lab02.html" aria-label="Open lab B2: Data Classification and Handling">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q1.</span>Who is responsible for determining the classification of the college&rsquo;s student financial aid data?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> The database administrator who maintains the system</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> The director of financial aid, as the data owner</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> The CISO</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> The students the data describes</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> The data owner, a business manager accountable for the data, sets its classification. The DBA is a custodian, the CISO advises and runs the program, and students are data subjects.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q2.</span>A solid-state drive that stored Confidential data will be returned to a leasing company. Which method BEST sanitizes it?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> Degaussing the drive</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> Deleting all files and reformatting</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> A single overwrite pass from the operating system</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> The drive&rsquo;s firmware sanitize command or a cryptographic erase</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> Media leaving organizational control with Confidential data needs a Purge. Firmware sanitize and cryptographic erase reach all flash blocks. Degaussing has no effect on flash, formatting is not sanitization, and an OS overwrite may miss over-provisioned blocks.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q3.</span>Under GDPR, which party decides the purposes and means of processing personal data?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> The data controller</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> The data processor</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> The data custodian</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> The data subject</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> The controller determines why and how personal data is processed. A processor acts only on the controller&rsquo;s instructions.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q4.</span>An organization adopts the NIST SP 800-53 moderate baseline and removes the controls for wireless access because the system has no wireless interface. What is this called?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> Tailoring</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> Applying a compensating control</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> Scoping</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> Risk avoidance</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> Scoping removes baseline controls that do not apply to the system. Tailoring adjusts the controls that remain to fit the organization.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q5.</span>A college runs workloads in three cloud accounts. The security team wants one tool that finds publicly exposed storage, unencrypted databases, and overly broad cloud permissions across all of them. Which tool BEST fits?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> A cloud-native application protection platform (CNAPP)</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> Digital rights management</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> A network-based IDS in the campus data center</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> Full-disk encryption on staff laptops</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> A CNAPP combines posture management, workload protection, and entitlement checks across cloud accounts, which is exactly this need. DRM protects individual files, an on-premises IDS does not see cloud configuration, and laptop encryption protects endpoints.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q6.</span>Faculty are uploading course rosters to personal file-sharing services the college has not approved. Which tool BEST gives visibility and policy enforcement over this cloud use?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> Digital rights management</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> A host-based firewall</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> A cloud access security broker (CASB)</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> A degausser</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> A CASB sits between users and cloud services, discovers unsanctioned shadow IT, and enforces policy. DRM protects individual files but does not reveal which services are in use.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q7.</span>A department is retiring forty desktops that stored student records. Which step should happen LAST?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> The asset owner approves the retirement.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> Records are archived according to the retention schedule.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> The drives are sanitized and the result is verified and certified.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> The desktops are removed from the asset inventory.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> The inventory entry is the evidence trail, so it closes only after approval, archiving, and verified sanitization. Removing assets first leaves no record of what happened to the data they held.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q8.</span>What is the MOST effective way to make sure staff handle a printed report according to its classification?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> Store it in a locked cabinet</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> Mark it with its classification and handling instructions, backed by policy and training</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> Print it on colored paper</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> Encrypt the file it was printed from</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Handling depends on people knowing the classification. Clear marking, supported by policy and training, tells every reader what to do. A cabinet protects one copy, and file encryption does nothing for the printout.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson01.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 1: Security Governance and Risk Management</span></a>
+    <a href="lesson03.html" class="next"><span class="pager-dir">Next &#8594;</span><span class="pager-name">Lesson 3: Security Architecture and Engineering</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

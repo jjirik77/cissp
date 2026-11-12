@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 1: Security Governance and Risk Management | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 1</span></p>
+    <span class="lesson-badge-lg">Day 1, Late Morning and Afternoon &bull; Domain 1</span>
+    <h1>Security Governance and <span>Risk Management</span></h1>
+    <p class="lesson-lede">Domain 1 ties for the largest share of the exam and is the lens for every other domain. It asks a manager&rsquo;s questions: what does the business need, what does the law require, how much risk is acceptable, and who owns the decision. The technology comes later. The judgment comes first.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 1, 10:30 to 5:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~5 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>13.6%</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">Security serves the business</h2>
+    <div class="rule"></div>
+    <p class="lead">Domain 1 sets the tone for the whole exam. Security exists to protect the mission, not to win arguments about technology. A CISSP aligns security with business goals, follows the law, writes policy that people can follow, measures risk in terms leaders understand, and recommends a response. Senior management then accepts the risk and owns the outcome.</p>
+    <p class="lead">This lesson covers governance, law and compliance, the ethical use of artificial intelligence, policy and personnel security, risk management, business continuity requirements, supply chain risk, awareness programs, and threat modeling. It is the longest session of the week because it ties for the most weight and frames every domain that follows.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>When two answers both reduce risk, the better answer usually starts with governance: understand the business need, follow policy, and involve the right owner. Fixing it yourself, right now, is rarely the CISSP answer.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Explain</strong> how governance aligns security with strategy, and distinguish due care from due diligence. <em class="bloom-tag">Bloom: Understand</em></span></li>
+      <li><span><strong>Classify</strong> legal, regulatory, and investigation requirements by type and burden of proof. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Evaluate</strong> an AI use case for fairness, transparency, accountability, privacy, and human oversight. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Calculate</strong> single loss expectancy, annualized loss expectancy, and the value of a safeguard. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Select</strong> a risk response and control type that fits a stated risk appetite. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Apply</strong> STRIDE to the elements of a data flow diagram and choose mitigations. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Design</strong> a classroom risk or threat modeling exercise with a scoring rubric. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Due Care</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Doing what a reasonable person would do to protect assets: acting on known risks by putting controls in place and operating them.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Due Diligence</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The ongoing work of learning about risk and verifying that controls work: research, assessment, monitoring, and review before and after a decision.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Risk Appetite</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The amount and type of risk an organization is willing to pursue or retain to meet its goals. Senior leadership sets it.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Annualized Loss Expectancy (ALE)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The expected yearly loss from a threat: single loss expectancy multiplied by the annualized rate of occurrence (ALE = SLE &times; ARO).</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Residual Risk</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The risk that remains after controls are in place. Management must formally accept it.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Business Impact Analysis (BIA)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The study that identifies critical business functions, their dependencies, and how long each can be down before the damage is unacceptable.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">STRIDE</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A threat classification: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Supply Chain Risk Management (SCRM)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Identifying and reducing the risk that comes from suppliers and the products they deliver, such as tampering, counterfeits, and implants.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Explainability</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The ability to describe why an AI system produced a given output in terms the affected person and the accountable owner can understand.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Standard</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A mandatory, specific requirement that supports a policy, such as a minimum password length or an approved encryption algorithm.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. Security Concepts and Governance</a></li>
+          <li><a href="#s2">2. Law, AI Ethics, and Investigations</a></li>
+          <li><a href="#s3">3. Policy and Personnel Security</a></li>
+          <li><a href="#s4">4. Risk Management</a></li>
+          <li><a href="#s5">5. Continuity, Supply Chain, and Awareness</a></li>
+          <li><a href="#s6">6. Threat Modeling</a></li>
+          <li><a href="#s7">7. Interactive: STRIDE Board</a></li>
+          <li><a href="#s8">8. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>Security Concepts and Governance</h3></div>
+          <p>The exam builds on five security properties. Confidentiality keeps information from people who should not see it. Integrity keeps it accurate and unaltered. Availability keeps it usable when it is needed. Authenticity confirms that a person, system, or message is genuine. Nonrepudiation prevents a sender from denying an action they took. ISC2 calls these the five pillars of information security.</p>
+          <p>Governance is how leadership directs and oversees security. It sets the goals and the risk appetite, assigns accountability, and checks results. Management then runs the program within those boundaries.</p>
+          <p>The exam outline asks you to evaluate, apply, and <strong>sustain</strong> governance. Building a program is the easy part. Keeping it healthy means reviewing the strategy as the business changes, refreshing policy on a schedule, reporting metrics to the board, renewing executive sponsorship, and fixing the gaps that audits and incidents reveal.</p>
+          <h4>What governance covers</h4>
+          <ul class="detail">
+            <li><strong>Alignment with strategy:</strong> the security program supports the mission, goals, and objectives. A strategic plan covers about five years, a tactical plan about one year, and operational plans cover weeks to months.</li>
+            <li><strong>Organizational processes:</strong> acquisitions bring in unknown systems and risk, so assess them before they connect. Divestitures require removing access and data cleanly. Governance committees, such as a steering committee, approve priorities and budgets.</li>
+            <li><strong>Roles and responsibilities:</strong> senior management holds final accountability. The CISO runs the program. Data owners classify data and approve access. Custodians operate the controls. Users follow policy. Auditors provide independent assurance.</li>
+            <li><strong>Control frameworks:</strong> ISO/IEC 27001 and 27002 (an information security management system and its controls), the NIST Cybersecurity Framework 2.0 (six functions: Govern, which version 2.0 added, plus Identify, Protect, Detect, Respond, and Recover) and SP 800-53, COBIT (governance of enterprise IT), SABSA (business-driven security architecture), PCI DSS (payment card data), and FedRAMP (cloud services for the U.S. federal government).</li>
+          </ul>
+          <div class="compare-2col">
+            <div><b>Due care</b>Acting on what you know. The organization implements and operates reasonable controls. Example: the college patches its servers and enforces MFA after a risk assessment identifies the need.</div>
+            <div><b>Due diligence</b>Making sure you know. The organization researches, assesses, and verifies. Example: the college reviews a cloud vendor&rsquo;s SOC 2 report before signing, then monitors the vendor each year.</div>
+          </div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>A memory aid many instructors use: due diligence is <em>thinking</em> before and after you act, and due care is <em>doing</em>. Failing at either can support a negligence claim. Accountability for both sits with senior management, even when tasks are delegated.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#127963;&#65039;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Five Pillars of Information Security</strong>: an interactive refresher on confidentiality, integrity, availability, authenticity, and nonrepudiation.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/FivePillars/FivePillars.html" target="_blank" rel="noopener noreferrer">Five Pillars <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Law, AI Ethics, and Investigations</h3></div>
+          <p>A CISSP does not practice law, but must recognize legal requirements and bring in counsel. The exam tests categories and consequences more than the details of any single statute.</p>
+          <h4>Legal and regulatory issues</h4>
+          <ul class="detail">
+            <li><strong>Cybercrimes and data breaches:</strong> computer crime laws, such as the U.S. Computer Fraud and Abuse Act, and breach notification laws that set deadlines for telling regulators and affected people.</li>
+            <li><strong>Licensing and intellectual property:</strong> copyright protects expression, patents protect inventions, trademarks protect brand identity, and trade secrets protect confidential business information for as long as it stays secret. Software licenses limit how software may be used.</li>
+            <li><strong>Import and export controls:</strong> some encryption and dual-use technology needs a license to export. In the U.S., ITAR covers defense items and the EAR covers commercial and dual-use items.</li>
+            <li><strong>Transborder data flow:</strong> personal data moving between countries must meet the rules of both. Data localization laws may require some data to stay in country.</li>
+            <li><strong>Privacy:</strong> the EU General Data Protection Regulation (GDPR), the California Consumer Privacy Act, China&rsquo;s Personal Information Protection Law, South Africa&rsquo;s Protection of Personal Information Act, and the U.S. Health Insurance Portability and Accountability Act (HIPAA), which protects health information held by covered entities such as health plans and providers and by their business associates. Each grants rights to individuals and duties to the organizations that collect data.</li>
+            <li><strong>Financial and corporate laws:</strong> in the U.S., the Gramm-Leach-Bliley Act (GLBA) requires financial institutions, including insurers and lenders, to protect customer financial information and explain how they share it. The Sarbanes-Oxley Act (SOX) holds public companies accountable for internal controls over financial reporting, which pulls IT access and change controls into scope.</li>
+            <li><strong>Contracts and industry standards:</strong> obligations can come from a contract (a service level agreement) or an industry body (PCI DSS) rather than from a law.</li>
+          </ul>
+          <h4>Ethics in artificial intelligence</h4>
+          <p>Organizations now use AI to screen applicants, flag fraud, answer students, and triage alerts. The security leader is often the person asked whether a use is safe and fair. Five principles frame that answer.</p>
+          <ul class="detail">
+            <li><strong>Fairness and bias:</strong> a model trained on skewed data repeats the skew. Test outcomes across groups before and after deployment.</li>
+            <li><strong>Transparency and explainability:</strong> people affected by a decision should know AI was involved and get a reason they can understand.</li>
+            <li><strong>Accountability:</strong> a named owner answers for each AI system. The model never owns the decision.</li>
+            <li><strong>Privacy:</strong> collect only the data the purpose needs, protect training data, and respect consent and retention rules.</li>
+            <li><strong>Human oversight:</strong> keep a person in the loop for decisions with legal or significant effects, with the authority to override.</li>
+          </ul>
+          <p>Two references help. The <strong>NIST AI Risk Management Framework</strong> is voluntary and organizes the work into four functions: govern, map, measure, and manage. The <strong>EU AI Act</strong> is law. It sorts AI systems by risk, bans a small set of unacceptable uses, and places the heaviest duties on high-risk systems such as those used in hiring or education.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>When an AI question offers a technical fix and a governance answer, such as an impact assessment, a named owner, or human review, the governance answer is usually best. The ISC2 Code of Ethics applies to AI work as it does to any other.</div>
+          <h4>Investigation types</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Type</th><th>Purpose</th><th>Standard of proof</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Administrative</td><td>Internal matters such as policy violations or operational problems.</td><td>Lowest; organizational policy decides.</td></tr>
+              <tr><td class="term">Criminal</td><td>Violations of criminal law, brought by the government.</td><td>Beyond a reasonable doubt.</td></tr>
+              <tr><td class="term">Civil</td><td>Disputes between parties, such as breach of contract.</td><td>Preponderance of the evidence.</td></tr>
+              <tr><td class="term">Regulatory</td><td>A government agency checks compliance with its rules.</td><td>Varies by agency; can lead to fines or criminal referral.</td></tr>
+              <tr><td class="term">Industry standards</td><td>Checks against a standard such as PCI DSS, often contractual.</td><td>Set by the standard and the contract.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>If an internal investigation might become criminal, handle evidence as if it will go to court from the first minute. You cannot add a chain of custody later.</div>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>Policy and Personnel Security</h3></div>
+          <p>Policy turns governance into direction people can follow. The exam expects you to know the four document types and how they relate.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Document</th><th>What it does</th><th>Mandatory?</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Policy</td><td>States management&rsquo;s intent and direction at a high level.</td><td>Yes</td><td>&ldquo;All sensitive data is encrypted at rest.&rdquo;</td></tr>
+              <tr><td class="term">Standard</td><td>Sets a specific, measurable requirement that supports a policy.</td><td>Yes</td><td>&ldquo;Use AES-256 for data at rest.&rdquo;</td></tr>
+              <tr><td class="term">Procedure</td><td>Gives step-by-step instructions to meet a standard.</td><td>Yes</td><td>&ldquo;How to enable disk encryption on a staff laptop.&rdquo;</td></tr>
+              <tr><td class="term">Guideline</td><td>Offers recommended practice where flexibility is acceptable.</td><td>No</td><td>&ldquo;Tips for choosing a strong passphrase.&rdquo;</td></tr>
+            </tbody>
+          </table></div>
+          <p>A <strong>baseline</strong> is a minimum security configuration for a type of system. It is often treated alongside standards.</p>
+          <h4>Personnel security across the employee life cycle</h4>
+          <ul class="detail">
+            <li><strong>Screening and hiring:</strong> background and reference checks that match the sensitivity of the role.</li>
+            <li><strong>Agreements:</strong> acceptable use policies, nondisclosure agreements, and noncompete clauses where the law allows them.</li>
+            <li><strong>Onboarding, transfers, and termination:</strong> grant only the access a role needs, remove old access on transfer to prevent privilege creep, and revoke all access promptly when someone leaves.</li>
+            <li><strong>Vendors, consultants, and contractors:</strong> the same controls by contract, service level agreements (SLAs) that set measurable security and availability commitments, monitoring, and the right to audit.</li>
+            <li><strong>Administrative controls:</strong> separation of duties, job rotation, and mandatory vacations help detect and deter fraud.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>For an involuntary termination, disable access at the same time the person is notified, not afterward. Expect at least one question that tests the order of these steps.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128220;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Policies, Standards, Procedures, Guidelines</strong>: sort real statements into the four document types.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/PSPG/PSPG.html" target="_blank" rel="noopener noreferrer">PSPG <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Risk Management</h3></div>
+          <p>Risk combines the likelihood that a threat will exploit a vulnerability with the impact if it does. Risk management finds, measures, and treats risk, then keeps watching it. The exam expects you to calculate, compare, and recommend.</p>
+          <h4>Quantitative analysis</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Term</th><th>Formula</th><th>Worked example</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Asset value (AV)</td><td>Value of the asset</td><td>Student records system: $400,000</td></tr>
+              <tr><td class="term">Exposure factor (EF)</td><td>Percent of value lost in one event</td><td>Ransomware event: 25%</td></tr>
+              <tr><td class="term">Single loss expectancy (SLE)</td><td>AV &times; EF</td><td>$400,000 &times; 0.25 = $100,000</td></tr>
+              <tr><td class="term">Annualized rate of occurrence (ARO)</td><td>Expected events per year</td><td>Once every five years: 0.2</td></tr>
+              <tr><td class="term">Annualized loss expectancy (ALE)</td><td>SLE &times; ARO</td><td>$100,000 &times; 0.2 = $20,000</td></tr>
+              <tr><td class="term">Safeguard value</td><td>ALE before &minus; ALE after &minus; annual safeguard cost</td><td>$20,000 &minus; $5,000 &minus; $8,000 = $7,000 per year</td></tr>
+            </tbody>
+          </table></div>
+          <p>In the example, an $8,000 per year safeguard lowers the ARO to 0.05, so the ALE drops to $5,000. The safeguard saves $7,000 a year, so it is worth buying. If the result is negative, the control costs more than the risk it removes.</p>
+          <p><strong>Qualitative analysis</strong> ranks risk with scales such as high, medium, and low, often in a likelihood and impact matrix. It is faster and captures harms that are hard to price, such as reputation. Most programs use both methods.</p>
+          <h4>Risk responses</h4>
+          <ul class="detail">
+            <li><strong>Mitigate (reduce):</strong> apply controls to lower likelihood or impact. Mitigation strategies range from technical controls to process changes, redundancy, and training, chosen by cost against benefit.</li>
+            <li><strong>Transfer (share):</strong> shift the financial impact to another party, for example through cybersecurity insurance or a contract. Accountability does not transfer.</li>
+            <li><strong>Avoid:</strong> stop the activity that creates the risk.</li>
+            <li><strong>Accept:</strong> a documented management decision to retain a risk that falls within the appetite.</li>
+          </ul>
+          <p>Ignoring a risk, sometimes called rejecting it, is never an acceptable response.</p>
+          <h4>Control types and categories</h4>
+          <div class="compare-2col">
+            <div><b>By function</b>Preventive (stops an event), detective (finds it), corrective (fixes the damage), deterrent (discourages it), recovery (restores operations), compensating (an alternative when the primary control is not feasible), and directive (tells people what to do).</div>
+            <div><b>By category</b>Administrative or managerial (policy, training, screening), technical or logical (encryption, firewalls, access control lists), and physical (locks, fences, guards). Every control has both a function and a category.</div>
+          </div>
+          <p>Controls need <strong>assessment</strong> (do they work as designed?), <strong>continuous monitoring and measurement</strong>, and <strong>reporting</strong> to internal and external audiences. Maturity modeling supports continuous improvement: an organization rates each capability on a scale, such as initial, repeatable, defined, managed, and optimizing, and plans the next step up. Common frameworks for the process are NIST SP 800-37 (the Risk Management Framework), NIST SP 800-30 (risk assessment), and ISO 31000 with ISO/IEC 27005.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Watch for the trap answer that &ldquo;transfers&rdquo; responsibility. Insurance shares the cost of a loss. The organization remains accountable for protecting the data.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#9878;&#65039;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Risk Analysis</strong>: practice qualitative and quantitative risk calculations.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/risk_analysis/risk_analysis.html" target="_blank" rel="noopener noreferrer">Risk Analysis <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>Continuity, Supply Chain, and Awareness</h3></div>
+          <h4>Business continuity requirements and the BIA</h4>
+          <p>Domain 1 owns the requirements for business continuity. Domain 7 runs the plans and tests them. The business impact analysis is the starting point. It identifies critical functions and the systems, people, and external dependencies they rely on, then sets recovery targets.</p>
+          <ul class="detail">
+            <li><strong>Maximum tolerable downtime (MTD):</strong> the longest a function can be unavailable before the damage is unacceptable. Also called the maximum tolerable period of disruption.</li>
+            <li><strong>Recovery time objective (RTO):</strong> the target time to restore the function. It must be shorter than the MTD.</li>
+            <li><strong>Recovery point objective (RPO):</strong> the maximum acceptable data loss, measured in time. It drives how often you back up.</li>
+            <li><strong>Work recovery time (WRT):</strong> time to verify data and resume work after systems return. RTO plus WRT must fit within the MTD.</li>
+          </ul>
+          <h4>Supply chain risk management</h4>
+          <p>Products and services from suppliers can arrive tampered with, counterfeit, or carrying implants. A supplier can also bring <strong>reputational</strong> risk: a vendor breach or a scandal becomes your headline when your name is on the service. Mitigations include third-party assessment and monitoring, minimum security requirements in contracts, service level requirements, a <strong>silicon root of trust</strong> (an immutable hardware anchor that verifies firmware at boot), <strong>physically unclonable functions</strong> (hardware fingerprints that cannot be copied), and a <strong>software bill of materials</strong> (SBOM) that lists every component in a product.</p>
+          <h4>Awareness, education, and training</h4>
+          <p>Awareness changes attention, training builds skill for a role, and education builds understanding for a career. Effective programs use phishing simulations, security champions, and gamification, review content periodically for new trends such as AI and cryptocurrency, and measure effectiveness with results, not just attendance. Evaluation includes <strong>stakeholder engagement</strong>: leaders, managers, and staff help set goals, review results, and keep the program relevant.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Measure an awareness program by behavior: lower phishing click rates and higher report rates. Completion percentages show reach, not effectiveness.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129333;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Social Engineering Tactics</strong>: the techniques an awareness program teaches people to recognize.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/SocialEngineeringTactics/SocialEngineeringTactics.html" target="_blank" rel="noopener noreferrer">Social Engineering Tactics <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>Threat Modeling</h3></div>
+          <p>Threat modeling finds design-level threats before they become incidents. The usual steps are to decompose the system, often into a data flow diagram (DFD), identify threats to each element, rate them, and choose mitigations. The DFD uses four element types: external entities, processes, data stores, and data flows. Trust boundaries mark the places where data crosses from one level of trust to another. Most threats cluster at those boundaries.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>STRIDE threat</th><th>Property violated</th><th>Typical mitigation</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Spoofing</td><td>Authenticity</td><td>Strong authentication, MFA, certificates</td></tr>
+              <tr><td class="term">Tampering</td><td>Integrity</td><td>Hashes, digital signatures, MACs, access control</td></tr>
+              <tr><td class="term">Repudiation</td><td>Nonrepudiation</td><td>Secure audit logs, digital signatures, timestamps</td></tr>
+              <tr><td class="term">Information disclosure</td><td>Confidentiality</td><td>Encryption, access control, data minimization</td></tr>
+              <tr><td class="term">Denial of service</td><td>Availability</td><td>Redundancy, rate limiting, filtering, capacity</td></tr>
+              <tr><td class="term">Elevation of privilege</td><td>Authorization</td><td>Least privilege, input validation, sandboxing</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Other methods</h4>
+          <ul class="detail">
+            <li><strong>PASTA:</strong> the Process for Attack Simulation and Threat Analysis, a seven-stage, risk-centric method that starts from business objectives.</li>
+            <li><strong>Attack trees:</strong> a goal at the root and the ways to reach it as branches.</li>
+            <li><strong>DREAD:</strong> an older scoring scheme (damage, reproducibility, exploitability, affected users, discoverability) used to rank threats.</li>
+            <li><strong>MITRE ATT&amp;CK:</strong> a knowledge base of real adversary tactics and techniques, useful to check a model against observed behavior.</li>
+          </ul>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#127917;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Threat Actors</strong>: who attacks, why, and with what capability. Useful context before rating threats.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/ThreatActors/ThreatActors.html" target="_blank" rel="noopener noreferrer">Threat Actors <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Interactive: STRIDE Threat Modeling Board</h3></div>
+          <p>The diagram shows a fictional college&rsquo;s student portal. Select each element, mark the STRIDE threats that apply to its element type, then check your answer. The board uses the common STRIDE-per-element mapping. Model all five elements to complete the board.</p>
+
+          <style>
+            .sb-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:1rem;align-items:start;}
+            .sb-dfd svg{width:100%;height:auto;display:block;}
+            .sb-el{cursor:pointer;}
+            .sb-el:focus{outline:none;}
+            .sb-el .shape{fill:#fff;stroke:#56647f;stroke-width:1.6;transition:stroke .15s,fill .15s;}
+            .sb-el:hover .shape,.sb-el:focus-visible .shape{stroke:var(--gold);stroke-width:2.4;}
+            .sb-el.sel .shape{stroke:var(--gold);stroke-width:3;fill:#e8edf8;}
+            .sb-el.done .shape{fill:#e3f3ec;stroke:var(--jade);}
+            .sb-el.done.sel .shape{stroke:var(--gold);}
+            .sb-el text{font-family:Arial,sans-serif;font-size:15px;fill:#0f1a33;pointer-events:none;}
+            .sb-el .kind{font-size:11px;fill:#56647f;letter-spacing:.06em;text-transform:uppercase;}
+            .sb-flow{stroke:#56647f;stroke-width:2;fill:none;}
+            .sb-el.sel .sb-flow,.sb-el:hover .sb-flow,.sb-el:focus-visible .sb-flow{stroke:var(--gold);stroke-width:3;}
+            .sb-el.done .sb-flow{stroke:var(--jade);}
+            .sb-tb{stroke:#b45309;stroke-width:2;stroke-dasharray:7 5;fill:none;}
+            .sb-tbl{font-family:Arial,sans-serif;font-size:12px;fill:#b45309;font-weight:700;}
+            .sb-chk{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.5rem 0 .7rem;}
+            .sb-chk label{display:flex;gap:.45rem;align-items:flex-start;padding:.4rem .5rem;border:1px solid var(--border);border-radius:5px;background:var(--card-bg);font-size:.78rem;color:var(--text-secondary);cursor:pointer;line-height:1.3;}
+            .sb-chk label:hover{border-color:var(--gold);}
+            .sb-chk input{accent-color:var(--gold);margin-top:.1rem;}
+            .sb-chk label.ok{border-color:var(--correct);background:var(--correct-bg);}
+            .sb-chk label.miss{border-color:var(--amber);background:#fdf3e6;}
+            .sb-chk label.bad{border-color:var(--wrong);background:var(--wrong-bg);}
+            .sb-chk .k{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;color:var(--gold);margin-right:.15rem;}
+            .sb-act{display:flex;gap:.5rem;flex-wrap:wrap;}
+            .sb-mit{font-family:Arial,sans-serif;font-size:.76rem;color:var(--text-secondary);line-height:1.5;margin:.3rem 0 0;padding-left:1rem;}
+            .sb-mit li{margin:.15rem 0;}
+            .sb-prog{display:flex;gap:.6rem;align-items:center;font-family:Arial,sans-serif;font-size:.75rem;color:var(--text-muted);margin-top:.6rem;}
+            .sb-bar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+            .sb-bar i{display:block;height:100%;width:0;background:var(--jade);transition:width .3s;}
+            .sb-name{font-family:Georgia,serif;font-size:1rem;font-weight:700;color:var(--text-primary);margin:0 0 .1rem;}
+            .sb-type{font-family:Arial,sans-serif;font-size:.74rem;color:var(--text-muted);margin:0 0 .3rem;}
+            @media (max-width:760px){.sb-grid{grid-template-columns:1fr;}}
+          </style>
+
+          <div class="iw" id="sb-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; model the threats</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="sb-grid">
+                <div class="sb-dfd iw-panel">
+                  <h5 class="iw-h5">Student portal data flow diagram</h5>
+                  <svg viewBox="0 0 520 330" role="group" aria-label="Data flow diagram. Select an element to model it.">
+                    <rect class="sb-tb" x="236" y="10" width="274" height="310" rx="10"/>
+                    <text class="sb-tbl" x="248" y="28">TRUST BOUNDARY: college network</text>
+                    <g class="sb-el" data-id="student" tabindex="0" role="button" aria-label="Student, external entity">
+                      <rect class="shape" x="14" y="128" width="118" height="62" rx="2"/>
+                      <text x="73" y="156" text-anchor="middle">Student</text>
+                      <text class="kind" x="73" y="174" text-anchor="middle">External entity</text>
+                    </g>
+                    <g class="sb-el" data-id="flow" tabindex="0" role="button" aria-label="Login request, data flow crossing the trust boundary">
+                      <path class="sb-flow" d="M132 159 L262 159" marker-end="url(#sb-arrow)"/>
+                      <rect x="136" y="128" width="124" height="60" fill="transparent"/>
+                      <text x="184" y="148" text-anchor="middle">Login</text>
+                      <text class="kind" x="184" y="180" text-anchor="middle">Data flow</text>
+                    </g>
+                    <g class="sb-el" data-id="portal" tabindex="0" role="button" aria-label="Student portal, process">
+                      <circle class="shape" cx="320" cy="159" r="56"/>
+                      <text x="320" y="156" text-anchor="middle">Portal</text>
+                      <text class="kind" x="320" y="174" text-anchor="middle">Process</text>
+                    </g>
+                    <g class="sb-el" data-id="db" tabindex="0" role="button" aria-label="Records database, data store">
+                      <path class="shape" d="M380 48 H500 M380 92 H500" />
+                      <rect class="shape" x="380" y="48" width="120" height="44" style="stroke-width:0"/>
+                      <path class="shape" d="M380 48 H500 M380 92 H500" style="fill:none"/>
+                      <text x="440" y="72" text-anchor="middle">Records DB</text>
+                      <text class="kind" x="440" y="86" text-anchor="middle">Data store</text>
+                    </g>
+                    <g class="sb-el" data-id="log" tabindex="0" role="button" aria-label="Audit log, data store">
+                      <rect class="shape" x="380" y="232" width="120" height="44" style="stroke-width:0"/>
+                      <path class="shape" d="M380 232 H500 M380 276 H500" style="fill:none"/>
+                      <text x="440" y="254" text-anchor="middle">Audit log</text>
+                      <text class="kind" x="440" y="270" text-anchor="middle">Data store</text>
+                    </g>
+                    <defs><marker id="sb-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 Z" fill="#56647f"/></marker></defs>
+                    <path d="M362 124 L396 94" stroke="#9aa6bd" stroke-width="1.6" fill="none" marker-end="url(#sb-arrow)"/>
+                    <path d="M362 196 L396 230" stroke="#9aa6bd" stroke-width="1.6" fill="none" marker-end="url(#sb-arrow)"/>
+                  </svg>
+                  <div class="sb-prog"><span id="sb-count">0 of 5 modeled</span><span class="sb-bar"><i id="sb-bar"></i></span><span id="sb-score">Score: 0</span></div>
+                </div>
+                <div class="iw-panel" aria-live="polite">
+                  <p class="sb-name" id="sb-name">Select an element</p>
+                  <p class="sb-type" id="sb-type">Choose any shape or the arrow in the diagram.</p>
+                  <div class="sb-chk" id="sb-chk">
+                    <label><input type="checkbox" value="S" disabled><span><span class="k">S</span>Spoofing</span></label>
+                    <label><input type="checkbox" value="T" disabled><span><span class="k">T</span>Tampering</span></label>
+                    <label><input type="checkbox" value="R" disabled><span><span class="k">R</span>Repudiation</span></label>
+                    <label><input type="checkbox" value="I" disabled><span><span class="k">I</span>Information disclosure</span></label>
+                    <label><input type="checkbox" value="D" disabled><span><span class="k">D</span>Denial of service</span></label>
+                    <label><input type="checkbox" value="E" disabled><span><span class="k">E</span>Elevation of privilege</span></label>
+                  </div>
+                  <div class="sb-act">
+                    <button type="button" class="iw-btn" id="sb-check" disabled>Check element</button>
+                    <button type="button" class="iw-btn jade" id="sb-reset">Reset board</button>
+                  </div>
+                  <div class="iw-verdict" id="sb-verdict"><span class="iw-pill" id="sb-pill">Ready</span><span id="sb-coach">Each element type attracts a different set of threats. Start with the element that crosses the trust boundary.</span></div>
+                  <ul class="sb-mit" id="sb-mit"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>Notice the pattern. Processes attract all six threats because they act on data. Data flows and data stores attract tampering, disclosure, and denial of service. The audit log adds repudiation, because a log someone can alter cannot prove who did what. External entities sit outside your control, so you can only verify who they are and record what they did.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('sb-root'); if(!root) return;
+            var EL={
+              student:{name:'Student',type:'External entity: outside your control',ans:'SR',
+                why:'An external entity can be impersonated (spoofing) and can deny what it did (repudiation). You do not control its internals, so tampering, disclosure, denial of service, and elevation are modeled on the elements it talks to.'},
+              flow:{name:'Login request',type:'Data flow: crosses the trust boundary',ans:'TID',
+                why:'Data in motion can be altered, read, or blocked. Spoofing and elevation belong to the endpoints, and repudiation belongs to the parties, not the wire.'},
+              portal:{name:'Student portal',type:'Process: runs code on the data',ans:'STRIDE',
+                why:'A process is exposed to every STRIDE category: someone can impersonate it, alter it, deny actions through it, leak data from it, crash it, or abuse it to gain privilege.'},
+              db:{name:'Records database',type:'Data store: data at rest',ans:'TID',
+                why:'Stored data can be altered, read, or made unavailable. A general data store does not add repudiation unless it is a log.'},
+              log:{name:'Audit log',type:'Data store: a log',ans:'TRID',
+                why:'A log is a data store, so tampering, disclosure, and denial of service apply. It also adds repudiation: if the log can be altered or erased, it cannot prove who did what.'}
+            };
+            var MIT={S:'Spoofing: strong authentication, MFA, mutual TLS certificates.',T:'Tampering: hashes, digital signatures, message authentication codes, write controls.',R:'Repudiation: protected audit logs, digital signatures, trusted timestamps.',I:'Information disclosure: encryption in transit and at rest, access control, minimization.',D:'Denial of service: redundancy, rate limiting, filtering, capacity planning.',E:'Elevation of privilege: least privilege, input validation, sandboxing, patching.'};
+            var state={}; var cur=null;
+            var els=[].slice.call(root.querySelectorAll('.sb-el'));
+            var boxes=[].slice.call(root.querySelectorAll('#sb-chk input'));
+            var $=function(id){return root.querySelector('#'+id);};
+            function select(id){
+              cur=id; els.forEach(function(g){g.classList.toggle('sel',g.dataset.id===id);});
+              var e=EL[id]; $('sb-name').textContent=e.name; $('sb-type').textContent=e.type;
+              var st=state[id];
+              boxes.forEach(function(b){b.disabled=false;b.checked=st?st.picked.indexOf(b.value)>=0:false;b.closest('label').className='';});
+              $('sb-check').disabled=false; $('sb-mit').innerHTML='';
+              if(st){show(id,false);} else {verdict('','Ready','Mark every STRIDE threat that applies to this '+e.type.split(':')[0].toLowerCase()+', then check.');}
+            }
+            function verdict(cls,pill,msg){var v=$('sb-verdict');v.className='iw-verdict '+cls;var p=$('sb-pill');p.className='iw-pill '+cls;p.textContent=pill;$('sb-coach').textContent=msg;}
+            function show(id){
+              var e=EL[id], st=state[id], ok=true;
+              boxes.forEach(function(b){
+                var should=e.ans.indexOf(b.value)>=0, has=b.checked, l=b.closest('label');
+                l.className= should&&has?'ok': should&&!has?'miss': !should&&has?'bad':'';
+                if(should!==has) ok=false;
+              });
+              verdict(ok?'good':'warn', ok?'Correct':'Review', (ok?'All threats identified. ':'Green is correct, amber was missed, red does not apply. ')+e.why);
+              $('sb-mit').innerHTML=e.ans.split('').map(function(k){return '<li>'+MIT[k]+'</li>';}).join('');
+            }
+            function check(){
+              if(!cur) return;
+              var picked=boxes.filter(function(b){return b.checked;}).map(function(b){return b.value;}).join('');
+              var e=EL[cur], right=0;
+              'STRIDE'.split('').forEach(function(k){ if((e.ans.indexOf(k)>=0)===(picked.indexOf(k)>=0)) right++; });
+              state[cur]={picked:picked,right:right};
+              show(cur); progress();
+            }
+            function progress(){
+              var ids=Object.keys(state), tot=0;
+              ids.forEach(function(i){tot+=state[i].right;});
+              els.forEach(function(g){g.classList.toggle('done',!!state[g.dataset.id]);});
+              $('sb-count').textContent=ids.length+' of 5 modeled';
+              $('sb-bar').style.width=(ids.length/5*100)+'%';
+              $('sb-score').textContent='Score: '+(ids.length?Math.round(tot/(ids.length*6)*100):0)+'%';
+              if(ids.length===5){ var pct=Math.round(tot/30*100);
+                verdict(pct===100?'good':'warn','Board complete','Final score '+pct+'%. '+(pct===100?'Every element is modeled correctly.':'Select any element to review it, change your marks, and check again.')); }
+            }
+            els.forEach(function(g){
+              g.addEventListener('click',function(){select(g.dataset.id);});
+              g.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();select(g.dataset.id);}});
+            });
+            $('sb-check').addEventListener('click',check);
+            $('sb-reset').addEventListener('click',function(){
+              state={}; cur=null; els.forEach(function(g){g.classList.remove('sel','done');});
+              boxes.forEach(function(b){b.checked=false;b.disabled=true;b.closest('label').className='';});
+              $('sb-check').disabled=true; $('sb-name').textContent='Select an element'; $('sb-type').textContent='Choose any shape or the arrow in the diagram.'; $('sb-mit').innerHTML='';
+              verdict('','Ready','Each element type attracts a different set of threats. Start with the element that crosses the trust boundary.'); progress();
+            });
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s8">
+          <div class="cs-head"><span class="cs-num">8</span><h3>Faculty Teaching Segment</h3></div>
+          <p>Domain 1 is where many students first meet security as a business discipline. It lands best when students make decisions with numbers and owners, not just definitions.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> give teams a one-page profile of a fictional organization and three risks. Each team calculates ALE, recommends a response, names the risk owner, and writes a two-paragraph memo to leadership.</li>
+            <li><strong>Rubric criteria:</strong> correct calculations, a response that fits the stated risk appetite, the right owner named, and plain language a dean or CFO could act on.</li>
+            <li><strong>Threat modeling lab:</strong> students draw a DFD for a system they know, such as the learning management system or a campus app, then apply STRIDE per element as on the board above.</li>
+            <li><strong>Course fit:</strong> this domain maps to an introductory security, governance, risk, and compliance (GRC), or policy course. It supports the CAE-CD Cybersecurity Planning and Management and Security Risk Analysis Knowledge Units.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>Run the STRIDE board twice: first individually, then in pairs who must agree before they check. The disagreements, especially over the audit log and the external entity, are where the learning happens.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 1</span></div><h3>Five Pillars of Information Security</h3><p>Confidentiality, integrity, availability, authenticity, and nonrepudiation, with examples of each.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/FivePillars/FivePillars.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Five Pillars of Information Security (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Policies, Standards, Procedures, Guidelines</h3><p>Tell the four governance document types apart and see how they support each other.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/PSPG/PSPG.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Policies, Standards, Procedures, Guidelines (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Risk Management</h3><p>The risk management process from identification through response and monitoring.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/risk_management/risk_management.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Risk Management (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Risk Analysis</h3><p>Qualitative and quantitative analysis, including the loss expectancy formulas.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/risk_analysis/risk_analysis.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Risk Analysis (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 4</span></div><h3>Cybersecurity Controls</h3><p>Control functions and categories, and how they combine into layered defense.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/controls/cybersecurity_controls.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cybersecurity Controls (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 5</span></div><h3>Social Engineering Tactics</h3><p>The manipulation techniques a security awareness program trains people to spot and report.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/SocialEngineeringTactics/SocialEngineeringTactics.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Social Engineering Tactics (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 6</span></div><h3>Threat Actors</h3><p>Adversary types, motives, and capabilities to inform threat modeling and risk ratings.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/ThreatActors/ThreatActors.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Threat Actors (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Self-checking practice for this lesson, ready to use with your own students. Each item ends with a report you can print or save as a PDF.</p>
+    <div class="pl-grid">
+      <article class="pl-card"><div class="pl-top"><span class="pl-type">CISSP Practice &middot; A2</span><span class="pl-time">&#9201; 35 min</span></div><h3><a href="activity02.html">Governance, Law, and Risk</a></h3><p>Separate due care from due diligence, match laws and frameworks to needs, and calculate SLE, ALE, and safeguard value.</p><div class="pl-foot"><span class="pl-level">Foundational</span><a class="pl-open" href="activity02.html" aria-label="Open activity A2: Governance, Law, and Risk">Open &#8594;</a></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B1</span><span class="pl-time">&#9201; 60 min</span></div><h3><a href="lab01.html">Threat Modeling Workshop</a></h3><p>Build a data flow diagram, mark trust boundaries, apply STRIDE per element, rank the threats, and choose mitigations.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="lab01.html" aria-label="Open lab B1: Threat Modeling Workshop">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q1.</span>Before signing with a new cloud provider, a college reviews the provider&rsquo;s SOC 2 Type II report and its breach history. Which concept does this BEST illustrate?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> Due care</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> Due diligence</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> Risk transference</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> Separation of duties</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Researching and verifying before a decision is due diligence. Due care would be acting on that knowledge, such as putting contract controls in place and operating them.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q2.</span>A data warehouse is valued at $250,000. A flood would destroy 40% of its value, and floods are expected once every two years. What is the annualized loss expectancy?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> $100,000</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> $125,000</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> $50,000</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> $20,000</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> SLE = $250,000 &times; 0.40 = $100,000. ARO = 0.5 (once every two years). ALE = $100,000 &times; 0.5 = $50,000. Option A is the SLE, a common trap.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q3.</span>An organization buys a cybersecurity insurance policy to cover breach response costs. Which statement is MOST accurate?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> The financial impact is shared, but the organization remains accountable for protecting the data.</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> The risk has been avoided, so no further controls are needed.</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> Accountability for the data moves to the insurer.</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> The residual risk is now zero.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> Insurance is risk transfer, or sharing. It moves some of the cost of a loss, not the duty of care. Regulators and affected individuals still hold the organization accountable.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q4.</span>A college plans to use an AI model to recommend which applicants are denied admission. What should the security leader recommend FIRST?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> Encrypt the training data with AES-256.</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> Deploy the model now and review complaints later.</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> Replace the model with a vendor model that has higher accuracy.</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> Require an impact assessment for bias, a named accountable owner, and human review of every denial.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> A decision with significant effects on people calls for governance first: test for bias, assign accountability, and keep a human in the loop who can override. Encryption protects the data but does nothing for fairness, and accuracy alone does not prove a model is fair.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q5.</span>A college runs a health clinic that bills an insurance plan for student visits. Which U.S. law MOST directly governs the clinic&rsquo;s patient records?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> The Computer Fraud and Abuse Act</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> The General Data Protection Regulation</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> The Health Insurance Portability and Accountability Act (HIPAA)</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> PCI DSS</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> A provider that bills a health plan electronically is a HIPAA covered entity, so HIPAA protects its health information. The CFAA addresses computer crime, GDPR protects people in the EU, and PCI DSS is an industry standard for payment cards.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q6.</span>During a BIA, the registrar says enrollment can be down for no more than 48 hours. Which value MUST be shorter than 48 hours?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> The recovery time objective (RTO)</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> The maximum tolerable downtime (MTD)</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> The annualized rate of occurrence (ARO)</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> The mean time between failures (MTBF)</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> The 48 hours is the MTD. The RTO, plus the time to verify data and resume work, must fit inside it. The MTD is the limit, not a value set below it.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q7.</span>A security manager discovers evidence that an employee sold student data. Leadership may refer the case to law enforcement. What should the manager do FIRST?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> Confront the employee to get a confession.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> Image the employee&rsquo;s laptop personally and review it.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> Delete the exposed data to limit the damage.</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> Follow the incident and evidence procedures and involve legal counsel, preserving the chain of custody.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> A possible criminal case needs evidence handled properly from the start and the involvement of counsel. The other options can destroy evidence or compromise the case.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q8.</span>A college worries that network switches from a new supplier could contain hidden hardware implants. Which control BEST addresses this supply chain risk?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> A security awareness campaign for network staff</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> Buying from authorized channels and requiring hardware with a verified silicon root of trust and third-party assessment</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> Increasing the cybersecurity insurance limit</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> Placing the switches in a locked wiring closet</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> SCRM controls target the product and the supplier: trusted channels, hardware roots of trust that verify firmware, and independent assessment. Insurance and locks do not detect a compromised device.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson00.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 0: Orientation</span></a>
+    <a href="lesson02.html" class="next"><span class="pager-dir">Next &#8594;</span><span class="pager-name">Lesson 2: Asset Security</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

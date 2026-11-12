@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A9 Secure Software Life Cycle | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A9',
+  title: 'Secure Software Life Cycle',
+  accent: 'Life Cycle',
+  domain: 'Domain 8 (11.2%)',
+  time: '35 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson08.html#s1',
+  lessonLabel: 'Lesson 8, Security in the Software Development Life Cycle',
+  lede: 'Security that arrives the week before launch is expensive and late. Practice placing security work in the phase where it belongs, matching each flaw to the fix that removes it for good, and making the calls on software you buy rather than build. The setting is Talmora Software, a company that builds a scheduling platform for clinics and also buys and assembles a great deal of code it did not write.',
+  concepts: [
+    { key: 'phases', name: 'Security by life cycle phase', review: 'Lesson 8, Security in the Software Development Life Cycle' },
+    { key: 'flaws', name: 'Flaws to fixes', review: 'Lesson 8, Secure Coding and Source-Code Weaknesses' },
+    { key: 'ecosystem', name: 'Languages and pipeline controls', review: 'Lesson 8, Security Controls in Development Ecosystems' },
+    { key: 'acquired', name: 'Acquired software, SCA, and SBOM', review: 'Lesson 8, Security Impact of Acquired Software' }
+  ],
+  stations: [
+    {
+      type: 'sort', short: 'Activity by phase', title: 'Where does the security work belong?', concept: 'phases',
+      instr: 'Talmora is adding an online payment feature to its scheduling platform. Place each security activity in the life cycle phase where it belongs. Then select <b>Check answers</b>.',
+      hint: 'Requirements say what must be true, including how the feature could be abused. Design decides structure, so threat models live there. Development is writing and reviewing code. Testing exercises the built software. Deployment and operations cover release, configuration, monitoring, and patching.',
+      buckets: ['Requirements', 'Design', 'Development', 'Testing', 'Deployment and operations'],
+      review: { href: 'lesson08.html#s1', label: 'Lesson 8, Security in the Software Development Life Cycle' },
+      items: [
+        { text: 'Write abuse cases, such as a patient replaying a refund request', answer: 0, why: 'Misuse and abuse cases describe how a feature could be attacked. They belong with the requirements so the design can answer them.' },
+        { text: 'List the PCI DSS and privacy obligations the payment feature must meet', answer: 0, why: 'Compliance needs are requirements. Discovering them after the code is written is the most expensive way to learn them.' },
+        { text: 'Threat model the data flows between the clinic portal and the payment processor', answer: 1, why: 'Threat modeling examines a proposed structure and its trust boundaries. It is a design activity.' },
+        { text: 'Review the attack surface the new payment API adds', answer: 1, why: 'Attack surface review is a design decision: every new interface is a choice that can be made smaller.' },
+        { text: 'Scan each commit for secrets before it reaches the shared repository', answer: 2, why: 'Secrets scanning in the repository runs as code is written, which is development.' },
+        { text: 'Run SAST in the developer’s IDE and require a peer review before merge', answer: 2, why: 'Static analysis and peer review read code at rest, as it is written. That is development, the cheapest place to catch a coding flaw.' },
+        { text: 'Run DAST against the payment feature in the staging environment', answer: 3, why: 'DAST needs a running application, so it happens in testing.' },
+        { text: 'Fuzz the parser that reads uploaded insurance card images', answer: 3, why: 'Fuzzing exercises a running program with malformed input. It is a testing activity.' },
+        { text: 'Rerun security regression tests to confirm an old flaw has not come back', answer: 3, why: 'Regression testing confirms that a change did not reintroduce old flaws. It runs in testing, before release.' },
+        { text: 'Sign the release artifact and require change approval before production', answer: 4, why: 'Code signing and change approval control what reaches production. They are deployment controls.' },
+        { text: 'Apply a hardened configuration baseline to the production containers', answer: 4, why: 'Secure configuration of the environment the software runs in happens at deployment.' },
+        { text: 'Patch a vulnerable dependency after a new advisory is published', answer: 4, why: 'Vulnerability management continues for as long as the software runs. It is part of operations and maintenance.' }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Flaws to fixes', title: 'Match the flaw to the fix that removes it', concept: 'flaws',
+      instr: 'You are Talmora’s application security lead, Bastian Achterberg-Nwosu. Code review found the problems below. For each, choose the <b>BEST</b> fix.',
+      hint: 'Input validation helps against almost everything, but it is rarely the single best answer. Look for the fix that removes the class of flaw: parameterized queries for injection, output encoding for script, tokens for forged requests, memory safety for overflows, and a secrets manager for keys in code.',
+      review: { href: 'lesson08.html#s3', label: 'Lesson 8, Secure Coding and Source-Code Weaknesses' },
+      items: [
+        {
+          title: 'Case 1: The clinic search box', text: 'The appointment search builds a SQL statement by joining the clinic name the user types into the query string. The same page later shows the search term back to the user without changes.',
+          parts: [
+            { q: 'What is the BEST fix for the query?', options: ['Block single quotes in the search box', 'Run the database account as administrator', 'Use parameterized queries for the search', 'Log every search the users run'], answer: 2, why: 'Parameterized queries keep input as data, never as code. Blocking characters is easy to bypass and breaks legitimate names.' },
+            { q: 'What is the BEST fix for showing the search term back?', options: ['Context-aware output encoding, plus a Content Security Policy', 'Store the search term in a cookie first', 'Limit the search term to 30 characters', 'Turn off JavaScript for clinic users'], answer: 0, why: 'Cross-site scripting is a rendering problem. Encoding output for its context stops the browser from running input as script, and CSP limits damage if one slips through.' }
+          ]
+        },
+        {
+          title: 'Case 2: The image parser', text: 'Fuzzing crashed the insurance card image parser, which is written in C, with a write past the end of a buffer. The parser has had three similar bugs in two years.',
+          parts: [
+            { q: 'What is the most durable fix?', concept: 'ecosystem', options: ['Turn on ASLR on the production servers', 'Fix this one bounds check and close the ticket', 'Add a web application firewall in front of uploads', 'Rewrite the parser in a memory-safe language'], answer: 3, why: 'Bounds checks fix one bug, and ASLR and DEP only make exploitation harder. A memory-safe language such as Rust or Go removes the whole class of buffer overflows, which is why current guidance urges a memory-safety roadmap.' }
+          ]
+        },
+        {
+          title: 'Case 3: The payment API', text: 'A tester signed in as one clinic changed the clinic ID in an API request and received another clinic’s invoices. Separately, a developer committed the payment processor’s API key to the repository last month.',
+          parts: [
+            { q: 'What is the BEST fix for the invoice exposure?', options: ['Hide clinic IDs by encoding them in Base64', 'Check object-level authorization on every request', 'Require TLS 1.3 for every API call', 'Rate limit each clinic to 100 requests per minute'], answer: 1, why: 'This is broken object-level authorization. The API must confirm on every call that the caller may access that specific object. Obscured IDs are still guessable.' },
+            { q: 'What should Bastian do about the committed key?', concept: 'ecosystem', options: ['Delete the commit from the repository history', 'Make the repository private and move on', 'Rotate the key now and move it to a secrets manager', 'Add a comment telling others not to copy it'], answer: 2, why: 'Assume the key is exposed. Rotate it at once, store it in a secrets manager, and add secrets scanning so the next one is caught before commit.' }
+          ]
+        },
+        {
+          title: 'Case 4: The pipeline', text: 'Talmora’s CI/CD pipeline has a service account that can push to production. Any developer can edit the build definition.',
+          parts: [
+            { q: 'Which control BEST protects the pipeline?', concept: 'ecosystem', options: ['Restrict build definition changes and sign the artifacts', 'Run the pipeline only at night to reduce exposure', 'Let each developer deploy their own code directly', 'Email the build log to the whole team each day'], answer: 0, why: 'The pipeline is a high-value target. Restricting who can change it, protecting its credentials, and signing what it produces keeps a single account from shipping anything it likes. It also preserves separation of duties.' }
+          ]
+        },
+        {
+          title: 'Case 5: Check, then use', text: 'The booking code checks that a time slot is free, then books it a moment later. Under load, two patients sometimes get the same slot.',
+          parts: [
+            { q: 'What is the BEST fix?', options: ['Add a short delay between the check and the booking', 'Ask patients to confirm by email after booking', 'Validate the time slot format on the client side', 'Make the check and the booking a single atomic operation'], answer: 3, why: 'This is a time-of-check to time-of-use race condition. An atomic operation or a lock removes the gap between check and use; a delay only moves it.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Acquired software', title: 'Software you buy, borrow, and assemble', concept: 'acquired',
+      instr: 'Talmora both buys software and sells it to clinics. For each case, choose the <b>BEST</b> answer.',
+      hint: 'You inherit the security of everything you install. SCA builds the inventory of open source components and produces the SBOM. The SBOM answers “do we run it, and where?” The SSDF describes secure development as outcomes in four groups: prepare the organization, protect the software, produce well-secured software, and respond to vulnerabilities.',
+      review: { href: 'lesson08.html#s5', label: 'Lesson 8, Security Impact of Acquired Software' },
+      items: [
+        {
+          title: 'Case 1: A new advisory', text: 'At 9 a.m. a critical vulnerability is published in a widely used open source date-parsing library. The CEO asks whether Talmora’s products are affected.',
+          parts: [
+            { q: 'What lets Bastian answer within the hour?', options: ['A current SBOM for each product, built by SCA in the pipeline', 'The annual penetration test report', 'A list of the libraries developers remember adding', 'The vendor’s SOC 2 Type II report'], answer: 0, why: 'An SBOM lists every component, including dependencies of dependencies, and where it ships. Without one, the answer can take weeks.' },
+            { q: 'When should SCA run to keep that answer current?', options: ['Once a year, before the external audit', 'Only when a developer adds a new library', 'On every build, and against new advisories daily', 'Only after a customer reports a problem'], answer: 2, why: 'New vulnerabilities are published against old components every day. SCA on every build, with continuous matching against advisories, keeps the inventory and the risk picture current.' }
+          ]
+        },
+        {
+          title: 'Case 2: A large clinic customer', text: 'A hospital system will buy Talmora’s platform only if Talmora shows it follows recognized secure development practices.',
+          parts: [
+            { q: 'Which response BEST meets the hospital’s request?', options: ['Send the source code for the hospital to review', 'Attest to SSDF practices and provide an SBOM', 'Share the list of developers and their training', 'Promise to fix any bug within 90 days'], answer: 1, why: 'Buyers increasingly ask producers to attest that they follow practices drawn from the Secure Software Development Framework, NIST SP 800-218, and to supply an SBOM.' },
+            { q: 'Talmora’s process for receiving, triaging, and fixing reported flaws falls into which SSDF practice group?', options: ['Prepare the organization', 'Protect the software', 'Produce well-secured software', 'Respond to vulnerabilities'], answer: 3, why: 'Handling reported vulnerabilities, finding root causes, and fixing them is the respond to vulnerabilities group.' }
+          ]
+        },
+        {
+          title: 'Case 3: Choosing a component', text: 'Developers want to add an open source PDF library. Its last release was four years ago, and its issue tracker has unanswered security reports.',
+          parts: [
+            { q: 'What is the BEST decision?', options: ['Use it, since open source is reviewed by many people', 'Use it, but remove the license file to avoid obligations', 'Use it, and copy the code into Talmora’s repository', 'Choose a maintained alternative, or accept the risk formally'], answer: 3, why: 'Project health is part of open source assurance. An unmaintained library will not get fixes, so pick a maintained one, or have the risk owner accept the risk with compensating controls.' }
+          ]
+        },
+        {
+          title: 'Case 4: Buying and outsourcing', text: 'Talmora plans to buy a commercial HR system, move email to a SaaS provider, and hire a contractor to build a custom billing module.',
+          parts: [
+            { q: 'For the SaaS email service, what is the BEST source of assurance?', options: ['A penetration test Talmora runs without notice', 'The provider’s SOC 2 Type II report and a clear shared responsibility model', 'A copy of the provider’s source code', 'A promise in the sales presentation'], answer: 1, why: 'With SaaS the customer cannot test or see the lower layers. Independent audit reports, SLAs, and a clear split of responsibilities provide the assurance.' },
+            { q: 'For the contractor’s custom module, what protects Talmora BEST?', options: ['Paying only after the module goes live', 'Letting the contractor choose its own standards', 'Secure coding requirements in the contract, code review, and escrow', 'Asking the contractor for a SOC 3 report'], answer: 2, why: 'Quality depends on the contractor, so secure coding requirements belong in the contract. Code review checks them, and escrow protects Talmora if the contractor disappears.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'left', label: 'Where does security enter the software projects your students build? What is one activity you could shift left in your own course?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the exam, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

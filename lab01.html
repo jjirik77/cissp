@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>B1 Threat Modeling Workshop | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+<style>
+.b1-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+.b1-col { flex: 1 1 260px; min-width: 0; }
+.b1-col.wide { flex: 1.6 1 340px; }
+.b1-box { border: 1px solid var(--border); border-radius: 6px; background: #fff; padding: .9rem 1rem; min-width: 0; margin-bottom: 1rem; }
+.b1-box h4 { font: 700 .7rem Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); margin: 0 0 .6rem; }
+.b1-dfd { width: 100%; height: auto; display: block; }
+.b1-dfw { overflow-x: auto; }
+@media (max-width: 700px) { .b1-dfd { min-width: 640px; } .b1-dfw::after { content: 'Scroll sideways to see the whole diagram, or use the flow list.'; display: block; font: .72rem Arial, sans-serif; color: var(--text-muted); margin-top: .3rem; position: sticky; left: 0; } }
+.b1-dfd .node rect, .b1-dfd .node circle { fill: #fff; stroke: var(--navy); stroke-width: 2; }
+.b1-dfd .node.ext rect { fill: #eef2fa; }
+.b1-dfd .node .nm { font: 700 14px Arial, sans-serif; fill: #0f1a33; }
+.b1-dfd .node .kd { font: 12px Arial, sans-serif; fill: #56647f; }
+.b1-dfd .store line { stroke: var(--navy); stroke-width: 2; }
+.b1-dfd .fl line.v { stroke: #56647f; stroke-width: 2; }
+.b1-dfd .fl line.hit { stroke: transparent; stroke-width: 16; cursor: pointer; }
+.b1-dfd .fl text { font: 700 12px Arial, sans-serif; fill: #26365a; cursor: pointer; }
+.b1-dfd .fl .tag { fill: #fff; stroke: #c9d3e3; }
+.b1-dfd .fl.on line.v { stroke: #b45309; stroke-width: 3; stroke-dasharray: 7 4; }
+.b1-dfd .fl.on .tag { fill: #fdf0dc; stroke: #b45309; }
+.b1-dfd .fl.on text { fill: #7a3d00; }
+.b1-dfd .fl:focus { outline: none; }
+.b1-dfd .fl:focus-visible .tag { stroke: #1e3a8a; stroke-width: 3; }
+.b1-dfd .zone { fill: none; stroke: #047857; stroke-width: 2; stroke-dasharray: 10 6; }
+.b1-dfd .zl { font: 700 12px Arial, sans-serif; fill: #065f46; }
+.b1-flows { list-style: none; margin: 0; padding: 0; columns: 2 300px; column-gap: 1.2rem; font: .8rem/1.4 Arial, sans-serif; color: var(--text-secondary); }
+.b1-flows li { margin: 0 0 .3rem; break-inside: avoid; }
+.b1-flows label { display: flex; gap: .45rem; align-items: flex-start; cursor: pointer; }
+.b1-flows input { margin-top: .15rem; accent-color: #b45309; }
+.b1-flows b { color: var(--text-primary); }
+.b1-sum { font: .82rem/1.5 Arial, sans-serif; color: var(--text-secondary); margin: .5rem 0 0; }
+.b1-sum b { color: var(--text-primary); }
+.b1-btn { border: 1px solid var(--navy); background: #fff; color: var(--navy); font: 700 .72rem Arial, sans-serif; padding: .35rem .65rem; border-radius: 3px; cursor: pointer; margin: .5rem .4rem 0 0; }
+.b1-btn[aria-pressed=true] { background: var(--navy); color: #fff; }
+.b1-btn:disabled { opacity: .55; cursor: not-allowed; }
+.b1-grid { border-collapse: collapse; font: .8rem Arial, sans-serif; min-width: 520px; }
+.b1-grid th, .b1-grid td { border: 1px solid var(--border); padding: .45rem .5rem; text-align: center; }
+.b1-grid th[scope=row] { text-align: left; font-weight: 700; color: var(--text-primary); background: var(--blue-pale); }
+.b1-grid thead th { background: var(--navy); color: #fff; }
+.b1-grid thead th small { display: block; font-weight: 400; font-size: .66rem; opacity: .9; }
+.b1-grid input { width: 1.05rem; height: 1.05rem; accent-color: #1e3a8a; }
+.b1-reg { font: .76rem/1.4 Arial, sans-serif; min-width: 900px; }
+.b1-reg td, .b1-reg th { vertical-align: top; }
+.b1-reg td.ev { min-width: 17rem; }
+.b1-reg td.c { text-align: center; white-space: nowrap; }
+.b1-reg select { font: .74rem Arial, sans-serif; padding: .2rem; border: 1px solid var(--border); border-radius: 3px; background: #fff; color: var(--text-primary); }
+.b1-reg select.lv { width: 3.3rem; }
+.b1-reg select.mt { max-width: 13rem; }
+.b1-reg .sub { display: block; color: var(--text-muted); font-size: .7rem; margin-top: .2rem; }
+.b1-st { display: inline-block; font: 700 .66rem Arial, sans-serif; border-radius: 3px; padding: .1rem .35rem; background: var(--navy); color: #fff; }
+.b1-band { display: inline-block; font: 700 .66rem Arial, sans-serif; border-radius: 3px; padding: .1rem .35rem; border: 1px solid; white-space: nowrap; }
+.b1-band.h { color: #9b1222; border-color: var(--wrong); background: var(--wrong-bg); }
+.b1-band.m { color: #7a3d00; border-color: #b45309; background: #fdf0dc; }
+.b1-band.l { color: #155e3a; border-color: #15803d; background: var(--correct-bg); }
+.b1-band.n { color: var(--text-muted); border-color: var(--border); background: #fff; }
+.b1-tiles { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 .8rem; }
+.b1-tile { flex: 1 1 140px; min-width: 0; background: var(--blue-pale); border: 1px solid var(--blue-pale-border); border-radius: 5px; padding: .55rem .65rem; }
+.b1-tile .k { font: 700 .6rem Arial, sans-serif; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); }
+.b1-tile .v { font: 900 1.15rem Arial, sans-serif; color: var(--text-primary); margin-top: .15rem; }
+.b1-rank { margin: .3rem 0 0 1.2rem; padding: 0; font: .82rem/1.5 Arial, sans-serif; color: var(--text-secondary); }
+.b1-facts td, .b1-facts th { vertical-align: top; font-size: .8rem; }
+.b1-grid input:focus-visible, .b1-reg select:focus-visible, .b1-btn:focus-visible, .b1-flows input:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This lab needs JavaScript enabled.</p></noscript></div>
+
+<script>
+/* ===================== Model data (fixed) =====================
+   Ellisford Clinics, CareSlot telehealth scheduling app, design review before launch.
+   All answers below are computed from these arrays. */
+(function () {
+  var N = {
+    E1: { nm: 'Patient', kd: 'External entity', t: 'ext', x: 20, y: 52, w: 150, h: 60 },
+    E2: { nm: 'Clinician', kd: 'External entity', t: 'ext', x: 20, y: 372, w: 150, h: 60 },
+    P1: { nm: 'API gateway', kd: 'Process', t: 'proc', cx: 330, cy: 232, r: 60 },
+    P2: { nm: 'Scheduling', kd: 'Process', t: 'proc', cx: 560, cy: 232, r: 60 },
+    P3: { nm: 'Eligibility', kd: 'Process', t: 'proc', cx: 760, cy: 92, r: 50 },
+    P4: { nm: 'Reminders', kd: 'Process', t: 'proc', cx: 760, cy: 322, r: 50 },
+    D1: { nm: 'D1 Appointments', kd: 'Data store', t: 'store', x: 420, y: 408, w: 170, h: 40 },
+    D2: { nm: 'D2 Audit log', kd: 'Data store', t: 'store', x: 620, y: 432, w: 150, h: 40 },
+    E3: { nm: 'Insurer API', kd: 'External entity', t: 'ext', x: 900, y: 62, w: 124, h: 60 },
+    E4: { nm: 'SMS provider', kd: 'External entity', t: 'ext', x: 900, y: 292, w: 124, h: 60 }
+  };
+  var F = [
+    { id: 'F1', a: 'E1', b: 'P1', off: -10, nm: 'Booking request', cross: true },
+    { id: 'F2', a: 'P1', b: 'E1', off: -10, nm: 'Booking confirmation', cross: true },
+    { id: 'F3', a: 'E2', b: 'P1', off: 0, nm: 'Clinician schedule query', cross: true },
+    { id: 'F4', a: 'P1', b: 'P2', off: 0, nm: 'Validated request, with session identity', cross: true },
+    { id: 'F5', a: 'P2', b: 'D1', off: -10, nm: 'Write appointment', cross: false },
+    { id: 'F6', a: 'D1', b: 'P2', off: -10, nm: 'Read open slots', cross: false },
+    { id: 'F7', a: 'P2', b: 'P3', off: 0, nm: 'Eligibility check request', cross: false },
+    { id: 'F8', a: 'P3', b: 'E3', off: -10, nm: 'Coverage query', cross: true },
+    { id: 'F9', a: 'E3', b: 'P3', off: -10, nm: 'Coverage response', cross: true },
+    { id: 'F10', a: 'P2', b: 'P4', off: 0, nm: 'Reminder job', cross: false },
+    { id: 'F11', a: 'P4', b: 'E4', off: 0, nm: 'Reminder text message', cross: true },
+    { id: 'F12', a: 'P2', b: 'D2', off: 0, nm: 'Audit event', cross: false }
+  ];
+  /* Threats. L and I are the keyed scores from the scoring guide; evidence states the facts. */
+  var T = [
+    { id: 'T1', el: 'P1 API gateway', s: 'S', th: 'An attacker signs in as patients with passwords leaked from other sites (credential stuffing).',
+      ev: 'Sign-in is password only. Gateway logs show about 40,000 failed sign-ins a week from rotating addresses since the beta opened. A successful attacker could take over many patient accounts.', L: 5, I: 4,
+      mt: ['Raise the minimum password length to 14', 'Phishing-resistant MFA (passkeys), breached-password screening, and sign-in rate limits', 'Add a CAPTCHA to the sign-in page', 'Lock each account permanently after three failures'], mk: 1 },
+    { id: 'T2', el: 'P2 Scheduling', s: 'T', th: 'A signed-in patient changes another patient&rsquo;s appointment by editing the appointment ID in the request.',
+      ev: 'Confirmed by the beta penetration test and not yet fixed. Anyone can create a patient account. Appointment IDs are sequential, so one patient could alter many appointments.', L: 4, I: 4,
+      mt: ['Hide the appointment ID in the mobile app', 'Validate the ID format at the gateway', 'Check in the scheduling service that the signed-in patient owns the appointment', 'Encrypt the appointments database'], mk: 2 },
+    { id: 'T3', el: 'D2 Audit log', s: 'R', th: 'A clinician denies canceling a patient&rsquo;s appointment, and the log cannot show who did it.',
+      ev: 'The audit log records the scheduling service account, not the person. Only clinic staff can cancel, so this needs an insider. A dispute would be an internal matter with no health information exposed.', L: 2, I: 2,
+      mt: ['Record the authenticated user, time, and action in an append-only log', 'Remove the ability to cancel', 'Email every cancellation to the clinic manager', 'Keep the log for ten years'], mk: 0 },
+    { id: 'T4', el: 'F11 Reminder text', s: 'I', th: 'Reminder texts reveal the reason for the visit to anyone who sees the patient&rsquo;s phone.',
+      ev: 'Every reminder includes the visit reason, such as a test result follow-up, and lock screens show message previews. This happens in normal operation, not only under attack. Each message exposes one patient.', L: 4, I: 3,
+      mt: ['Move to a different SMS provider', 'Send only the date, time, and clinic, and show details after sign-in', 'Encrypt the text message', 'Ask patients to turn off lock screen previews'], mk: 1 },
+    { id: 'T5', el: 'P1 API gateway', s: 'D', th: 'A bot flood during the flu vaccine campaign takes booking offline for every clinic.',
+      ev: 'The gateway is internet facing and has no rate limiting or bot protection. No flood has been seen yet. Phone booking would still work, but online booking would be down for all clinics.', L: 3, I: 4,
+      mt: ['Add more gateway servers', 'Rate limits, bot protection, and a provider DDoS service in front of the gateway', 'Close online booking during campaigns', 'Block foreign IP addresses'], mk: 1 },
+    { id: 'T6', el: 'P2 Scheduling', s: 'E', th: 'An injection flaw in slot search lets an attacker run commands with the service&rsquo;s database administrator rights.',
+      ev: 'Code review found parameterized queries throughout, and SAST is clean. An attack would need a new flaw on top of those controls. The service account is a database administrator, so success would expose every patient record.', L: 2, I: 5,
+      mt: ['Run the service with a least-privilege database account', 'Turn off slot search', 'Add a second SAST tool', 'Move the database to another cloud region'], mk: 0 },
+    { id: 'T7', el: 'F9 Coverage response', s: 'T', th: 'A forged coverage response tells the clinic a patient is covered when they are not.',
+      ev: 'Certificate validation is turned off in the eligibility service configuration. An attacker would need a position on the network path to exploit it. A forged response affects one patient&rsquo;s visit.', L: 2, I: 3,
+      mt: ['Ask the insurer to sign its responses', 'Turn certificate validation back on and pin the insurer&rsquo;s certificate authority', 'Check coverage again at check-in', 'Log every coverage response'], mk: 1 },
+    { id: 'T8', el: 'D1 Appointments', s: 'I', th: 'Nightly backups of the appointments database can be read by any account at the cloud provider.',
+      ev: 'The cloud-native application protection platform (CNAPP) flagged the backup bucket: its policy grants read access to any authenticated account at the provider, and anyone can open a free account. The backups hold every patient&rsquo;s appointments and visit reasons.', L: 4, I: 5,
+      mt: ['Remove the broad grant, limit reads to the backup role, and make the CNAPP check a deployment gate', 'Rename the bucket so it is harder to guess', 'Encrypt the backups with the provider-managed key', 'Move backups to a cheaper storage tier'], mk: 0 }
+  ];
+  function score(t) { return t.L * t.I; }
+  var ranked = T.slice().sort(function (a, b) { return score(b) - score(a) || b.I - a.I || (a.id < b.id ? -1 : 1); });
+  window.B1DATA = {
+    N: N, F: F, T: T,
+    answers: {
+      cross: F.filter(function (f) { return f.cross; }).map(function (f) { return f.id; }),
+      high: T.filter(function (t) { return score(t) >= 15; }).map(function (t) { return t.id; }),
+      treat: T.filter(function (t) { return score(t) >= 12; }).length,
+      first: ranked[0].id,
+      ranked: ranked.map(function (t) { return t.id; })
+    }
+  };
+})();
+</script>
+
+<script>
+(function () {
+  var X = window.B1DATA, api0 = null;
+  function A(k) { return function () { return X.answers[k]; }; }
+  function scored() { var sc = (api0 && api0.note('sc')) || {}; return X.T.every(function (t) { return sc[t.id] && sc[t.id].L && sc[t.id].I; }); }
+  var LOCK = 'Score all eight threats in the Threat register tab first (likelihood and impact menus). The ranking then fills in.';
+  window.LAB = {
+    id: 'B1',
+    title: 'Threat Modeling Workshop',
+    accent: 'Threat Modeling',
+    domain: 'Domain 1 (13.6%)',
+    time: '60 min',
+    level: 'Intermediate',
+    lessonHref: 'lesson01.html#s6',
+    lessonLabel: 'Lesson 1, Threat Modeling',
+    lede: 'Threat modeling finds design flaws while they are still cheap to fix. Mark the trust boundaries on a real data flow diagram, apply STRIDE per element, score and rank the threats against a written guide, and give the product owner a plan with mitigations and owners.',
+    workbenchTitle: 'Threat model workbench',
+    kus: ['Cyber Threats (CTH)', 'Security Risk Analysis (SRA)'],
+    ticket: {
+      number: 'SEC-2027-0614',
+      priority: 'High priority',
+      from: 'Asha Lindqvist, Director of Digital Care, Ellisford Clinics',
+      to: 'Security architect, Information Security Office (you)',
+      subject: 'Threat model for CareSlot before the launch review',
+      due: 'Before the launch review on Friday',
+      body: '<p>Ellisford Clinics runs fourteen primary care clinics. CareSlot, our new telehealth scheduling app, lets patients book visits and lets clinicians see their schedules. It checks insurance coverage with an insurer API and sends text reminders through an SMS provider. The beta has been open to 2,000 patients for six weeks.</p>' +
+        '<p>The launch review board will not approve go-live without a threat model. Please mark where the trust boundaries are on the data flow diagram, work out which STRIDE threats apply to each kind of element, and score the eight threats the team has already raised using our scoring guide. I need to know which threats we must treat before launch, what you recommend for the top ones, and anything you think the board should formally accept.</p>' +
+        '<p>Please keep it to the design. The team will turn your recommendations into tickets.</p>'
+    },
+    howTo: 'The <b>Data flow diagram</b> tab shows CareSlot&rsquo;s elements and twelve numbered flows. Use the <b>Element facts</b> tab to decide which flows cross a trust boundary, and mark them by clicking the flow on the diagram or ticking it in the list. Fill in the <b>STRIDE per element</b> worksheet. In the <b>Threat register</b>, score each threat with the <b>Scoring guide</b>; the ranking updates as you go. Check each checklist item when you are ready. Revealing a debrief before an item is verified earns 0 points for that item.',
+    workIntro: 'Scores are likelihood times impact on 1 to 5 scales. Ties rank by impact first, because the board would rather prevent the worse outcome.',
+    checklist: [
+      { id: 'bounds', type: 'set', points: 12, short: 'Boundary flows', title: 'Flows that cross a trust boundary',
+        task: 'Use the element facts to place the trust boundaries. Which data flows cross a trust boundary? Mark them on the diagram, then enter the flow IDs.',
+        label: 'Flow IDs', placeholder: 'e.g., F1, F2',
+        answer: A('cross'),
+        hint: 'A boundary sits wherever data moves between elements with different privilege or a different party in control. The internet-facing gateway and the private services are not at the same privilege level.',
+        debrief: '<p>Seven flows cross a boundary: <b>F1, F2, and F3</b> (patient and clinician devices to the gateway), <b>F4</b> (the internet-facing gateway to the private scheduling service), <b>F8 and F9</b> (to and from the insurer), and <b>F11</b> (to the SMS provider). F5, F6, F7, F10, and F12 stay inside the private subnet, where every element runs at the same trust level.</p><p>F4 is the one teams miss. The gateway handles untrusted input, so the scheduling service must not assume that what arrives from it is safe. Every boundary crossing is where you look hardest for spoofing, tampering, and disclosure. After this item is verified, the diagram can draw the trust zones for you.</p>',
+        reviewNote: 'Trust boundaries sit where privilege or control changes; flows crossing them get the closest scrutiny.' },
+      { id: 'sflow', type: 'set', points: 8, short: 'STRIDE: data flow', title: 'STRIDE categories for a data flow',
+        task: 'Using the STRIDE-per-element mapping, which categories apply to a <b>data flow</b>? Enter the letters (S, T, R, I, D, E).',
+        label: 'STRIDE letters', placeholder: 'e.g., S, T',
+        answer: ['T', 'I', 'D'],
+        hint: 'A flow is data in motion. What can happen to data on the wire? Impersonation and privilege belong to the endpoints.',
+        debrief: '<p>A data flow attracts <b>Tampering, Information disclosure, and Denial of service</b>: data in motion can be altered, read, or blocked. Spoofing and elevation of privilege are threats to the endpoints, and repudiation belongs to the parties who act, not the wire. That is why T4 (reminder texts) and T7 (the forged coverage response) sit on flows.</p>',
+        reviewNote: 'Data flows: tampering, information disclosure, denial of service.' },
+      { id: 'slog', type: 'set', points: 8, short: 'STRIDE: audit log', title: 'STRIDE categories for the audit log (D2)',
+        task: 'D2 is a data store, but it is also the audit log. Which STRIDE categories apply to <b>D2</b>? Enter the letters.',
+        label: 'STRIDE letters', placeholder: 'e.g., T, I',
+        answer: ['T', 'R', 'I', 'D'],
+        hint: 'Start with what applies to any data store, then ask what a log is for. If someone can alter it, what can they deny?',
+        debrief: '<p>Any data store attracts <b>Tampering, Information disclosure, and Denial of service</b>. A store that holds audit records adds <b>Repudiation</b>: if the log can be altered, or does not record who acted, it cannot prove who did what. T3 is exactly that weakness. Treating the log as an ordinary store would miss it.</p>',
+        reviewNote: 'Data stores: T, I, D; an audit log adds repudiation.' },
+      { id: 'authz', type: 'choice', points: 10, short: 'Fix for T2', title: 'Where to fix T2, the edited appointment ID',
+        task: 'T2 lets a signed-in patient change someone else&rsquo;s appointment. Where must the fix be enforced?',
+        options: ['In the mobile app, by hiding the appointment ID from the patient', 'At the API gateway, by checking that the ID is a valid number', 'In the scheduling service, by checking that the signed-in patient owns the appointment before any change', 'In the appointments database, by encrypting the appointment table'],
+        answer: 2,
+        hint: 'The client is on the far side of a trust boundary. Which element knows both who is signed in and who owns the appointment?',
+        debrief: '<p>The authorization check belongs in the <b>scheduling service</b>, the element that holds the business rule and acts on the data. It must confirm, on every request, that the authenticated patient from F4 owns the appointment being changed. Hiding the ID in the app does nothing, because the attacker controls the client. A format check at the gateway lets a valid but foreign ID through, and encryption at rest does not stop an authorized service from changing the wrong row.</p><p>In STRIDE terms this is tampering that comes from missing authorization, so it also has an elevation of privilege flavor. Name the threat by what the attacker achieves, then fix it where the decision is made.</p>',
+        reviewNote: 'Enforce authorization on the trusted side of the boundary, in the element that owns the decision.' },
+      { id: 'high', type: 'set', points: 12, short: 'Scores 15+', title: 'Threats in the high band',
+        task: 'After you score every threat, which threats score <b>15 or more</b>? Enter the threat IDs.',
+        label: 'Threat IDs', placeholder: 'e.g., T1',
+        answer: A('high'),
+        locked: function () { return scored() ? false : LOCK; },
+        hint: 'Read the scoring guide carefully. Active attempts in our own logs mean likelihood 5. A confirmed weakness anyone with a free account can reach is likelihood 4. Exposure of every patient record is impact 5.',
+        debrief: '<p>Three threats score 15 or more: <b>T8</b> (backup bucket readable by any provider account, 4 x 5 = 20), <b>T1</b> (credential stuffing already under way, 5 x 4 = 20), and <b>T2</b> (the confirmed appointment ID flaw, 4 x 4 = 16). Under the Ellisford guide, all three must be treated before launch, and none can be accepted by the product team.</p><p>T6 is the trap. Its impact is the worst on the list, but code review and SAST give two working controls, so it scores 2 x 5 = 10. Severe impact alone does not make a threat the top priority.</p>',
+        reviewNote: 'Score from the evidence and the guide; high impact with strong controls is not automatically high risk.' },
+      { id: 'first', type: 'choice', points: 10, short: 'Top threat', title: 'The threat that ranks first',
+        task: 'Two threats tie on score. Using the tie rule in the guide, which threat ranks first?',
+        options: ['T1, credential stuffing at the gateway', 'T2, the edited appointment ID', 'T5, the bot flood during the vaccine campaign', 'T8, the readable backup bucket'],
+        answer: 3,
+        locked: function () { return scored() ? false : LOCK; },
+        hint: 'T1 and T8 both score 20. The guide breaks ties by impact.',
+        debrief: '<p><b>T8 ranks first.</b> T1 and T8 both score 20, and the guide breaks ties by impact: T8 is impact 5 (every patient&rsquo;s records), and T1 is impact 4 (many accounts). The tie rule reflects the board&rsquo;s preference to prevent the worse outcome first.</p><p>In practice both get treated before launch, and T8 is also the quickest to fix: one bucket policy change, then a CNAPP check in the pipeline so the same mistake cannot ship again.</p>',
+        reviewNote: 'Rank by score, then by impact when scores tie.' },
+      { id: 'treat', type: 'number', points: 8, short: 'Treat before launch', title: 'How many threats must be treated before launch?',
+        task: 'The guide says any threat scoring <b>12 or more</b> must be treated before launch. How many of the eight threats is that?',
+        answer: A('treat'), tol: 0, unit: 'threats',
+        locked: function () { return scored() ? false : LOCK; },
+        hint: 'Count the threats in the high band, then add those that score exactly 12 to 14. Check T4 and T5 carefully.',
+        debrief: '<p><b>Five threats</b> must be treated before launch: T8 (20), T1 (20), T2 (16), T5 (12), and T4 (12). T6 (10), T7 (6), and T3 (4) can be scheduled after launch with a named owner, or formally accepted by the right person.</p><p>T4 is easy to underrate because it is not an attack. It happens with every reminder in normal operation, and that is why its likelihood is 4. Privacy threats often look like features until someone reads the lock screen.</p>',
+        reviewNote: 'Apply the treatment threshold to every score, including non-attack privacy threats.' },
+      { id: 'mit1', type: 'choice', points: 10, short: 'Mitigate T1', title: 'The mitigation for T1',
+        task: 'Choose the mitigation that best treats T1, credential stuffing. Try it in the register&rsquo;s mitigation menu first.',
+        options: ['Raise the minimum password length to 14 characters', 'Phishing-resistant MFA with passkeys, breached-password screening, and sign-in rate limits', 'Add a CAPTCHA to the sign-in page', 'Lock each account permanently after three failed sign-ins'],
+        answer: 1,
+        hint: 'The attacker already has valid passwords. Which option still works when the password is correct?',
+        debrief: '<p>Credential stuffing uses passwords that are already correct, so password rules do nothing against it. <b>Passkeys</b> remove the shared secret entirely, breached-password screening stops reuse for people still on passwords, and rate limits slow what remains. A CAPTCHA is defeated by solving services, and permanent lockout hands the attacker a way to deny service to every patient whose email they know.</p><p>Notice that the mitigation also lowers T5, the bot flood, because the rate limits sit on the same gateway. Good mitigations often treat more than one threat.</p>',
+        reviewNote: 'Treat credential stuffing with phishing-resistant MFA, breached-password checks, and rate limits.' },
+      { id: 'mit8', type: 'choice', points: 10, short: 'Mitigate T8', title: 'The mitigation for T8',
+        task: 'Choose the mitigation that best treats T8, the backup bucket the CNAPP flagged.',
+        options: ['Remove the broad read grant, limit reads to the backup role, and make the CNAPP check a deployment gate', 'Rename the bucket so it is harder to find', 'Encrypt the backups with the provider-managed key', 'Move the backups to a cheaper storage tier'],
+        answer: 0,
+        hint: 'Who can read the bucket today, and would encryption with a key the provider manages for you stop an authorized read?',
+        debrief: '<p>The cause is an access policy, so the fix is the policy: <b>remove the grant to any authenticated account</b>, allow reads only by the backup role, and make the CNAPP posture check a gate in the deployment pipeline so the setting cannot return. Then review the bucket&rsquo;s access logs to learn whether anyone outside Ellisford read the backups, because that would make this an incident, not just a finding.</p><p>Provider-managed encryption decrypts for any request the policy allows, so it does not help here. Renaming is obscurity, not control.</p>',
+        reviewNote: 'Fix misconfigured access at the policy, then prevent recurrence with a posture check in the pipeline.' },
+      { id: 'memo', type: 'text', points: 12, short: 'Launch review memo', title: 'Write the threat model summary for the launch review', reportTitle: 'Threat model summary for the launch review',
+        task: 'Write the summary Asha will take to the launch review board. Use element, flow, and threat IDs.',
+        fields: [
+          { key: 'scope', label: 'Scope and trust boundaries', min: 40, placeholder: 'What the model covers and where the boundaries sit.' },
+          { key: 'top', label: 'Threats to treat before launch, in rank order', min: 50, placeholder: 'IDs, scores, and one line on why each matters.' },
+          { key: 'mit', label: 'Recommended mitigations and owners', min: 50, placeholder: 'What to change, where, and who owns each fix.' },
+          { key: 'accept', label: 'Lower-ranked threats: schedule or accept', min: 30, placeholder: 'What waits until after launch and who must accept it.' }
+        ],
+        hint: 'Lead with the decision the board must make. A board member should know in one minute what blocks launch and who is fixing it.',
+        debrief: '<p><b>Model summary.</b> <b>Scope:</b> CareSlot as designed for launch: two external user groups, four processes, two data stores, and two third parties. Trust boundaries sit between user devices and the gateway (F1 to F3), between the internet-facing gateway and the private services (F4), and between Ellisford and the insurer and SMS provider (F8, F9, F11). <b>Treat before launch:</b> T8 (20), T1 (20), T2 (16), T5 (12), and T4 (12). <b>Mitigations:</b> cloud platform team fixes the backup bucket policy and adds the CNAPP gate, and reviews access logs for outside reads (T8); identity team adds passkeys, breached-password screening, and rate limits (T1, and T5 in part); scheduling developers add an ownership check on every appointment change (T2); gateway team adds bot protection and the provider DDoS service (T5); product removes visit reasons from texts (T4). <b>After launch:</b> least-privilege database account for scheduling (T6, 10), certificate validation on the insurer flow (T7, 6), and user identity in an append-only audit log (T3, 4). Each gets an owner and a date; anything not done by then needs a formal acceptance by the Director of Digital Care.</p>',
+        reviewNote: 'A threat model ends in decisions: what blocks launch, what each fix is, and who owns it.' }
+    ],
+
+    workbench: function (root, api) {
+      api0 = api;
+      var esc = api.esc;
+      root.innerHTML = '<div class="lb-tool"><div class="lb-tabs" role="tablist" aria-label="Workbench tools">' +
+        '<button role="tab" id="tb-df" aria-controls="pn-df" aria-selected="true">Data flow diagram</button>' +
+        '<button role="tab" id="tb-fa" aria-controls="pn-fa" aria-selected="false" tabindex="-1">Element facts</button>' +
+        '<button role="tab" id="tb-sp" aria-controls="pn-sp" aria-selected="false" tabindex="-1">STRIDE per element</button>' +
+        '<button role="tab" id="tb-tr" aria-controls="pn-tr" aria-selected="false" tabindex="-1">Threat register</button>' +
+        '<button role="tab" id="tb-sg" aria-controls="pn-sg" aria-selected="false" tabindex="-1">Scoring guide</button></div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-df" aria-labelledby="tb-df"></div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-fa" aria-labelledby="tb-fa" hidden>' + FACTS() + '</div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-sp" aria-labelledby="tb-sp" hidden></div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-tr" aria-labelledby="tb-tr" hidden></div>' +
+        '<div class="lb-panel" role="tabpanel" id="pn-sg" aria-labelledby="tb-sg" hidden>' + GUIDE() + '</div></div>';
+      var tabs = [].slice.call(root.querySelectorAll('[role=tab]'));
+      function sel(t) { tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }); api.note('tab', t.id); }
+      tabs.forEach(function (t, i) { t.addEventListener('click', function () { sel(t); }); t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; sel(n); n.focus(); } }); });
+      if (api.note('tab')) { var tt = document.getElementById(api.note('tab')); if (tt) sel(tt); }
+
+      /* ---------- Diagram ---------- */
+      function marked() { return api.note('fl') || []; }
+      function center(n) { return n.t === 'proc' ? { x: n.cx, y: n.cy } : { x: n.x + n.w / 2, y: n.y + n.h / 2 }; }
+      function clip(n, from, dx, dy) {
+        // point where the ray from 'from' along (dx,dy) leaves node n
+        if (n.t === 'proc') { var c = center(n), ox = from.x - c.x, oy = from.y - c.y, b = ox * dx + oy * dy, cc = ox * ox + oy * oy - (n.r + 3) * (n.r + 3), d = b * b - cc; var t = -b + Math.sqrt(Math.max(d, 0)); return { x: from.x + dx * t, y: from.y + dy * t }; }
+        var x0 = n.x - 3, x1 = n.x + n.w + 3, y0 = n.y - 3, y1 = n.y + n.h + 3, ts = [];
+        if (dx) { ts.push((x0 - from.x) / dx, (x1 - from.x) / dx); }
+        if (dy) { ts.push((y0 - from.y) / dy, (y1 - from.y) / dy); }
+        var best = Infinity;
+        ts.forEach(function (t) { if (t > 0) { var px = from.x + dx * t, py = from.y + dy * t; if (px >= x0 - .5 && px <= x1 + .5 && py >= y0 - .5 && py <= y1 + .5 && t < best) best = t; } });
+        return { x: from.x + dx * best, y: from.y + dy * best };
+      }
+      function seg(f) {
+        var A1 = X.N[f.a], B1 = X.N[f.b], ca = center(A1), cb = center(B1);
+        // pairs share the same geometry direction; offset to one side of the canonical direction
+        var flip = f.a > f.b, p = flip ? cb : ca, q = flip ? ca : cb;
+        var dx = q.x - p.x, dy = q.y - p.y, L = Math.sqrt(dx * dx + dy * dy); dx /= L; dy /= L;
+        var nx = -dy, ny = dx, o = f.off ? (flip ? -f.off : f.off) : 0;
+        if (f.off && flip) o = -f.off; if (f.off && !flip) o = f.off;
+        var sa = { x: ca.x + nx * o, y: ca.y + ny * o }, sb = { x: cb.x + nx * o, y: cb.y + ny * o };
+        var ex = sb.x - sa.x, ey = sb.y - sa.y, EL = Math.sqrt(ex * ex + ey * ey); ex /= EL; ey /= EL;
+        var s = clip(A1, sa, ex, ey), e = clip(B1, sb, -ex, -ey);
+        return { s: s, e: e, nx: nx, ny: ny, o: o };
+      }
+      function zones() {
+        return '<rect class="zone" x="8" y="36" width="174" height="410" rx="10"/><text class="zl" x="16" y="30">User devices</text>' +
+          '<rect class="zone" x="254" y="152" width="152" height="160" rx="10"/><text class="zl" x="262" y="146">Public subnet</text>' +
+          '<rect class="zone" x="410" y="26" width="414" height="456" rx="10"/><text class="zl" x="560" y="20">Private subnet</text>' +
+          '<rect class="zone" x="888" y="36" width="146" height="330" rx="10"/><text class="zl" x="896" y="30">Third parties</text>';
+      }
+      function svg() {
+        var m = marked(), showZ = api.note('zones') && boundsOk();
+        var s = '<svg class="b1-dfd" viewBox="0 0 1036 490" role="group" aria-label="CareSlot data flow diagram. Flows are buttons; select a flow to mark it as crossing a trust boundary.">' +
+          '<defs><marker id="b1-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#56647f"/></marker>' +
+          '<marker id="b1-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#b45309"/></marker></defs>';
+        if (showZ) s += zones();
+        Object.keys(X.N).forEach(function (k) {
+          var n = X.N[k];
+          if (n.t === 'proc') s += '<g class="node"><circle cx="' + n.cx + '" cy="' + n.cy + '" r="' + n.r + '"/><text class="nm" x="' + n.cx + '" y="' + (n.cy - 2) + '" text-anchor="middle">' + k + ' ' + esc(n.nm) + '</text><text class="kd" x="' + n.cx + '" y="' + (n.cy + 15) + '" text-anchor="middle">Process</text></g>';
+          else if (n.t === 'ext') s += '<g class="node ext"><rect x="' + n.x + '" y="' + n.y + '" width="' + n.w + '" height="' + n.h + '"/><text class="nm" x="' + (n.x + n.w / 2) + '" y="' + (n.y + 26) + '" text-anchor="middle">' + k + ' ' + esc(n.nm) + '</text><text class="kd" x="' + (n.x + n.w / 2) + '" y="' + (n.y + 43) + '" text-anchor="middle">External entity</text></g>';
+          else s += '<g class="node store"><line x1="' + n.x + '" y1="' + n.y + '" x2="' + (n.x + n.w) + '" y2="' + n.y + '"/><line x1="' + n.x + '" y1="' + (n.y + n.h) + '" x2="' + (n.x + n.w) + '" y2="' + (n.y + n.h) + '"/><text class="nm" x="' + (n.x + n.w / 2) + '" y="' + (n.y + 25) + '" text-anchor="middle">' + esc(n.nm) + '</text></g>';
+        });
+        X.F.forEach(function (f) {
+          var g = seg(f), on = m.indexOf(f.id) >= 0;
+          var mx = (g.s.x + g.e.x) / 2 + g.nx * (f.off ? (g.o > 0 ? 14 : -14) : 14), my = (g.s.y + g.e.y) / 2 + g.ny * (f.off ? (g.o > 0 ? 14 : -14) : 14);
+          s += '<g class="fl' + (on ? ' on' : '') + '" data-f="' + f.id + '" tabindex="0" role="button" aria-pressed="' + on + '" aria-label="' + f.id + ', ' + esc(f.nm) + ', from ' + f.a + ' to ' + f.b + (on ? ', marked as crossing a trust boundary' : '') + '">' +
+            '<line class="v" x1="' + g.s.x.toFixed(1) + '" y1="' + g.s.y.toFixed(1) + '" x2="' + g.e.x.toFixed(1) + '" y2="' + g.e.y.toFixed(1) + '" marker-end="url(#' + (on ? 'b1-ar2' : 'b1-ar') + ')"/>' +
+            '<line class="hit" x1="' + g.s.x.toFixed(1) + '" y1="' + g.s.y.toFixed(1) + '" x2="' + g.e.x.toFixed(1) + '" y2="' + g.e.y.toFixed(1) + '"/>' +
+            '<rect class="tag" x="' + (mx - 16).toFixed(1) + '" y="' + (my - 9).toFixed(1) + '" width="32" height="18" rx="3"/><text x="' + mx.toFixed(1) + '" y="' + (my + 4).toFixed(1) + '" text-anchor="middle">' + f.id + '</text></g>';
+        });
+        return s + '</svg>';
+      }
+      function boundsOk() { var st = api.state().st || {}; return st.bounds === 'ok'; }
+      function toggle(id) { var m = marked().slice(), i = m.indexOf(id); if (i >= 0) m.splice(i, 1); else m.push(id); m.sort(function (a, b) { return +a.slice(1) - +b.slice(1); }); api.note('fl', m); drawDF(id); }
+      function drawDF(focusF) {
+        var pn = document.getElementById('pn-df'), m = marked(), ok = boundsOk();
+        var fa = document.activeElement, fid = fa && fa.id;
+        pn.innerHTML = '<div><div><div class="b1-box" data-popout="Data flow diagram"><h4>CareSlot data flow diagram</h4><div class="b1-dfw">' + svg() + '</div>' +
+          '<p class="b1-sum">Marked as crossing a trust boundary: <b>' + (m.length ? m.join(', ') : 'none yet') + '</b> (' + m.length + ' of 12 flows)</p>' +
+          '<button type="button" class="b1-btn" id="b1-z" aria-pressed="' + !!(api.note('zones') && ok) + '"' + (ok ? '' : ' disabled') + '>' + (ok ? (api.note('zones') ? 'Hide trust zones' : 'Show trust zones') : 'Trust zones unlock after checklist item 1') + '</button>' +
+          '<button type="button" class="b1-btn" id="b1-clr">Clear marks</button></div></div>' +
+          '<div><div class="b1-box"><h4>Flows</h4><ul class="b1-flows">' + X.F.map(function (f) {
+            return '<li><label><input type="checkbox" id="b1-cb-' + f.id + '" data-f="' + f.id + '"' + (m.indexOf(f.id) >= 0 ? ' checked' : '') + '><span><b>' + f.id + '</b> ' + esc(f.nm) + ' <span style="color:var(--text-muted)">(' + f.a + ' to ' + f.b + ')</span></span></label></li>';
+          }).join('') + '</ul></div></div></div>';
+        pn.querySelectorAll('.fl').forEach(function (g) { g.addEventListener('click', function () { toggle(g.dataset.f); }); g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(g.dataset.f); } }); });
+        pn.querySelectorAll('.b1-flows input').forEach(function (c) { c.addEventListener('change', function () { toggle(c.dataset.f); }); });
+        pn.querySelector('#b1-z').addEventListener('click', function () { if (!boundsOk()) return; api.note('zones', !api.note('zones')); drawDF(); var b = document.getElementById('b1-z'); if (b) b.focus(); });
+        pn.querySelector('#b1-clr').addEventListener('click', function () { api.note('fl', []); drawDF(); });
+        if (focusF) { var el = fid && fid.indexOf('b1-cb-') === 0 ? document.getElementById(fid) : pn.querySelector('.fl[data-f="' + focusF + '"]'); if (el) el.focus(); }
+      }
+      drawDF();
+      // the zones button unlocks when item 1 verifies; watch for that without reloading the tool
+      var wasOk = boundsOk();
+      var watch = setInterval(function () { if (!document.getElementById('pn-df')) { clearInterval(watch); return; } var ok = boundsOk(); if (ok !== wasOk) { wasOk = ok; drawDF(); } }, 800);
+
+      /* ---------- STRIDE grid ---------- */
+      var ROWS = [['ext', 'External entity (E1 to E4)'], ['proc', 'Process (P1 to P4)'], ['flow', 'Data flow (F1 to F12)'], ['store', 'Data store (D1 Appointments)'], ['log', 'Audit log (D2)']];
+      var COLS = [['S', 'Spoofing'], ['T', 'Tampering'], ['R', 'Repudiation'], ['I', 'Information disclosure'], ['D', 'Denial of service'], ['E', 'Elevation of privilege']];
+      function drawSP() {
+        var g = api.note('sg') || {}, pn = document.getElementById('pn-sp');
+        pn.innerHTML = '<p class="lead-p">Tick each STRIDE category that applies to each kind of element. This is your worksheet; checklist items 2 and 3 check the two rows that matter most for CareSlot.</p>' +
+          '<div class="table-wrap"><table class="b1-grid"><caption class="sr-only">STRIDE per element worksheet</caption><thead><tr><th scope="col">Element type</th>' + COLS.map(function (c) { return '<th scope="col">' + c[0] + '<small>' + c[1] + '</small></th>'; }).join('') + '</tr></thead><tbody>' +
+          ROWS.map(function (r) { return '<tr><th scope="row">' + r[1] + '</th>' + COLS.map(function (c) { var k = r[0] + c[0]; return '<td><input type="checkbox" data-k="' + k + '" aria-label="' + esc(r[1] + ': ' + c[1]) + '"' + (g[k] ? ' checked' : '') + '></td>'; }).join('') + '</tr>'; }).join('') +
+          '</tbody></table></div>' +
+          '<p class="b1-sum">Your data flow row: <b>' + (COLS.filter(function (c) { return g['flow' + c[0]]; }).map(function (c) { return c[0]; }).join(', ') || 'none') + '</b>. Your audit log row: <b>' + (COLS.filter(function (c) { return g['log' + c[0]]; }).map(function (c) { return c[0]; }).join(', ') || 'none') + '</b>.</p>';
+        pn.querySelectorAll('input').forEach(function (c) { c.addEventListener('change', function () { var o = Object.assign({}, api.note('sg') || {}); o[c.dataset.k] = c.checked; api.note('sg', o); var k = c.dataset.k; drawSP(); var n = document.querySelector('#pn-sp input[data-k="' + k + '"]'); if (n) n.focus(); }); });
+      }
+      drawSP();
+
+      /* ---------- Threat register ---------- */
+      function sc() { return api.note('sc') || {}; }
+      function mt() { return api.note('mt') || {}; }
+      function band(v) { return v == null ? 'n' : v >= 15 ? 'h' : v >= 12 ? 'm' : 'l'; }
+      var BN = { h: 'Treat before launch (high)', m: 'Treat before launch', l: 'Schedule or accept', n: 'Not scored' };
+      function drawTR(focusSel) {
+        var s = sc(), M = mt(), pn = document.getElementById('pn-tr');
+        var rows = X.T.map(function (t) { var v = s[t.id] || {}; return { t: t, L: v.L || null, I: v.I || null, sc: v.L && v.I ? v.L * v.I : null }; });
+        var done = rows.filter(function (r) { return r.sc != null; });
+        var rk = done.slice().sort(function (a, b) { return b.sc - a.sc || b.I - a.I || (a.t.id < b.t.id ? -1 : 1); });
+        var rankOf = {}; rk.forEach(function (r, i) { rankOf[r.t.id] = i + 1; });
+        function opt(v, cur) { return '<option value="' + v + '"' + (cur === v ? ' selected' : '') + '>' + v + '</option>'; }
+        var h = '<div class="b1-tiles"><div class="b1-tile"><div class="k">Scored</div><div class="v">' + done.length + ' of 8</div></div>' +
+          '<div class="b1-tile"><div class="k">Score 15 or more</div><div class="v">' + (done.length === 8 ? done.filter(function (r) { return r.sc >= 15; }).length : '&middot;') + '</div></div>' +
+          '<div class="b1-tile"><div class="k">Treat before launch (12+)</div><div class="v">' + (done.length === 8 ? done.filter(function (r) { return r.sc >= 12; }).length : '&middot;') + '</div></div>' +
+          '<div class="b1-tile"><div class="k">Ranks first</div><div class="v">' + (done.length === 8 ? rk[0].t.id : '&middot;') + '</div></div></div>' +
+          '<div class="table-wrap"><table class="data b1-reg"><caption class="sr-only">CareSlot threat register</caption><thead><tr><th scope="col">ID</th><th scope="col">Element and STRIDE</th><th scope="col">Threat and evidence</th><th scope="col">L</th><th scope="col">I</th><th scope="col">Score</th><th scope="col">Rank</th><th scope="col">Mitigation</th></tr></thead><tbody>' +
+          rows.map(function (r) {
+            var t = r.t, b = band(r.sc);
+            return '<tr><th scope="row">' + t.id + '</th><td>' + esc(t.el) + '<span class="sub"><span class="b1-st">' + t.s + '</span></span></td>' +
+              '<td class="ev"><b>' + t.th + '</b><span class="sub">' + t.ev + '</span></td>' +
+              '<td class="c"><select class="lv" id="b1-L-' + t.id + '" data-t="' + t.id + '" data-k="L" aria-label="' + t.id + ' likelihood"><option value="">&middot;</option>' + [1, 2, 3, 4, 5].map(function (v) { return opt(v, r.L); }).join('') + '</select></td>' +
+              '<td class="c"><select class="lv" id="b1-I-' + t.id + '" data-t="' + t.id + '" data-k="I" aria-label="' + t.id + ' impact"><option value="">&middot;</option>' + [1, 2, 3, 4, 5].map(function (v) { return opt(v, r.I); }).join('') + '</select></td>' +
+              '<td class="c"><b>' + (r.sc == null ? '&middot;' : r.sc) + '</b><span class="sub"><span class="b1-band ' + b + '">' + BN[b] + '</span></span></td>' +
+              '<td class="c">' + (rankOf[t.id] || '&middot;') + '</td>' +
+              '<td><select class="mt" id="b1-M-' + t.id + '" data-t="' + t.id + '" aria-label="' + t.id + ' mitigation"><option value="">Choose a mitigation</option>' + t.mt.map(function (o, k) { return '<option value="' + k + '"' + (M[t.id] === k ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select></td></tr>';
+          }).join('') + '</tbody></table></div>' +
+          (done.length === 8 ? '<div class="b1-box" style="margin-top:1rem" data-popout="Threat ranking"><h4>Ranking and plan</h4><ol class="b1-rank">' + rk.map(function (r) { var mm = M[r.t.id]; return '<li><b>' + r.t.id + '</b> (' + r.sc + ', impact ' + r.I + ') ' + (mm == null ? '<i>no mitigation chosen</i>' : r.t.mt[mm]) + '</li>'; }).join('') + '</ol></div>' : '<p class="b1-sum">Score all eight threats to see the ranking and your mitigation plan.</p>');
+        pn.innerHTML = h;
+        pn.querySelectorAll('select.lv').forEach(function (e) { e.addEventListener('change', function () { var o = Object.assign({}, sc()); var v = Object.assign({}, o[e.dataset.t] || {}); v[e.dataset.k] = e.value ? +e.value : null; o[e.dataset.t] = v; api.note('sc', o); drawTR('#' + e.id); api.refresh(); }); });
+        pn.querySelectorAll('select.mt').forEach(function (e) { e.addEventListener('change', function () { var o = Object.assign({}, mt()); if (e.value === '') delete o[e.dataset.t]; else o[e.dataset.t] = +e.value; api.note('mt', o); drawTR('#' + e.id); }); });
+        if (focusSel) { var f = document.querySelector(focusSel); if (f) f.focus(); }
+      }
+      drawTR();
+    },
+    onReset: function () { }
+  };
+
+  function FACTS() {
+    return '<div class="lb-doc"><h4>Where each element runs and who controls it</h4><div class="table-wrap"><table class="data b1-facts"><thead><tr><th scope="col">Element</th><th scope="col">Runs on</th><th scope="col">Controlled by</th><th scope="col">What it trusts</th></tr></thead><tbody>' +
+      '<tr><th scope="row">E1 Patient</th><td>The patient&rsquo;s own phone or browser, on the public internet</td><td>The patient</td><td>Nothing; Ellisford cannot control the device</td></tr>' +
+      '<tr><th scope="row">E2 Clinician</th><td>Clinic laptops that connect over home and clinic internet links</td><td>Ellisford IT manages the laptops, but the network path is the public internet</td><td>Treated as untrusted until the gateway authenticates the session</td></tr>' +
+      '<tr><th scope="row">P1 API gateway</th><td>Ellisford cloud account, <b>public subnet</b>, internet facing</td><td>Ellisford cloud platform team</td><td>Terminates TLS, authenticates sessions, validates input; everything it receives is untrusted</td></tr>' +
+      '<tr><th scope="row">P2 Scheduling</th><td>Ellisford cloud account, <b>private subnet</b></td><td>Ellisford scheduling developers</td><td>Accepts traffic only from the gateway and from P3 and P4</td></tr>' +
+      '<tr><th scope="row">P3 Eligibility, P4 Reminders</th><td>Ellisford cloud account, <b>private subnet</b></td><td>Ellisford scheduling developers</td><td>Same service identity and trust level as P2</td></tr>' +
+      '<tr><th scope="row">D1 Appointments, D2 Audit log</th><td>Managed database and log service in the <b>private subnet</b></td><td>Ellisford cloud platform team</td><td>Reachable only by P2</td></tr>' +
+      '<tr><th scope="row">E3 Insurer API</th><td>Northgate Benefits Exchange data center</td><td>Northgate, under contract</td><td>Ellisford cannot see or change its internals</td></tr>' +
+      '<tr><th scope="row">E4 SMS provider</th><td>Relaylark Messaging cloud</td><td>Relaylark, under contract</td><td>Ellisford cannot see or change its internals; it delivers to phone carriers</td></tr>' +
+      '</tbody></table></div></div>' +
+      '<div class="lb-doc"><h4>Ellisford threat modeling standard, section 2</h4><ul>' +
+      '<li>A <b>trust boundary</b> sits wherever data passes between elements that run at different privilege levels or under the control of different parties.</li>' +
+      '<li>The public subnet and the private subnet are different privilege levels. Elements in the same subnet with the same service identity share a trust level.</li>' +
+      '<li>Every flow that crosses a boundary must authenticate its source, protect data in transit, and validate input on the receiving side.</li></ul></div>';
+  }
+  function GUIDE() {
+    return '<div class="lb-doc"><h4>Likelihood (L)</h4><div class="table-wrap"><table class="data"><tbody>' +
+      '<tr><th scope="row">5 Active</th><td>Attempts against CareSlot appear in our own logs now.</td></tr>' +
+      '<tr><th scope="row">4 Exposed</th><td>A confirmed, unfixed weakness that anyone can reach: anyone on the internet, anyone who can open a free account, or anyone who sees a patient&rsquo;s phone. Also any harm that happens in normal operation.</td></tr>' +
+      '<tr><th scope="row">3 Open</th><td>No confirmed weakness, but the element is internet facing and has no control for this threat.</td></tr>' +
+      '<tr><th scope="row">2 Constrained</th><td>Needs an insider, privileged access, a position on the network path, or a new flaw on top of controls already in place.</td></tr>' +
+      '<tr><th scope="row">1 Remote</th><td>Needs several independent failures or a capability we have no reason to expect.</td></tr></tbody></table></div></div>' +
+      '<div class="lb-doc"><h4>Impact (I)</h4><div class="table-wrap"><table class="data"><tbody>' +
+      '<tr><th scope="row">5 Severe</th><td>Health information of all or most patients exposed, or patient safety at risk.</td></tr>' +
+      '<tr><th scope="row">4 Major</th><td>Health information of many patients exposed or altered, or online booking down for every clinic.</td></tr>' +
+      '<tr><th scope="row">3 Moderate</th><td>One patient&rsquo;s health information exposed, or one patient&rsquo;s visit or coverage decision affected.</td></tr>' +
+      '<tr><th scope="row">2 Minor</th><td>An internal dispute or record error with no health information exposed.</td></tr>' +
+      '<tr><th scope="row">1 Negligible</th><td>No effect a patient or regulator would notice.</td></tr></tbody></table></div></div>' +
+      '<div class="lb-doc"><h4>Scoring and treatment rules</h4><ul>' +
+      '<li>Score = L x I. Rank by score; when scores tie, the higher impact ranks first.</li>' +
+      '<li><b>15 or more:</b> high. Must be treated before launch; only the Executive Leadership Team could accept it.</li>' +
+      '<li><b>12 to 14:</b> must be treated before launch.</li>' +
+      '<li><b>11 or less:</b> schedule with an owner and date, or have the Director of Digital Care formally accept it.</li>' +
+      '<li>Score the threat as the design stands today. Do not count a mitigation until it is built.</li></ul></div>';
+  }
+})();
+</script>
+<script src="lab.js"></script>
+</body>
+</html>

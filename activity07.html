@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A7 Assessment and Testing Strategy | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A7',
+  title: 'Assessment and Testing Strategy',
+  accent: 'Testing Strategy',
+  domain: 'Domain 6 (11.2%)',
+  time: '35 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson06.html#s1',
+  lessonLabel: 'Lesson 6, Assessment Strategy',
+  lede: 'A test answers one question, and the leader’s job is to pick the test whose question matches the risk. Practice matching tests to objectives, choosing the audit report that gives the assurance a stakeholder needs, and turning raw results into the metrics management acts on, all at Mardell Foods, a regional food processor with plants, a distribution fleet, and an online ordering portal.',
+  concepts: [
+    { key: 'tests', name: 'Test types and objectives', review: 'Lesson 6, Vulnerability and Penetration Testing' },
+    { key: 'audits', name: 'Audits and SOC reports', review: 'Lesson 6, Analysis, Reporting, and Audits' },
+    { key: 'metrics', name: 'KPIs and KRIs', review: 'Lesson 6, Security Process Data' },
+    { key: 'analysis', name: 'Coverage and remediation math', review: 'Lesson 6, Analysis, Reporting, and Audits' }
+  ],
+  stations: [
+    {
+      type: 'sort', short: 'Test to objective', title: 'Which test answers the question?', concept: 'tests',
+      instr: 'Each line is an objective someone at Mardell Foods brought to the security team. Choose the test type that answers it <b>best</b>. Then select <b>Check answers</b>.',
+      hint: 'A vulnerability scan is wide and shallow: what known weaknesses exist? A penetration test is narrow and deep: how far could an attacker get? An attack simulation asks whether our controls detect and block a specific technique. SAST and code review read code at rest. DAST and fuzzing exercise a running program.',
+      buckets: ['Vulnerability scan', 'Penetration test', 'Attack simulation', 'SAST or code review', 'DAST or fuzzing'],
+      review: { href: 'lesson06.html#s2', label: 'Lesson 6, Vulnerability and Penetration Testing' },
+      items: [
+        { text: 'Find every server in the plant network that is missing last month’s critical patches', answer: 0, why: 'Breadth against known weaknesses is the scanner’s job. A credentialed scan sees missing patches most accurately.' },
+        { text: 'Show the board how far an outside attacker could get toward the order database', answer: 1, why: 'Chaining weaknesses to show real business impact is what a penetration test proves.' },
+        { text: 'Confirm that the EDR tool still detects credential dumping after this week’s policy change', answer: 2, why: 'Whether a control detects a specific technique, and still does after a change, is the question an attack simulation answers.' },
+        { text: 'Catch injection patterns in the portal’s new checkout code before it is merged', answer: 3, why: 'Reading code at rest finds coding flaws earliest, when they are cheapest to fix.' },
+        { text: 'Test a vendor’s compiled label-printer service, with no source code available, for crashes on malformed input', answer: 4, why: 'Fuzzing feeds malformed input to a running program and needs no source code. Crashes point to input handling and memory errors.' },
+        { text: 'Run safe versions of a known ransomware group’s techniques every week and report which steps went unseen', answer: 2, why: 'Breach and attack simulation tools run safe, scheduled versions of known techniques and report blocked, detected, and unseen steps.' },
+        { text: 'Find business logic flaws in the discount approval code that automated tools keep missing', answer: 3, why: 'Logic and design flaws are where manual code review earns its cost. Tools match patterns; people understand intent.' },
+        { text: 'Check the staging copy of the ordering portal for misconfigured headers and exposed admin pages', answer: 4, why: 'Runtime and configuration flaws are visible only in a running application. That is DAST.' },
+        { text: 'Produce a quarterly list of known vulnerabilities across all 400 assets, rated by CVSS', answer: 0, why: 'A broad inventory of known weaknesses with severity ratings is what a vulnerability assessment delivers.' },
+        { text: 'Learn whether a phishing foothold on a sales laptop could reach the plant control network', answer: 1, why: 'Testing whether access can be escalated and moved across segments is a goal-oriented penetration test.' },
+        { text: 'Find hardcoded credentials and unsafe functions in the fleet-tracking app’s repository', answer: 3, why: 'Secrets and unsafe function calls are visible in the source. SAST and secrets scanning find them before release.' },
+        { text: 'See whether the SOC escalates when a test agent beacons to a simulated command server', answer: 2, why: 'The question is about detection and response, not exploitation. An attack simulation tests the defenders and their tools.' }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Audits and indicators', title: 'The right assurance and the right indicator', concept: 'audits',
+      instr: 'You are Mardell’s security director, Reuben Castellanos-Hart. For each case, choose the <b>BEST</b> answer.',
+      hint: 'SOC 1 covers controls relevant to financial reporting. SOC 2 covers security and the trust services criteria: Type I is design on one day, Type II is design and operation over a period. SOC 3 is the public summary. A KPI looks back at how well a process performed; a KRI looks ahead at rising risk.',
+      review: { href: 'lesson06.html#s5', label: 'Lesson 6, Analysis, Reporting, and Audits' },
+      items: [
+        {
+          title: 'Case 1: A new cloud payroll provider', text: 'Mardell plans to move payroll to a cloud provider. The CFO and the external financial auditors want assurance about the provider’s controls. Reuben wants to know whether its security controls actually operated over the last year.',
+          parts: [
+            { q: 'Which report best serves the external financial auditors?', options: ['A SOC 3 report from the provider’s website', 'A SOC 2 Type I report', 'A SOC 1 Type II report', 'The provider’s ISO 27001 certificate'], answer: 2, why: 'Payroll feeds financial statements. A SOC 1 covers controls relevant to the customer’s financial reporting, and Type II shows they operated over a period.' },
+            { q: 'Which report BEST answers Reuben’s question?', options: ['A SOC 2 Type II report', 'A SOC 2 Type I report', 'A SOC 3 report', 'A completed security questionnaire'], answer: 0, why: 'A SOC 2 Type II tests design and operating effectiveness of security controls over a period, often 6 to 12 months. Type I covers design on one day.' },
+            { q: 'The SOC 2 report lists complementary user entity controls. What do they mean for Mardell?', options: ['Controls the auditor tested at Mardell’s site', 'Controls Mardell must run for the provider’s controls to work', 'Optional controls the provider sells as add-ons', 'Controls that failed testing during the period'], answer: 1, why: 'Complementary user entity controls are the customer’s share, such as removing departed employees’ access. If Mardell does not run them, the provider’s report does not cover the gap.' }
+          ]
+        },
+        {
+          title: 'Case 2: Who should assess?', text: 'A large grocery chain, Mardell’s biggest customer, requires an assessment of Mardell’s order portal before it renews the contract. The chain wants results it can trust and will review them directly.',
+          parts: [
+            { q: 'Which assessor BEST meets the customer’s requirement?', options: ['Mardell’s internal audit team', 'The developers who built the portal', 'An outside firm Mardell picks and manages', 'An independent third party reporting to the customer'], answer: 3, why: 'A third-party assessment, outside Mardell’s control and reporting to the customer, gives the highest independence. Internal and external assessors still work for Mardell.' }
+          ]
+        },
+        {
+          title: 'Case 3: Testing in the cloud', text: 'Mardell’s ordering portal runs on a public cloud platform. The CIO has signed written authorization for a penetration test next week.',
+          parts: [
+            { q: 'What should Reuben check BEFORE the test starts?', concept: 'tests', options: ['The provider’s testing policy and any notice it requires', 'That the testers will use only automated tools', 'That the CIO also signs the final report', 'That the test runs only outside business hours'], answer: 0, why: 'The provider owns the underlying infrastructure. Mardell’s authorization is necessary but not always sufficient, so the provider’s acceptable use and testing terms come first.' }
+          ]
+        },
+        {
+          title: 'Case 4: KPI or KRI?', text: 'Reuben is building a dashboard for the executive team. Decide what each measure is.',
+          parts: [
+            { q: '“We fixed 92 percent of critical vulnerabilities within 15 days last quarter.”', concept: 'metrics', options: ['A key risk indicator', 'A key performance indicator', 'A key goal indicator', 'A compliance finding'], answer: 1, why: 'It looks back and measures a process against a target. That is a KPI.' },
+            { q: '“Nine internet-facing servers run an operating system that loses vendor support in 45 days.”', concept: 'metrics', options: ['A key risk indicator', 'A key performance indicator', 'A service level target', 'An audit exception'], answer: 0, why: 'It looks ahead and warns that risk is rising before an incident. That is a KRI.' },
+            { q: 'Which evidence BEST shows management that backups are effective?', concept: 'metrics', options: ['Backup jobs reported 100 percent success', 'The backup vendor holds an ISO certificate', 'Backups are encrypted with AES-256', 'Quarterly test restores met the RTO'], answer: 3, why: 'A successful job proves only that data was written. A test restore that meets the RTO proves it can be recovered in time.' }
+          ]
+        },
+        {
+          title: 'Case 5: The finding nobody can fix', text: 'A legacy oven controller at one plant cannot be patched without voiding its safety certification. The scan flags it as critical every month.',
+          parts: [
+            { q: 'What is the BEST way to handle the finding?', concept: 'analysis', options: ['Exclude the controller from all future scans', 'Lower its CVSS score so the finding stops appearing', 'A signed exception with compensating controls and an end date', 'Patch it anyway and recertify the oven afterward'], answer: 2, why: 'When a finding cannot be fixed, the risk owner documents a formal exception with compensating controls, such as segmentation, and a date to revisit it. Hiding the finding hides the risk.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'calc', short: 'Do the metrics', title: 'Turn results into metrics management can use', concept: 'analysis',
+      instr: 'Here are Mardell Foods’ assessment results for the quarter. Calculate each metric and enter the number. Enter percentages as whole numbers (for example, enter 85 for 85 percent).',
+      hint: 'Coverage is what you tested divided by what you own. The false positive rate is false positives divided by everything the scanner reported. Mean time to remediate is the total days divided by the number of findings.',
+      table: {
+        caption: 'Mardell Foods: quarterly assessment results',
+        head: ['Measure', 'Value'],
+        rows: [
+          ['Assets in the inventory', '400'],
+          ['Assets scanned with credentials', '340'],
+          ['Findings reported by the scanner', '120'],
+          ['Findings rejected as false positives after validation', '18'],
+          ['Validated critical findings', '40'],
+          ['Critical findings fixed within the 15-day SLA', '32'],
+          ['Days to fix five sampled critical findings', '4, 9, 12, 6, 14'],
+          ['Code branches exercised by the portal test suite', '1,560 of 2,400']
+        ]
+      },
+      review: { href: 'lesson06.html#s4', label: 'Lesson 6, Security Process Data' },
+      items: [
+        { label: 'Credentialed scan coverage', answer: 85, unit: '%', tol: 0.5, why: '340 of 400 assets is 85 percent. The other 60 assets were either missed or scanned without credentials, so their results are less complete.' },
+        { label: 'False positive rate', answer: 15, unit: '%', tol: 0.5, why: '18 of 120 reported findings is 15 percent. Validation before reporting keeps those 18 from wasting remediation time.' },
+        { label: 'Critical findings fixed within SLA', answer: 80, unit: '%', tol: 0.5, concept: 'metrics', why: '32 of 40 is 80 percent. This looks back at process performance, so it is a KPI.' },
+        { label: 'Critical findings past the SLA (the count for the KRI)', answer: 8, unit: 'findings', concept: 'metrics', why: '40 minus 32 leaves 8 critical findings past due. A growing count warns that exposure is rising, so it works as a KRI.' },
+        { label: 'Mean time to remediate the five sampled critical findings', answer: 9, unit: 'days', tol: 0.1, why: '4 + 9 + 12 + 6 + 14 = 45 days, divided by 5 findings, is 9 days.' },
+        { label: 'Branch coverage of the portal test suite', answer: 65, unit: '%', tol: 0.5, why: '1,560 of 2,400 branches is 65 percent. High coverage does not prove security, but the untested 35 percent is a known gap.' }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'metric', label: 'Pick one security process you teach or run. What KPI would show it is working, and what KRI would warn you before it fails?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the next lesson, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

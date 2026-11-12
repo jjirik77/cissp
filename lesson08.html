@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 8: Software Development Security | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 8</span></p>
+    <span class="lesson-badge-lg">Day 5, Morning &bull; Domain 8</span>
+    <h1>Software Development <span>Security</span></h1>
+    <p class="lesson-lede">Most breaches end in software, so security has to begin there. Domain 8 asks how an organization builds security into every phase of development, controls the tools and pipelines that produce code, judges software it buys rather than builds, and finds flaws while they are still cheap to fix.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 5, 9:00 to 12:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~3 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>11.2%</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">Build it in, do not bolt it on</h2>
+    <div class="rule"></div>
+    <p class="lead">A CISSP is not expected to write code. A CISSP is expected to make sure the people who write it have the requirements, tools, reviews, and gates that keep flaws out of production. The earlier a flaw is found, the less it costs. A design flaw caught on a whiteboard costs an hour. The same flaw found by an attacker costs a breach.</p>
+    <p class="lead">This lesson covers security across the development life cycle, the controls in a development ecosystem, how to assess whether those controls work, how to evaluate acquired software, and the coding weaknesses that matter most.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>The best answer usually moves security earlier: requirements and threat modeling over penetration testing, pipeline gates over emergency patches. Testing finds flaws. Good process prevents them.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Integrate</strong> security activities into each phase of Waterfall, Agile, and DevSecOps life cycles. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Compare</strong> SAST, DAST, and software composition analysis by what each can and cannot find. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Apply</strong> the Secure Software Development Framework and SBOM requirements to a software project. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Match</strong> common source-code weaknesses to the coding practices that prevent them. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Evaluate</strong> the security of acquired software, including COTS, open source, and cloud services. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Explain</strong> why shifting security left lowers cost, using a defect-escape model. <em class="bloom-tag">Bloom: Understand</em></span></li>
+      <li><span><strong>Design</strong> a secure code review assignment and rubric for students. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">DevSecOps</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">DevOps with security built into every stage of the pipeline, owned by development, security, and operations together.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">SAST</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Static application security testing: analyzes source or compiled code without running it. White box, early, and prone to false positives.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">DAST</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Dynamic application security testing: probes a running application from the outside. Black box, needs no source code.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Software Composition Analysis (SCA)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Inventories the open-source and third-party components in software and flags known vulnerabilities and license issues.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">SBOM</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Software bill of materials: a machine-readable list of every component and version in a product, such as SPDX or CycloneDX.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Parameterized Query</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A database call that sends code and data separately, so user input is never executed as SQL. The primary defense against SQL injection.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">TOCTOU</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Time of check to time of use: a race condition where a resource changes between the moment it is checked and the moment it is used.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Code Signing</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A digital signature on software that proves who published it and that it has not changed since it was signed.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Shift Left</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Moving security activities earlier in the life cycle, where flaws are cheaper and faster to fix.</div></div>
+        </div>
+      </button>
+
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">SSDF</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Secure Software Development Framework, NIST SP 800-218: secure development practices grouped as prepare the organization, protect the software, produce well-secured software, and respond to vulnerabilities.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. Security in the SDLC</a></li>
+          <li><a href="#s2">2. Development Ecosystem Controls</a></li>
+          <li><a href="#s3">3. Secure Coding and Weaknesses</a></li>
+          <li><a href="#s4">4. Assessing Effectiveness</a></li>
+          <li><a href="#s5">5. Acquired Software</a></li>
+          <li><a href="#s6">6. Interactive: Pipeline Gates</a></li>
+          <li><a href="#s7">7. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>Security in the Software Development Life Cycle</h3></div>
+          <p>Every life cycle has the same broad phases: requirements, design, development, testing, deployment, operations and maintenance, and retirement. Security has a job in each one.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Phase</th><th>Security activity</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Requirements</td><td>Security and privacy requirements, misuse and abuse cases, compliance needs</td></tr>
+              <tr><td class="term">Design</td><td>Threat modeling, secure design principles, attack surface review</td></tr>
+              <tr><td class="term">Development</td><td>Secure coding standards, peer review, SAST, secrets scanning</td></tr>
+              <tr><td class="term">Testing</td><td>DAST, fuzzing, penetration testing, security regression tests</td></tr>
+              <tr><td class="term">Deployment</td><td>Hardened configuration, code signing, change approval</td></tr>
+              <tr><td class="term">Operations</td><td>Monitoring, patching, vulnerability management, change management</td></tr>
+              <tr><td class="term">Retirement</td><td>Data migration or destruction, decommissioning, removing access</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Development methodologies</h4>
+          <ul class="detail">
+            <li><strong>Waterfall:</strong> sequential phases with sign-off between them. Easy to audit, slow to change.</li>
+            <li><strong>Spiral:</strong> repeated cycles, each with an explicit risk analysis. Good for large, high-risk projects.</li>
+            <li><strong>Agile and Scrum:</strong> short sprints and working software. Security fits as user stories, a definition of done, and a security champion on each team.</li>
+            <li><strong>DevOps and DevSecOps:</strong> development and operations share ownership through automation. DevSecOps adds automated security gates to the pipeline.</li>
+            <li><strong>Scaled Agile Framework (SAFe):</strong> coordinates many Agile teams across a large organization.</li>
+          </ul>
+          <h4>Maturity models and governance</h4>
+          <ul class="detail">
+            <li><strong>Capability Maturity Model (CMM and CMMI):</strong> five levels from initial (ad hoc) through repeatable, defined, managed, and optimizing.</li>
+            <li><strong>OWASP SAMM:</strong> the Software Assurance Maturity Model, which measures and plans security practices across business functions.</li>
+            <li><strong>BSIMM:</strong> a descriptive model built from observing what real organizations do.</li>
+            <li><strong>Change management:</strong> every change is requested, assessed for security impact, approved, tested, and documented.</li>
+            <li><strong>Integrated product team (IPT):</strong> a cross-functional team, including security, that owns a product across its life cycle.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Security requirements belong in the earliest phase. When asked when to involve security in a project, the answer is at initiation and requirements, not before deployment.</div>
+          <h4>Shift left, the SSDF, and SBOM requirements</h4>
+          <p><strong>Shift left</strong> means moving security work earlier in the life cycle: requirements and threat modeling instead of a penetration test the week before launch. Early fixes are cheaper and change the design rather than patching around it.</p>
+          <p>The <strong>Secure Software Development Framework (SSDF)</strong>, NIST SP 800-218, describes secure development as outcomes rather than tools. It groups its practices into four areas:</p>
+          <ul class="detail">
+            <li><strong>Prepare the organization (PO):</strong> roles, training, policies, and secure toolchains.</li>
+            <li><strong>Protect the software (PS):</strong> protect code, builds, and releases from tampering, and keep release integrity verifiable.</li>
+            <li><strong>Produce well-secured software (PW):</strong> secure design, coding, review, and testing.</li>
+            <li><strong>Respond to vulnerabilities (RV):</strong> find, fix, and learn from vulnerabilities after release.</li>
+          </ul>
+          <p>U.S. federal agencies now ask software producers to attest that they follow secure development practices drawn from the SSDF, and many buyers outside government ask the same. A <strong>software bill of materials (SBOM)</strong> is the matching transparency requirement: a machine-readable list of every component in a product, with supplier, name, version, a unique identifier, and dependency relationships. The two common formats are <strong>SPDX</strong> (an ISO/IEC standard) and <strong>CycloneDX</strong> (an OWASP project). Writing &ldquo;provide an SBOM with every release&rdquo; into contracts turns the requirement into something you can enforce.</p>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Security Controls in Development Ecosystems</h3></div>
+          <p>Code is only as trustworthy as the environment that produced it. The ecosystem includes programming languages, libraries, tool sets, the integrated development environment (IDE), the runtime, continuous integration and continuous delivery (CI/CD) pipelines, software configuration management, and code repositories.</p>
+          <ul class="detail">
+            <li><strong>Languages and runtimes:</strong> memory-safe languages such as Rust, Go, Java, C#, and Swift manage memory for the programmer and remove whole classes of flaws, such as buffer overflows and use-after-free errors, that C and C++ leave to the programmer. Government guidance now urges new projects to choose memory-safe languages and to publish a roadmap for older C and C++ code. Object-oriented languages add encapsulation, which helps hide internal state, but they are not automatically memory safe.</li>
+            <li><strong>Libraries:</strong> approved sources only, pinned versions, and a process to update when a vulnerability is published.</li>
+            <li><strong>IDE and tool sets:</strong> security linters and plugins in the IDE give feedback while code is written.</li>
+            <li><strong>Code repositories:</strong> branch protection, required reviews, signed commits, and secrets scanning to stop credentials from being committed.</li>
+            <li><strong>CI/CD:</strong> the pipeline is a high-value target. Protect its credentials, restrict who can change build definitions, and sign the artifacts it produces.</li>
+            <li><strong>Software configuration management:</strong> versions every change so any build can be reproduced and traced.</li>
+          </ul>
+          <h4>Application security testing</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Method</th><th>How it works</th><th>Strength</th><th>Limitation</th></tr></thead>
+            <tbody>
+              <tr><td class="term">SAST</td><td>Analyzes code at rest</td><td>Early; points to the exact line</td><td>False positives; misses runtime and configuration issues</td></tr>
+              <tr><td class="term">DAST</td><td>Attacks the running app</td><td>No source needed; finds runtime and configuration flaws</td><td>Late; cannot point to code; limited coverage</td></tr>
+            </tbody>
+          </table></div>
+          <p>SAST and DAST are complementary: one reads the code, the other attacks the running result. Some teams add interactive testing, an agent inside the running application that combines both views. Checking third-party components is a separate job, covered with open source in Section 5.</p>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>Secure Coding and Source-Code Weaknesses</h3></div>
+          <p>Most weaknesses come from trusting input or mishandling state. The OWASP Top 10 ranks the most critical web application risks, and the Common Weakness Enumeration (CWE) catalogs weakness types by number. Both are references, not checklists.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Weakness</th><th>What goes wrong</th><th>Primary fix</th></tr></thead>
+            <tbody>
+              <tr><td class="term">SQL and command injection</td><td>Input is executed as code</td><td>Parameterized queries; avoid shell calls; allowlist validation</td></tr>
+              <tr><td class="term">Cross-site scripting (XSS)</td><td>Input is rendered as script in another user&rsquo;s browser</td><td>Context-aware output encoding; Content Security Policy</td></tr>
+              <tr><td class="term">Cross-site request forgery (CSRF)</td><td>A logged-in browser is tricked into sending a request</td><td>Anti-CSRF tokens; SameSite cookies; reauthentication</td></tr>
+              <tr><td class="term">Buffer overflow</td><td>Data written past the end of a memory buffer</td><td>Bounds checking; memory-safe languages; ASLR and DEP</td></tr>
+              <tr><td class="term">Race condition (TOCTOU)</td><td>State changes between check and use</td><td>Atomic operations; locking</td></tr>
+              <tr><td class="term">Insecure deserialization</td><td>Untrusted data rebuilds objects that run code</td><td>Do not deserialize untrusted data; integrity checks; safe formats</td></tr>
+              <tr><td class="term">Hardcoded secrets</td><td>Passwords and keys in source code</td><td>Secrets manager; secrets scanning; key rotation</td></tr>
+            </tbody>
+          </table></div>
+          <h4>API security and good practice</h4>
+          <ul class="detail">
+            <li><strong>APIs:</strong> authenticate every call, authorize every object (broken object-level authorization is a leading API flaw), rate limit, validate schemas, and never expose more data than the client needs.</li>
+            <li><strong>Practices:</strong> validate input on the server with allowlists, encode output, fail securely, handle errors without revealing internals, use vetted cryptographic libraries, and log security events.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Input validation helps against nearly everything, but it is rarely the single best answer. For SQL injection the best answer is parameterized queries. For XSS it is output encoding.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128137;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>SQL Injection</strong>: see how a crafted input changes a query, and why parameterization stops it.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/SQLinjection/SQLinjection.html" target="_blank" rel="noopener noreferrer">SQL Injection <span class="ext">&#8599;</span></a></div>
+          </div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#129529;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Buffer Overflow</strong>: watch data overrun a buffer and overwrite adjacent memory.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/bufferoverflow/bufferoverflow.html" target="_blank" rel="noopener noreferrer">Buffer Overflow <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Assessing the Effectiveness of Software Security</h3></div>
+          <p>Controls in a pipeline are only useful if someone checks that they work. Assessment asks two questions: are changes controlled and traceable, and is the remaining risk known and accepted?</p>
+          <ul class="detail">
+            <li><strong>Auditing and logging of changes:</strong> every commit, approval, build, and deployment is logged with who, what, and when. Logs are protected from alteration so they can support investigations.</li>
+            <li><strong>Risk analysis and mitigation:</strong> findings from testing are rated, assigned owners and deadlines, and tracked. Exceptions need documented risk acceptance.</li>
+            <li><strong>Metrics:</strong> defect density, mean time to remediate, percentage of builds passing security gates, and open findings by severity.</li>
+            <li><strong>Separation of duties:</strong> the developer who writes a change should not be the only person who approves and deploys it.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Regression testing confirms that a change did not break existing functions or reintroduce old flaws. Expect it in questions about patches and change management.</div>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>Security Impact of Acquired Software</h3></div>
+          <p>Most organizations buy far more software than they build. You inherit the security of every product you install, so evaluation must happen before purchase and continue after.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Source</th><th>Main risk</th><th>Assurance approach</th></tr></thead>
+            <tbody>
+              <tr><td class="term">COTS</td><td>No source access; you depend on the vendor&rsquo;s practices</td><td>Vendor attestations, independent testing, contract terms, patch commitments</td></tr>
+              <tr><td class="term">Open source</td><td>Unmaintained or vulnerable components, license obligations</td><td>Software composition analysis (SCA), SBOM, project health review, pinned versions</td></tr>
+              <tr><td class="term">Third-party custom</td><td>Quality depends on the contractor</td><td>Secure coding requirements in contract, code review, escrow</td></tr>
+              <tr><td class="term">Managed services</td><td>Shared control of enterprise applications</td><td>SLAs, SOC 2 reports, right to audit</td></tr>
+              <tr><td class="term">Cloud (SaaS, PaaS, IaaS, FaaS)</td><td>Shared responsibility and limited visibility; with FaaS the provider runs everything below your function code</td><td>Clarify the responsibility model; review certifications; configure securely</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Software composition analysis</h4>
+          <p>Most of a modern application is open source code the team did not write. <strong>SCA</strong> tools read the project&rsquo;s dependency files and binaries, build an inventory of every component, including the dependencies of dependencies, and match it against vulnerability databases and license terms. Run SCA in the pipeline on every build, not once a year, because new vulnerabilities are published against old components every day. SCA also produces the SBOM.</p>
+          <p>An SBOM lets an organization answer the first question after a new vulnerability is published: do we run the affected component, and where? Without one, that answer can take weeks.</p>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128148;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Heart-bleed Bug</strong>: a flaw in one widely used open-source library exposed servers worldwide. A case for SCA and SBOMs.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/heartbleed/heartbleed.html" target="_blank" rel="noopener noreferrer">Heart-bleed Bug <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>Interactive: Secure Pipeline Gates</h3></div>
+          <p>Sixty seeded defects enter a delivery pipeline. Turn security gates on and off at each stage and watch where defects are caught, how many escape to production, and what the fixes cost. Each gate catches a stated share of the defect types it targets. Cost multipliers rise the later a defect is found. The numbers are illustrative, not research data.</p>
+
+          <style>
+            .pg-pre{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:.8rem;}
+            .pg-pipe{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.5rem;}
+            .pg-st{background:var(--card-bg);border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:5px;padding:.55rem .5rem;display:flex;flex-direction:column;gap:.35rem;}
+            .pg-st.prod{border-top-color:var(--wrong);}
+            .pg-sn{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-primary);}
+            .pg-cm{font-family:Arial,sans-serif;font-size:.66rem;color:var(--text-muted);}
+            .pg-g{font-family:Arial,sans-serif;font-size:.7rem;line-height:1.25;text-align:left;color:var(--text-secondary);background:var(--section-alt);border:1px dashed var(--border);border-radius:4px;padding:.35rem .4rem;cursor:pointer;}
+            .pg-g[aria-pressed="true"]{background:var(--jade-pale);border:1px solid var(--jade);color:var(--text-primary);font-weight:700;}
+            .pg-g:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+            .pg-c{margin-top:auto;font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:1.05rem;color:var(--jade-dark);}
+            .pg-c small{font-family:Arial,sans-serif;font-weight:400;font-size:.62rem;color:var(--text-muted);display:block;}
+            .pg-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;margin:.8rem 0 .2rem;}
+            .pg-tile{background:var(--card-bg);border:1px solid var(--border);border-radius:5px;padding:.5rem .6rem;text-align:center;}
+            .pg-tile .k{font-family:Arial,sans-serif;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);}
+            .pg-tile .v{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:1.25rem;color:var(--gold);}
+            .pg-tile.bad .v{color:var(--wrong);}
+            .pg-tbl{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:.76rem;margin-top:.5rem;}
+            .pg-tbl th,.pg-tbl td{padding:.3rem .4rem;border-top:1px solid var(--border);text-align:right;color:var(--text-secondary);}
+            .pg-tbl th:first-child,.pg-tbl td:first-child{text-align:left;}
+            .pg-tbl th{font-size:.64rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);border-top:none;}
+            .pg-bar{display:inline-block;height:8px;border-radius:3px;background:var(--wrong);vertical-align:middle;}
+            @media (max-width:820px){.pg-pipe{grid-template-columns:repeat(3,minmax(0,1fr));}}
+            @media (max-width:480px){.pg-pipe{grid-template-columns:repeat(2,minmax(0,1fr));}.pg-tiles{grid-template-columns:minmax(0,1fr);}}
+          </style>
+
+          <div class="iw" id="pg-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; shift security left</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="pg-pre" role="group" aria-label="Presets">
+                <button type="button" class="iw-btn" data-pre="none">No gates</button>
+                <button type="button" class="iw-btn" data-pre="late">Test at the end only</button>
+                <button type="button" class="iw-btn jade" data-pre="full">Full DevSecOps</button>
+              </div>
+              <div class="pg-pipe" id="pg-pipe"></div>
+              <div class="pg-tiles">
+                <div class="pg-tile"><div class="k">Caught before release</div><div class="v" id="pg-pre">0</div></div>
+                <div class="pg-tile bad"><div class="k">Escaped to users</div><div class="v" id="pg-esc">60</div></div>
+                <div class="pg-tile"><div class="k">Relative fix cost</div><div class="v" id="pg-cost">6000</div></div>
+              </div>
+              <div class="iw-verdict" id="pg-verdict" aria-live="polite"><span class="iw-pill" id="pg-pill">No gates</span><span id="pg-coach"></span></div>
+              <div class="iw-panel" style="overflow-x:auto">
+                <h5 class="iw-h5">Defects by type</h5>
+                <table class="pg-tbl" id="pg-tbl"><thead><tr><th>Type</th><th>Seeded</th><th>Caught</th><th>Escaped</th><th style="width:30%">&nbsp;</th></tr></thead><tbody></tbody></table>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>Compare &ldquo;Test at the end only&rdquo; with &ldquo;Full DevSecOps.&rdquo; Late testing catches some coding and configuration flaws, but at ten times the cost, and it never sees vulnerable libraries, leaked secrets, or tampered builds. Each type of defect needs the gate built for it, and the cheapest gates sit at the left. That is the business case for shifting left, in one picture.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('pg-root'); if(!root) return;
+            var $=function(id){return root.querySelector('#'+id);};
+            var TYPES=[['design','Design flaws',10],['coding','Coding flaws',20],['deps','Vulnerable dependencies',12],['secrets','Leaked secrets',6],['config','Misconfigurations',8],['tamper','Tampered artifacts',4]];
+            var STAGES=[['Design',1],['Code',5],['Build',8],['Test',10],['Release',15],['Production',30]];
+            var ESC=100;
+            var GATES=[
+              {id:'tm',st:0,name:'Threat modeling',r:{design:.7}},
+              {id:'rev',st:1,name:'Peer code review',r:{design:.2,coding:.35,secrets:.3,config:.15}},
+              {id:'sec',st:1,name:'Secrets scanning',r:{secrets:.9}},
+              {id:'sast',st:2,name:'SAST',r:{coding:.55,secrets:.4}},
+              {id:'sca',st:2,name:'SCA + SBOM',r:{deps:.85}},
+              {id:'dast',st:3,name:'DAST',r:{coding:.35,config:.6,design:.15}},
+              {id:'sign',st:4,name:'Artifact signing',r:{tamper:.95}},
+              {id:'mon',st:5,name:'Runtime monitoring and WAF',r:{coding:.3,config:.3,tamper:.3,deps:.2}}
+            ];
+            var on={};
+            var pipe=$('pg-pipe');
+            STAGES.forEach(function(s,i){
+              var d=document.createElement('div'); d.className='pg-st'+(i===5?' prod':'');
+              var h='<span class="pg-sn">'+s[0]+'</span><span class="pg-cm">Fix cost '+s[1]+'x</span>';
+              GATES.filter(function(g){return g.st===i;}).forEach(function(g){
+                var tg=Object.keys(g.r).map(function(k){return Math.round(g.r[k]*100)+'% '+TYPES.filter(function(t){return t[0]===k;})[0][1].toLowerCase();}).join(', ');
+                h+='<button type="button" class="pg-g" data-g="'+g.id+'" aria-pressed="false" title="Catches '+tg+'">'+g.name+'</button>';
+              });
+              h+='<span class="pg-c" id="pg-c'+i+'">0<small>caught</small></span>';
+              d.innerHTML=h; pipe.appendChild(d);
+            });
+            function model(){
+              var rem={}, caughtT={}, stage=[0,0,0,0,0,0], cost=0;
+              TYPES.forEach(function(t){rem[t[0]]=t[2];caughtT[t[0]]=0;});
+              GATES.forEach(function(g){ if(!on[g.id]) return;
+                Object.keys(g.r).forEach(function(k){ var c=rem[k]*g.r[k]; rem[k]-=c; caughtT[k]+=c; stage[g.st]+=c; cost+=c*STAGES[g.st][1]; });
+              });
+              var esc=0; TYPES.forEach(function(t){esc+=rem[t[0]];}); cost+=esc*ESC;
+              return {rem:rem,caughtT:caughtT,stage:stage,esc:esc,cost:cost,pre:stage[0]+stage[1]+stage[2]+stage[3]+stage[4]};
+            }
+            function fmt(x){return (Math.round(x*10)/10).toString();}
+            function paint(){
+              root.querySelectorAll('.pg-g').forEach(function(b){b.setAttribute('aria-pressed',on[b.dataset.g]?'true':'false');});
+              var m=model();
+              m.stage.forEach(function(v,i){$('pg-c'+i).innerHTML=fmt(v)+'<small>caught</small>';});
+              $('pg-pre').textContent=fmt(m.pre); $('pg-esc').textContent=fmt(m.esc); $('pg-cost').textContent=Math.round(m.cost).toLocaleString('en-US');
+              var body=TYPES.map(function(t){var e=m.rem[t[0]];return '<tr><td>'+t[1]+'</td><td>'+t[2]+'</td><td>'+fmt(m.caughtT[t[0]])+'</td><td>'+fmt(e)+'</td><td><span class="pg-bar" style="width:'+(e/t[2]*100)+'%"></span></td></tr>';}).join('');
+              $('pg-tbl').querySelector('tbody').innerHTML=body;
+              var n=Object.keys(on).filter(function(k){return on[k];}).length, pct=Math.round((1-m.cost/6000)*100);
+              var v=$('pg-verdict'), p=$('pg-pill'), msg, cls;
+              var blind=TYPES.filter(function(t){return m.rem[t[0]]/t[2]>0.9;}).map(function(t){return t[1].toLowerCase();});
+              if(n===0){cls='bad';p.textContent='No gates';msg='All 60 defects reach users, where each costs about 100x to handle. This is the baseline cost of 6,000.';}
+              else if(m.esc<10){cls='good';p.textContent='Shifted left';msg='Only '+fmt(m.esc)+' defects escape, and fix cost is '+pct+'% below the no-gate baseline. Most defects are caught in design, code, and build, where they are cheapest.';}
+              else {cls='warn';p.textContent='Gaps remain';msg=fmt(m.esc)+' defects still escape. Cost is '+pct+'% below baseline.'+(blind.length?' Nothing is catching '+blind.join(', ')+'.':' Add earlier gates to catch defects at lower cost.');}
+              v.className='iw-verdict '+cls; p.className='iw-pill '+cls; $('pg-coach').textContent=msg;
+            }
+            root.querySelectorAll('.pg-g').forEach(function(b){b.addEventListener('click',function(){on[b.dataset.g]=!on[b.dataset.g];paint();});});
+            root.querySelectorAll('[data-pre]').forEach(function(b){b.addEventListener('click',function(){
+              var p=b.dataset.pre; on={};
+              if(p==='late'){on.dast=true;}
+              if(p==='full'){GATES.forEach(function(g){on[g.id]=true;});}
+              paint();
+            });});
+            paint();
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Faculty Teaching Segment</h3></div>
+          <p>Students who are not programmers can still learn secure development. Focus on recognizing weaknesses, choosing controls, and reading tool output, not on writing exploits.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> give students five short code samples, each with one weakness. For each, they name the weakness and its CWE category, explain the impact, rewrite the vulnerable lines, and name the pipeline gate that should have caught it.</li>
+            <li><strong>Rubric criteria:</strong> weakness identified correctly, root-cause fix rather than a filter, a correct gate choice, and a clear impact statement a product owner would understand.</li>
+            <li><strong>Lab idea:</strong> run a free SAST tool and a free SCA tool against a small, intentionally vulnerable sample app on student machines. Students triage the findings, separate true from false positives, and read the generated SBOM.</li>
+            <li><strong>Course fit:</strong> this domain fits a secure programming, web development, or DevSecOps course. It supports the CAE-CD Secure Programming Practices (SPP), Software Assurance (SAS), and Supply Chain Security (SCS) Knowledge Units.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>Ask students to find the cheapest gate set that keeps escaped defects under ten in the pipeline model. They discover that no single tool is enough, and that each defect type needs its own control.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>SQL Injection</h3><p>How crafted input changes a database query, and how parameterized queries stop it.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/SQLinjection/SQLinjection.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: SQL Injection (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Cross Site Scripting</h3><p>Script injected into a page runs in another user&rsquo;s browser. See why output encoding matters.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/crosssitescripting/crosssitescripting.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cross Site Scripting (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Code Injection Attacks</h3><p>The family of flaws where data is executed as code, and the controls that separate the two.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/codeinjection/codeinjection.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Code Injection Attacks (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Code Injection Attacks Quiz</h3><p>A quick self-check on injection types and their defenses.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/codeinjectionquiz/codeinjectionquiz.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Code Injection Attacks Quiz (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>OS Command Injection</h3><p>Input passed to a system shell becomes a command. Why to avoid shell calls with user data.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/oscommandinjection/oscommandinjection.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: OS Command Injection (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Buffer Overflow</h3><p>Data overruns a buffer and overwrites memory, the classic case for memory-safe languages.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/bufferoverflow/bufferoverflow.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Buffer Overflow (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 5</span></div><h3>Heart-bleed Bug</h3><p>One flaw in a shared open-source library and its worldwide impact. A case for SCA and SBOMs.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/heartbleed/heartbleed.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Heart-bleed Bug (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 3</span></div><h3>Cookie Caper</h3><p>Cookies, sessions, and what goes wrong when session tokens are poorly protected.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/cookies/cookies.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Cookie Caper (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Self-checking practice for this lesson, ready to use with your own students. Each item ends with a report you can print or save as a PDF.</p>
+    <div class="pl-grid">
+      <article class="pl-card"><div class="pl-top"><span class="pl-type">CISSP Practice &middot; A9</span><span class="pl-time">&#9201; 35 min</span></div><h3><a href="activity09.html">Secure Software Life Cycle</a></h3><p>Place SDLC and DevSecOps activities by phase, match flaws to fixes, and make acquired software and SBOM decisions.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="activity09.html" aria-label="Open activity A9: Secure Software Life Cycle">Open &#8594;</a></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B8</span><span class="pl-time">&#9201; 60 min</span></div><h3><a href="lab08.html">Secure Code and Pipeline Review</a></h3><p>Review short code samples, configure CI/CD gates, read an SBOM against a fictional advisory feed, and decide to release or hold.</p><div class="pl-foot"><span class="pl-level">Advanced</span><a class="pl-open" href="lab08.html" aria-label="Open lab B8: Secure Code and Pipeline Review">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q1.</span>A code review finds a login form that builds its SQL statement by joining user input into the query string. What is the BEST fix?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> Add a web application firewall in front of the site</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> Strip single quotes from the input</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> Rewrite the query with parameterized statements</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> Encrypt the database</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> Parameterized queries separate code from data, which removes the root cause. A WAF and character filtering are partial, bypassable layers, and encryption does not affect injection.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q2.</span>What does software composition analysis (SCA) primarily identify?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> Open-source and third-party components with known vulnerabilities or license issues</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> Logic flaws in custom business code</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> Misconfigured web servers in production</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> Weak passwords in the user database</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> SCA inventories components, often producing an SBOM, and matches them against vulnerability and license data. It does not analyze custom logic or runtime configuration.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q3.</span>A college must test a purchased web application. The vendor will not provide source code. Which testing approach fits BEST?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> Static application security testing</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> Peer code review</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> Secrets scanning of the repository</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> Dynamic application security testing of a test instance</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> DAST tests the running application from the outside and needs no source. SAST, code review, and repository scanning all require access to the code.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q4.</span>A college that sells a scheduling app to a state agency is asked to attest that it follows secure development practices. Which framework is the agency MOST likely referring to?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> The OWASP Top 10</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> The NIST Secure Software Development Framework (SP 800-218)</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> The Capability Maturity Model</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> PCI DSS</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> The SSDF defines the secure development practices that government buyers ask producers to attest to. The OWASP Top 10 is a list of web risks, CMM measures process maturity in general, and PCI DSS protects payment card data.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q5.</span>A program checks that a user may write to a file, then opens the file a moment later. An attacker swaps the file for a link to a system file in between. What is this weakness?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> Cross-site request forgery</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> A time-of-check to time-of-use race condition</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> Insecure deserialization</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> A buffer overflow</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> The state changed between the check and the use, which defines a TOCTOU race condition. Atomic operations and locking prevent it.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q6.</span>A college plans to buy commercial off-the-shelf student information software. What gives the BEST assurance about its security before purchase?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> The vendor&rsquo;s marketing claims</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> Popularity among other colleges</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> A low price for the license</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> Independent test results and attestations, an SBOM, and contract terms for patching and vulnerability disclosure</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> Without source access, assurance comes from independent evidence and enforceable commitments. Popularity and claims are not evidence.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q7.</span>In which phase is a security flaw usually LEAST expensive to fix?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> Requirements and design</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> System testing</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> Deployment</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> Operations and maintenance</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> Fixing a flaw before code exists means changing a document, not rebuilding and redeploying software. Cost grows with each later phase, which is the case for shifting left.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q8.</span>A team is starting a new network service and wants to eliminate buffer overflow and use-after-free flaws by design. What is the BEST choice?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> Write it in C and run SAST weekly</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> Write it in C++ and add a web application firewall</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> Write it in a memory-safe language such as Rust or Go</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> Sign every build artifact</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> Memory-safe languages prevent these memory errors by design, which is the shift-left answer. SAST and a WAF find or block some instances after the fact, and signing proves integrity, not safety.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson07.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 7: Security Operations</span></a>
+    <a href="lesson09.html" class="next"><span class="pager-dir">Next &#8594;</span><span class="pager-name">Lesson 9: Capstone</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

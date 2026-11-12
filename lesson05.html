@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 5: Identity and Access Management | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 5</span></p>
+    <span class="lesson-badge-lg">Day 3, Afternoon &bull; Domain 5</span>
+    <h1>Identity and <span>Access Management</span></h1>
+    <p class="lesson-lede">Identity is the new perimeter. Domain 5 asks who is asking, how sure you are, what they may do, and whether that is still true today. Most breaches involve a stolen or misused identity, so this domain is where many controls succeed or fail.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 3, 1:00 to 5:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~3.5 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>13.6%</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">Right person, right access, right time</h2>
+    <div class="rule"></div>
+    <p class="lead">Identity and access management covers the whole life of an identity. An account is created after the person is proofed, it authenticates with one or more factors, it receives authorization through a model the organization chose, and it is reviewed and removed when it is no longer needed. Weakness at any stage undoes the others.</p>
+    <p class="lead">This lesson covers access to assets and the AAA model, authentication strategy, federation with third parties, authorization models, the provisioning life cycle, and the authentication systems that tie it together, including Kerberos, RADIUS, TACACS+, and LDAP.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>Access is a business decision. The data owner approves access, the custodian implements it, and periodic reviews confirm it is still justified. When an exam answer lets IT grant access on its own judgment, look for a better one.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Distinguish</strong> identification, authentication, authorization, and accountability, and the factor types. <em class="bloom-tag">Bloom: Understand</em></span></li>
+      <li><span><strong>Interpret</strong> biometric error rates and choose an authentication strategy that fits a risk level. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Compare</strong> SAML, OAuth 2.0, and OpenID Connect and the roles in each federation flow. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Evaluate</strong> the same access request under DAC, MAC, RBAC, and ABAC and explain each result. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Apply</strong> provisioning, review, and deprovisioning controls that prevent privilege creep. <em class="bloom-tag">Bloom: Apply</em></span></li>
+      <li><span><strong>Design</strong> an access review exercise that students can complete and defend. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Crossover Error Rate (CER)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The point where a biometric system&rsquo;s false rejection rate equals its false acceptance rate. A lower CER means a more accurate system.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Passkey</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A FIDO2 credential: a key pair bound to one site, unlocked locally by a PIN or biometric. It replaces the password and resists phishing.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Risk-Adaptable Access Control (RAdAC)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">An access model that weighs the real-time security risk of each request against operational need, and can permit access in an emergency.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Federated Identity</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A trust arrangement in which one organization&rsquo;s identity provider authenticates users for services run by other organizations.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">OpenID Connect (OIDC)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">An authentication layer on top of OAuth 2.0. It returns a signed ID token that tells the application who the user is.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Attribute-Based Access Control (ABAC)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Access decided by policies that combine attributes of the subject, the object, the action, and the environment, such as time or device health.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Policy Decision Point (PDP)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The component that evaluates a request against policy and returns permit or deny. The policy enforcement point (PEP) carries out that decision.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Privilege Creep</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The slow buildup of access as people change roles and keep old permissions. Access reviews and transfer procedures prevent it.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Ticket-Granting Ticket (TGT)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">The Kerberos credential the authentication service issues after login. The client presents it to the ticket-granting service to get service tickets.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Just-in-Time Access</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Privileges granted only when needed, for a limited time, and removed automatically. It shrinks the window in which a stolen account is dangerous.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. Access to Assets and AAA</a></li>
+          <li><a href="#s2">2. Authentication Strategy</a></li>
+          <li><a href="#s3">3. Federation with Third Parties</a></li>
+          <li><a href="#s4">4. Authorization Models</a></li>
+          <li><a href="#s5">5. The Provisioning Life Cycle</a></li>
+          <li><a href="#s6">6. Authentication and Authorization Systems</a></li>
+          <li><a href="#s7">7. Interactive: Access Model Playground</a></li>
+          <li><a href="#s8">8. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>Access to Assets and AAA</h3></div>
+          <p>Access control applies to more than files. The exam lists information, systems, devices, facilities, applications, services, and identities themselves. A badge reader on a server room door and a permission on a database table do the same job: they let an approved subject reach an object and keep everyone else out. Physical and logical access should be managed together, so that leaving the organization removes both the badge and the account.</p>
+          <h4>The access control steps</h4>
+          <ul class="detail">
+            <li><strong>Identification:</strong> the subject claims an identity, such as a username or badge number. It must be unique.</li>
+            <li><strong>Authentication:</strong> the subject proves the claim with one or more factors.</li>
+            <li><strong>Authorization:</strong> the system decides what the authenticated subject may do.</li>
+            <li><strong>Accountability:</strong> logs tie actions to the identity, which supports auditing and nonrepudiation. Shared accounts destroy accountability.</li>
+          </ul>
+          <p>AAA usually stands for authentication, authorization, and accounting, the services that RADIUS and TACACS+ provide. Groups and roles simplify all of it by assigning permissions to a set of people rather than one person at a time.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Identification without authentication proves nothing, and authentication without accountability proves nothing later. If a question describes a shared administrator account, the problem is accountability.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128273;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Access Control</strong>: identification, authentication, authorization, and the access control models.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/access_control/access_control.html" target="_blank" rel="noopener noreferrer">Access Control <span class="ext">&#8599;</span></a></div>
+          </div>
+          <h4>Managing access, not just controlling it</h4>
+          <p>Access is managed across its whole life, not set once at a door. Four verbs describe the job for every asset type: <strong>provision</strong> access from an approved request, <strong>control</strong> it at the point of use, <strong>review</strong> it on a schedule, and <strong>revoke</strong> it when the need ends. A contractor&rsquo;s badge, VPN account, and database role all move through the same four steps, and the revoke step should remove all of them together.</p>
+          <p><strong>Identities are assets too.</strong> User accounts, service accounts, API keys, certificates, and workload identities grant access to everything else, so attackers target them directly. Inventory them, give each an owner, protect their credentials, and monitor their use the way you would protect a server. In cloud environments, non-human identities often outnumber people and are the easiest to forget.</p>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Authentication Strategy</h3></div>
+          <p>An authentication strategy covers people, devices, and services. It decides how identities are registered, which factors they use, and how long a session lasts.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Factor type</th><th>Examples</th><th>Weakness</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Something you know (Type 1)</td><td>Password, PIN, security question</td><td>Guessed, phished, reused</td></tr>
+              <tr><td class="term">Something you have (Type 2)</td><td>Smart card, hardware security key, phone authenticator</td><td>Lost, stolen, or SIM-swapped (for SMS codes)</td></tr>
+              <tr><td class="term">Something you are (Type 3)</td><td>Fingerprint, face, iris, voice</td><td>Cannot be changed if compromised; error rates</td></tr>
+            </tbody>
+          </table></div>
+          <p>Location and behavior are sometimes added as context, but multifactor authentication means factors of <strong>different types</strong>. A password and a PIN are two items from one type, so they are single-factor.</p>
+          <h4>Biometric accuracy</h4>
+          <ul class="detail">
+            <li><strong>False rejection rate (Type I error):</strong> a legitimate user is turned away. It frustrates users.</li>
+            <li><strong>False acceptance rate (Type II error):</strong> an impostor is let in. It defeats security.</li>
+            <li><strong>Crossover error rate:</strong> raising sensitivity lowers false acceptance but raises false rejection. The point where they meet compares systems; lower is better.</li>
+          </ul>
+          <h4>Sessions, proofing, and credentials</h4>
+          <ul class="detail">
+            <li><strong>Session management:</strong> random session identifiers, idle and absolute timeouts, reauthentication before sensitive actions, and secure cookie flags.</li>
+            <li><strong>Registration and proofing:</strong> verify the person before issuing credentials. NIST SP 800-63 separates identity assurance (IAL, how well identity was proofed), authenticator assurance (AAL, how strong the login is), and federation assurance (FAL, how assertions are protected).</li>
+            <li><strong>Credential management:</strong> password vaults for users and privileged access management for administrator credentials, with rotation and check-out.</li>
+            <li><strong>Single sign-on and just-in-time access:</strong> SSO means one strong login reaches many systems, which is convenient and makes that login critical. Just-in-time access grants privileges only for the task at hand.</li>
+          </ul>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128070;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Biometrics</strong>: biometric types, error rates, and the crossover error rate.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/Biometrics/Biometrics.html" target="_blank" rel="noopener noreferrer">Biometrics <span class="ext">&#8599;</span></a></div>
+          </div>
+          <h4>Passwordless authentication</h4>
+          <p>Passwords are the weakest link because people can be tricked into typing them anywhere. Passwordless methods remove the shared secret. With <strong>FIDO2</strong>, the standard from the FIDO Alliance, a user registers an authenticator with a site, and the authenticator creates a public and private key pair for that site alone. <strong>WebAuthn</strong> is the browser API that lets websites use it. At login the site sends a challenge, the authenticator signs it with the private key, and the site checks the signature with the public key it stored at registration.</p>
+          <ul class="detail">
+            <li><strong>Phishing resistance:</strong> the key pair is bound to the site&rsquo;s origin, so a look-alike domain receives nothing it can use. Nothing reusable crosses the network, and the server stores only public keys, so a database breach leaks no passwords.</li>
+            <li><strong>Biometrics as a local unlock:</strong> a fingerprint or face scan unlocks the private key on the device. The biometric template never leaves the device and is not sent to the site.</li>
+            <li><strong>Platform and roaming authenticators:</strong> a platform authenticator is built into a laptop or phone (a TPM or secure enclave). A roaming authenticator is a separate hardware security key that plugs in or taps over NFC.</li>
+            <li><strong>Passkeys:</strong> FIDO credentials that can sync across a user&rsquo;s devices through a platform account, which makes recovery easier. Device-bound passkeys on hardware keys never leave the device and give the highest assurance.</li>
+            <li><strong>Design issues:</strong> plan account recovery (a weak recovery path undoes a strong login), enroll at least two authenticators per person, and decide when synced passkeys are acceptable and when a device-bound key is required, such as for administrators.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>If a scenario describes users being phished even though they use MFA with SMS codes or push approvals, the BEST fix is phishing-resistant authentication: FIDO2 security keys or passkeys. Push fatigue and real-time phishing proxies defeat codes and prompts, not origin-bound keys.</div>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>Federation with Third Parties</h3></div>
+          <p>Federation lets a user sign in once with their home organization and use a partner&rsquo;s service. The service trusts the identity provider instead of keeping its own passwords. Deployments may be on-premises, cloud, or hybrid, where an on-premises directory synchronizes or federates with a cloud identity service.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Standard</th><th>Purpose</th><th>Roles and tokens</th></tr></thead>
+            <tbody>
+              <tr><td class="term">SAML 2.0</td><td>Authentication and attribute exchange, mostly for enterprise web SSO</td><td>The identity provider (IdP) sends a signed XML assertion to the service provider (SP) through the user&rsquo;s browser.</td></tr>
+              <tr><td class="term">OAuth 2.0</td><td>Delegated authorization: an app acts on a user&rsquo;s behalf</td><td>The authorization server issues an access token to a client so it can call a resource server. It does not say who the user is.</td></tr>
+              <tr><td class="term">OpenID Connect</td><td>Authentication on top of OAuth 2.0</td><td>The OpenID provider returns a signed JSON Web Token (ID token) to the relying party.</td></tr>
+            </tbody>
+          </table></div>
+          <h4>A typical SAML sign-in</h4>
+          <ul class="detail">
+            <li>The user opens the service provider&rsquo;s application.</li>
+            <li>The SP redirects the browser to the IdP with an authentication request.</li>
+            <li>The user authenticates at the IdP, ideally with MFA.</li>
+            <li>The IdP returns a signed assertion through the browser to the SP.</li>
+            <li>The SP validates the signature and audience, then creates a session.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>OAuth answers &ldquo;what may this app do?&rdquo; OpenID Connect answers &ldquo;who is this user?&rdquo; If a question asks which protocol authenticates users for a modern web or mobile app, choose OIDC, not plain OAuth.</div>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Authorization Models</h3></div>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Model</th><th>Who decides</th><th>How it works</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Discretionary (DAC)</td><td>The owner</td><td>The owner grants access through ACLs. Flexible, but users can share data unwisely. Typical of file systems.</td></tr>
+              <tr><td class="term">Mandatory (MAC)</td><td>The system, by policy</td><td>Labels on objects and clearances on subjects, plus need to know through compartments. Users cannot change labels.</td></tr>
+              <tr><td class="term">Role-based (RBAC)</td><td>Administrators, by job function</td><td>Permissions attach to roles, and people get roles. Fits stable organizations; can suffer role explosion.</td></tr>
+              <tr><td class="term">Rule-based (RuBAC)</td><td>Global rules</td><td>The same rules apply to everyone, such as firewall rules or &ldquo;no logins after 10 p.m.&rdquo;</td></tr>
+              <tr><td class="term">Attribute-based (ABAC)</td><td>Policies over attributes</td><td>Combines subject, object, action, and environment attributes. Very fine-grained and suited to zero trust.</td></tr>
+              <tr><td class="term">Risk-Adaptable (RAdAC)</td><td>A risk engine weighing need and risk</td><td>Evaluates each request in real time against both security risk and operational need, and can grant, deny, or demand step-up authentication. In an emergency, mission need may justify access that normal policy would refuse, with extra logging.</td></tr>
+            </tbody>
+          </table></div>
+          <p>In any model, a <strong>policy decision point</strong> evaluates the request and a <strong>policy enforcement point</strong>, such as a gateway or application, enforces the result. Keeping them separate lets one policy govern many systems.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Key phrases point to models. &ldquo;Owner&rdquo; means DAC. &ldquo;Labels&rdquo; or &ldquo;clearance&rdquo; means MAC. &ldquo;Job function&rdquo; means RBAC. &ldquo;Time, location, or device&rdquo; usually means ABAC.</div>
+          <p>Write the abbreviations carefully. <strong>RBAC</strong> is role-based and <strong>RuBAC</strong> is rule-based. RAdAC goes further than ABAC: ABAC applies fixed rules to attributes, while RAdAC computes a risk level from signals such as device health, location, threat intelligence, and the sensitivity of the data, then compares it to how urgently the access is needed. The decision can change from one request to the next even when the attributes look the same.</p>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>The Provisioning Life Cycle</h3></div>
+          <ul class="detail">
+            <li><strong>Provisioning:</strong> create accounts from an approved request, ideally driven by HR records, with access based on role and least privilege.</li>
+            <li><strong>Role definition and transition:</strong> when people change jobs, add the new role&rsquo;s access and remove the old. Skipping the removal causes privilege creep.</li>
+            <li><strong>Account access review:</strong> owners recertify user, system, and service accounts on a schedule. Reviews catch orphaned accounts, excess rights, and separation of duties conflicts.</li>
+            <li><strong>Privilege escalation:</strong> follow the principle of least privilege (PoLP). Administrators work from a standard account and elevate only when needed, through separate privileged accounts, membership in administrator groups granted just in time, or controlled elevation such as sudo with a restricted command list. Every use is logged, alerts fire on changes to administrator group membership, and owners review who holds those rights.</li>
+            <li><strong>Service accounts:</strong> no interactive login, unique per service, long random or managed credentials, an owner of record, and inclusion in reviews.</li>
+            <li><strong>Deprovisioning:</strong> disable access promptly at departure, then delete after a retention period so logs still resolve to a name.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>The best control for privilege creep is a periodic access review by the data or system owner. Automation helps, but the owner&rsquo;s recertification is what the exam looks for.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128193;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Windows Permissions</strong>: how NTFS and share permissions combine, a hands-on view of DAC.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/permissions/permissions.html" target="_blank" rel="noopener noreferrer">Windows Permissions <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>Authentication and Authorization Systems</h3></div>
+          <p>These systems do more than check passwords. Kerberos tickets carry authorization data, TACACS+ authorizes individual commands, and RADIUS returns attributes such as a VLAN or session limit. Treat each one as both an authentication service and an authorization service, and protect it as a critical asset.</p>
+          <h4>Kerberos</h4>
+          <p>Kerberos provides single sign-on inside a realm using symmetric keys and tickets, so passwords never cross the network. The key distribution center (KDC) has two parts: the authentication service (AS) and the ticket-granting service (TGS).</p>
+          <ul class="detail">
+            <li>The client authenticates to the AS and receives a <strong>ticket-granting ticket</strong> encrypted with the KDC&rsquo;s key.</li>
+            <li>The client presents the TGT to the TGS and receives a <strong>service ticket</strong> for a specific server.</li>
+            <li>The client presents the service ticket to the server, which validates it without contacting the KDC.</li>
+          </ul>
+          <p>Tickets carry timestamps and expire, so clocks must be synchronized, usually within five minutes, to block replay. The KDC is a single point of failure and a prime target. If an attacker steals the key of the KDC&rsquo;s service account (krbtgt in Active Directory), they can forge TGTs, an attack known as a <strong>golden ticket</strong>. Pass-the-ticket and Kerberoasting are related attacks.</p>
+          <h4>RADIUS, TACACS+, and LDAP</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>System</th><th>Use</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td class="term">RADIUS</td><td>Network access: Wi-Fi, VPN, 802.1X</td><td>UDP; combines authentication and authorization; encrypts only the password. Diameter is its successor.</td></tr>
+              <tr><td class="term">TACACS+</td><td>Administrator access to network devices</td><td>TCP; separates authentication, authorization, and accounting; encrypts the entire payload; supports per-command authorization.</td></tr>
+              <tr><td class="term">LDAP</td><td>Directory queries and authentication</td><td>Port 389; use LDAPS (636) or StartTLS so credentials are not sent in clear text.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#127915;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Kerberos</strong> and <strong>Active Directory</strong>: follow the ticket exchange, then see how forests, trees, and domains organize it.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/kerberos/kerberos.html" target="_blank" rel="noopener noreferrer">Kerberos <span class="ext">&#8599;</span></a> <a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/forest/forest.html" target="_blank" rel="noopener noreferrer">Active Directory <span class="ext">&#8599;</span></a></div>
+          </div>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Interactive: Access Control Model Playground</h3></div>
+          <p>Dana works at a fictional college and wants to use a resource. Change the request and watch five models decide it at once: DAC, MAC, RBAC, ABAC, and risk-adaptable access control (RAdAC). Each card explains its reason. Then work the six challenges, which check themselves as you change settings.</p>
+
+          <style>
+            .ac-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:1rem;align-items:start;}
+            .ac-form{display:grid;grid-template-columns:1fr 1fr;gap:.55rem .7rem;}
+            .ac-form label{display:flex;flex-direction:column;gap:.2rem;font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--text-muted);}
+            .ac-form select{width:100%;text-transform:none;letter-spacing:0;font-weight:400;}
+            .ac-sub{grid-column:1/-1;font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-top:.3rem;border-bottom:1px solid var(--border);padding-bottom:.2rem;}
+            .ac-cards{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+            .ac-card{background:var(--card-bg);border:1px solid var(--border);border-left:5px solid var(--border);border-radius:5px;padding:.6rem .7rem;font-family:Arial,sans-serif;}
+            .ac-card.al{border-left-color:var(--correct);}
+            .ac-card.dn{border-left-color:var(--wrong);}
+            .ac-card .hd{display:flex;justify-content:space-between;align-items:center;gap:.4rem;margin-bottom:.3rem;}
+            .ac-card .md{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:.85rem;color:var(--text-primary);letter-spacing:.03em;}
+            .ac-card .rs{font-size:.76rem;color:var(--text-secondary);line-height:1.45;}
+            .ac-req{font-family:Arial,sans-serif;font-size:.8rem;color:var(--text-primary);background:var(--gold-pale);border-radius:4px;padding:.45rem .6rem;margin-bottom:.6rem;line-height:1.45;}
+            .ac-ch{margin-top:.9rem;}
+            .ac-ch ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.35rem;}
+            .ac-ch li{display:flex;gap:.55rem;align-items:flex-start;font-family:Arial,sans-serif;font-size:.8rem;color:var(--text-secondary);background:var(--card-bg);border:1px solid var(--border);border-radius:5px;padding:.45rem .6rem;line-height:1.45;}
+            .ac-ch li .st{flex-shrink:0;width:1.3rem;height:1.3rem;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;color:#fff;}
+            .ac-ch li.done{border-color:var(--correct);background:var(--correct-bg);}
+            .ac-ch li.done .st{background:var(--correct);border-color:var(--correct);}
+            .ac-ch li .hint{display:block;font-size:.74rem;color:var(--text-muted);margin-top:.15rem;}
+            .ac-ch li.done .hint{color:var(--text-secondary);}
+            @media (max-width:820px){.ac-grid{grid-template-columns:1fr;}}
+            @media (max-width:430px){.ac-cards,.ac-form{grid-template-columns:1fr;}}
+          </style>
+
+          <div class="iw" id="ac-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; one request, five models</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="ac-grid">
+                <div class="iw-panel">
+                  <div class="ac-form">
+                    <div class="ac-sub">Subject: Dana</div>
+                    <label>Role<select id="ac-role"><option value="instr">Instructor</option><option value="reg">Registrar clerk</option><option value="it">IT administrator</option><option value="sw">Student worker</option></select></label>
+                    <label>Clearance<select id="ac-clr"><option value="0">Public</option><option value="1">Internal</option><option value="2" selected>Confidential</option><option value="3">Restricted</option></select></label>
+                    <label>Department<select id="ac-dept"><option value="Nursing">Nursing</option><option value="Registrar">Registrar</option><option value="IT">IT</option></select></label>
+                    <label>Device<select id="ac-dev"><option value="m">Managed, compliant</option><option value="u">Unmanaged</option></select></label>
+                    <label>Location<select id="ac-loc"><option value="on">On campus</option><option value="off">Off campus</option></select></label>
+                    <label>Time<select id="ac-time"><option value="bh">Business hours</option><option value="ah">After hours</option></select></label>
+                    <label>Sign-in method<select id="ac-auth"><option value="pw">Password + SMS code</option><option value="pk">Passkey (FIDO2)</option></select></label>
+                    <label>Threat signal<select id="ac-thr"><option value="n">Normal</option><option value="h">Elevated (phishing campaign)</option></select></label>
+                    <div class="ac-sub">Request</div>
+                    <label>Resource<select id="ac-obj"><option value="grades">Nursing grades sheet</option><option value="trans">Transcript database</option><option value="cal">Events calendar</option></select></label>
+                    <label>Action<select id="ac-act"><option value="r">Read</option><option value="w">Write</option></select></label>
+                    <label style="grid-column:1/-1">Operational need (RAdAC)<select id="ac-need"><option value="rt">Routine</option><option value="ur">Urgent: an emergency requires this access now</option></select></label>
+                    <label style="grid-column:1/-1">Owner&rsquo;s ACL entry for Dana (DAC)<select id="ac-acl"><option value="none">No entry</option><option value="r">Read</option><option value="rw" selected>Read and write</option></select></label>
+                  </div>
+                </div>
+                <div>
+                  <div class="ac-req" id="ac-req" aria-live="polite"></div>
+                  <div class="ac-cards" id="ac-cards" aria-live="polite"></div>
+                  <div class="ac-ch">
+                    <h5 class="iw-h5">Challenges <span id="ac-done" style="color:var(--jade-dark)">0 of 6</span></h5>
+                    <ol id="ac-ch"></ol>
+                  </div>
+                  <div style="margin-top:.6rem"><button type="button" class="iw-btn jade" id="ac-reset">Reset request</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>The same request can be allowed by one model and denied by another, because each model asks a different question. DAC asks what the owner wants. MAC asks whether labels and need to know permit it. RBAC asks whether the job requires it. ABAC asks whether the full context fits policy. RAdAC asks whether the risk of this request, right now, is worth the need, which is why it alone can bend in an emergency. Notice how switching to a passkey lowers the risk score and satisfies the Restricted-data policy. Real systems often layer two or more models, and access is granted only if every layer agrees.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('ac-root'); if(!root) return;
+            var $=function(id){return root.querySelector('#'+id);};
+            var LV=['Public','Internal','Confidential','Restricted'];
+            var OBJ={grades:{n:'Nursing grades sheet',owner:'Professor Lee',lab:2,dept:'Nursing'},
+                     trans:{n:'Transcript database',owner:'the Registrar',lab:3,dept:'Registrar'},
+                     cal:{n:'Events calendar',owner:'Marketing',lab:0,dept:'Marketing'}};
+            var ROLE={instr:'Instructor',reg:'Registrar clerk',it:'IT administrator',sw:'Student worker'};
+            var PERM={instr:{grades:'rw',trans:'',cal:'r'},reg:{grades:'r',trans:'rw',cal:'r'},it:{grades:'',trans:'',cal:'rw'},sw:{grades:'',trans:'',cal:'rw'}};
+            var ids=['role','clr','dept','dev','loc','time','auth','thr','obj','act','need','acl'];
+            var DEF={role:'instr',clr:'2',dept:'Nursing',dev:'m',loc:'on',time:'bh',auth:'pw',thr:'n',obj:'grades',act:'r',need:'rt',acl:'rw'};
+            function st(){var s={};ids.forEach(function(k){s[k]=$('ac-'+k).value;});s.clr=+s.clr;return s;}
+            function act(a){return a==='r'?'read':'write';}
+            function evalAll(s){
+              var o=OBJ[s.obj], r={};
+              // DAC
+              var g=s.acl==='rw'||(s.acl==='r'&&s.act==='r');
+              r.DAC={ok:g,why:o.owner+(s.acl==='none'?' has not granted Dana any access.':' granted '+(s.acl==='r'?'read only':'read and write')+'.')+(g?'':' The ACL does not cover '+act(s.act)+'.')};
+              // MAC (Bell-LaPadula plus compartment)
+              var ntk=o.lab===0||s.dept===o.dept, lev;
+              if(s.act==='r'){lev=s.clr>=o.lab;}else{lev=s.clr<=o.lab;}
+              var mw;
+              if(!ntk) mw='Label check fails need to know: the '+o.dept+' compartment does not include a '+s.dept+' subject.';
+              else if(!lev) mw=s.act==='r'?'No read up: a subject cleared '+LV[s.clr]+' cannot read an object labeled '+LV[o.lab]+' (simple security property).':'No write down: a subject cleared '+LV[s.clr]+' cannot write to an object labeled '+LV[o.lab]+' (star property).';
+              else mw=(s.act==='r'?'Clearance '+LV[s.clr]+' dominates label '+LV[o.lab]:'Writing at or above the subject&rsquo;s level is allowed: '+LV[s.clr]+' to '+LV[o.lab])+(o.lab===0?'.':', and need to know is met.');
+              r.MAC={ok:ntk&&lev,why:mw};
+              // RBAC
+              var p=PERM[s.role][s.obj], rg=p.indexOf(s.act)>=0;
+              r.RBAC={ok:rg,why:'The '+ROLE[s.role]+' role '+(p?'has '+(p==='rw'?'read and write':'read')+' on this resource':'has no permission on this resource')+'.'+(rg?'':' The job function does not include '+act(s.act)+'.')};
+              // ABAC
+              var fail=[];
+              if(!(o.lab===0||s.dept===o.dept)) fail.push('P1: subject department must match the resource department');
+              if(o.lab>=2&&s.dev!=='m') fail.push('P2: Confidential and Restricted data require a managed, compliant device');
+              if(o.lab===3&&s.loc!=='on') fail.push('P3: Restricted data is available on campus only');
+              if(o.lab>=2&&s.act==='w'&&s.time!=='bh') fail.push('P4: changes to sensitive data only during business hours');
+              if(o.lab===3&&s.auth!=='pk') fail.push('P5: Restricted data requires phishing-resistant sign-in');
+              r.ABAC={ok:!fail.length,why:fail.length?'Denied by '+fail.join('; ')+'.':'All five policies pass for this subject, resource, action, and context.'};
+              // RAdAC: real-time risk weighed against operational need
+              var parts=[['label '+LV[o.lab],o.lab]];
+              if(s.dev!=='m') parts.push(['unmanaged device',2]);
+              if(s.loc!=='on') parts.push(['off campus',1]);
+              if(s.time!=='bh') parts.push(['after hours',1]);
+              if(s.thr==='h') parts.push(['elevated threat',2]);
+              if(s.auth!=='pk') parts.push(['phishable sign-in',2]);
+              if(s.act==='w') parts.push(['write',1]);
+              var risk=0; parts.forEach(function(x){risk+=x[1];});
+              var urgent=s.need==='ur', lim=urgent?6:4, entitled=rg, rw;
+              var detail='Risk '+risk+' ('+parts.filter(function(x){return x[1];}).map(function(x){return x[0]+' +'+x[1];}).join(', ')+') against a limit of '+lim+(urgent?' for urgent need':' for routine need')+'.';
+              var rok;
+              if(!entitled&&!urgent){rok=false;rw=detail+' Dana is not entitled to this access and the need is routine, so there is nothing to weigh.';}
+              else if(!entitled&&urgent){rok=risk<=3;rw=detail+(rok?' Emergency override: Dana is not normally entitled, but the risk is low and the need is urgent, so access is granted with extra logging and later review.':' Even with urgent need, an override for someone not normally entitled requires risk of 3 or less.');}
+              else {rok=risk<=lim;rw=detail+(rok?' The risk fits the need.':(s.auth!=='pk'?' Signing in with a passkey would lower the risk by 2.':' The risk is too high for this need.'));}
+              r.RAdAC={ok:rok,why:rw};
+              return r;
+            }
+            var CH=[
+              {t:'Make DAC allow while RBAC denies.',h:'An owner can share with anyone. Try a role that has no permission on the resource.',f:function(r){return r.DAC.ok&&!r.RBAC.ok;}},
+              {t:'Make MAC deny a read that RBAC allows.',h:'Lower Dana&rsquo;s clearance below the resource label.',f:function(r,s){return s.act==='r'&&!r.MAC.ok&&r.RBAC.ok;}},
+              {t:'Make ABAC the only model that denies.',h:'Change the context, such as the device or location, without changing anything else.',f:function(r){return !r.ABAC.ok&&r.DAC.ok&&r.MAC.ok&&r.RBAC.ok;}},
+              {t:'Make MAC deny a write that every other model allows.',h:'Under Bell-LaPadula, a subject with a higher clearance cannot write down.',f:function(r,s){return s.act==='w'&&!r.MAC.ok&&r.DAC.ok&&r.RBAC.ok&&r.ABAC.ok&&r.RAdAC.ok;}},
+              {t:'Get all five models to allow a write to the transcript database.',h:'Think about role, clearance, department, device, location, time, sign-in method, and the owner&rsquo;s ACL together.',f:function(r,s){return s.obj==='trans'&&s.act==='w'&&r.DAC.ok&&r.MAC.ok&&r.RBAC.ok&&r.ABAC.ok&&r.RAdAC.ok;}},
+              {t:'Make RAdAC grant emergency access that RBAC denies.',h:'Pick a role with no permission on a low-risk resource, then mark the need as urgent.',f:function(r,s){return r.RAdAC.ok&&!r.RBAC.ok&&s.need==='ur';}}
+            ];
+            var done=CH.map(function(){return false;});
+            var ol=$('ac-ch');
+            CH.forEach(function(c,i){var li=document.createElement('li');li.innerHTML='<span class="st" aria-hidden="true"></span><span><b>'+(i+1)+'.</b> '+c.t+'<span class="hint">Hint: '+c.h+'</span></span>';ol.appendChild(li);});
+            function paint(){
+              var s=st(), r=evalAll(s), o=OBJ[s.obj];
+              $('ac-req').innerHTML='<b>Request:</b> Dana ('+ROLE[s.role]+', '+LV[s.clr]+', '+s.dept+') wants to <b>'+act(s.act)+'</b> the '+o.n+' (label '+LV[o.lab]+', owner '+o.owner+').';
+              $('ac-cards').innerHTML=['DAC','MAC','RBAC','ABAC','RAdAC'].map(function(m){var x=r[m];return '<div class="ac-card '+(x.ok?'al':'dn')+'"><div class="hd"><span class="md">'+m+'</span><span class="iw-pill '+(x.ok?'good':'bad')+'">'+(x.ok?'Allow':'Deny')+'</span></div><div class="rs">'+x.why+'</div></div>';}).join('');
+              CH.forEach(function(c,i){if(c.f(r,s)) done[i]=true; var li=ol.children[i]; li.className=done[i]?'done':''; li.querySelector('.st').textContent=done[i]?'✓':''; li.querySelector('.st').setAttribute('aria-label',done[i]?'complete':'not complete');});
+              var n=done.filter(Boolean).length; $('ac-done').textContent=n+' of '+CH.length+(n===CH.length?' complete':'');
+            }
+            ids.forEach(function(k){$('ac-'+k).addEventListener('change',paint);});
+            $('ac-reset').addEventListener('click',function(){ids.forEach(function(k){$('ac-'+k).value=DEF[k];});paint();});
+            paint();
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s8">
+          <div class="cs-head"><span class="cs-num">8</span><h3>Faculty Teaching Segment</h3></div>
+          <p>IAM is where students meet the systems they already use every day. Teach it through decisions about real accounts, not lists of acronyms.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> give students an export of 30 fictional accounts with roles, departments, last login dates, and group memberships, plus an HR roster. They perform an access review, flag orphaned accounts, privilege creep, shared accounts, and separation of duties conflicts, and write a remediation memo to the data owner.</li>
+            <li><strong>Rubric criteria:</strong> every exception found and classified correctly, the right owner named for each decision, least-privilege remediation, and a sustainable review schedule.</li>
+            <li><strong>Lab idea:</strong> in an isolated Windows Server lab, students build an Active Directory domain, create role-based groups, apply NTFS permissions, then move a user to a new role and verify the old access is removed. Advanced students configure a free identity provider to federate with a test application using SAML or OIDC.</li>
+            <li><strong>Course fit:</strong> this domain fits an operating systems, systems administration, or security fundamentals course. It supports the CAE-CD Cybersecurity Principles (CSP) and Operating Systems Concepts (OSC) Knowledge Units.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>Project the playground and run the challenges as a class poll: students predict each model&rsquo;s decision before you change a setting. Challenge 4, the write-down rule, reliably starts the best discussion of the session.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 1</span></div><h3>Access Control</h3><p>Identification, authentication, authorization, and the major access control models.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/access_control/access_control.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Access Control (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 2</span></div><h3>Biometrics</h3><p>Biometric types, false acceptance and false rejection, and the crossover error rate.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/Biometrics/Biometrics.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Biometrics (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 5</span></div><h3>Windows Permissions</h3><p>NTFS and share permissions and how they combine for a user.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/permissions/permissions.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Windows Permissions (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 6</span></div><h3>Kerberos</h3><p>The authentication service, ticket-granting service, and tickets, step by step.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/kerberos/kerberos.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Kerberos (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Networking</span><span class="em-sec">Section 6</span></div><h3>Active Directory</h3><p>Forests, trees, domains, and organizational units in a Windows directory.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/forest/forest.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Active Directory (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Self-checking practice for this lesson, ready to use with your own students. Each item ends with a report you can print or save as a PDF.</p>
+    <div class="pl-grid">
+      <article class="pl-card"><div class="pl-top"><span class="pl-type">CISSP Practice &middot; A6</span><span class="pl-time">&#9201; 35 min</span></div><h3><a href="activity06.html">Identity and Access</a></h3><p>Sort factors and passwordless methods, match access models to cases, and put SAML and OIDC federation flows in order.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="activity06.html" aria-label="Open activity A6: Identity and Access">Open &#8594;</a></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B5</span><span class="pl-time">&#9201; 60 min</span></div><h3><a href="lab05.html">Identity and Federation Lab</a></h3><p>Build RBAC roles from job functions, evaluate ABAC policies, assemble a SAML or OIDC sign-in, and find access review exceptions.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="lab05.html" aria-label="Open lab B5: Identity and Federation Lab">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q1.</span>A fingerprint reader at the data center door often rejects authorized staff. Which error is occurring?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> Type II error, false acceptance</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> Type I error, false rejection</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> A high crossover error rate caused by impostors</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> A replay attack</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Rejecting legitimate users is a false rejection, a Type I error. Lowering sensitivity reduces it but raises false acceptance, the Type II error.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q2.</span>Faculty use passwords with SMS codes, yet attackers keep capturing both through look-alike sign-in pages. Which change BEST stops this attack?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> Require longer passwords that change every 60 days</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> Replace SMS codes with push approvals on a phone app</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> Add a security question after the SMS code</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> Move to FIDO2 passkeys or security keys bound to the real site&rsquo;s origin</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> FIDO2 and WebAuthn credentials are tied to the legitimate origin, so a look-alike page receives nothing it can replay. Passwords, codes, and security questions can all be typed into a fake page, and push approvals can be relayed or approved through fatigue.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q3.</span>In a SAML single sign-on between a college and a cloud learning platform, which party creates and signs the assertion?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> The identity provider</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> The service provider</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> The user&rsquo;s browser</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> The certificate authority</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> The IdP authenticates the user and issues a signed assertion. The browser only carries it, and the service provider validates it.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q4.</span>A mobile app developer wants users to sign in with their existing accounts and needs to know who each user is. Which standard BEST fits?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> OAuth 2.0 access tokens alone</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> LDAP over port 389</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> OpenID Connect</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> TACACS+</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> OAuth 2.0 delegates authorization but does not identify the user. OpenID Connect adds a signed ID token for authentication and is built for modern web and mobile apps.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q5.</span>Users suddenly cannot reach any Kerberos-protected service after a server&rsquo;s clock drifts by 20 minutes. Why?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> Kerberos encrypts traffic with the current time as the key.</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> The KDC deletes accounts whose clocks drift.</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> Tickets and authenticators carry timestamps, and large clock skew causes them to be rejected to prevent replay.</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> Kerberos uses certificates that expire every hour.</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> Kerberos uses timestamps to stop replayed tickets. When clocks differ by more than the allowed skew, often five minutes, authentication fails. Time synchronization is a dependency.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q6.</span>An employee who worked in payroll, then admissions, then IT still has access from all three jobs. Which control BEST prevents this?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> Periodic access reviews by data owners, plus removal of old access at each transfer</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> Longer passwords</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> Mandatory vacations</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> A stronger biometric reader</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> This is privilege creep. Transfer procedures should remove old access, and owner recertification catches what slips through. Authentication strength does not address excess authorization.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q7.</span>During a campus emergency, a facilities manager who normally has no access to the building safety system needs it immediately. The access system weighs the urgency against the current risk of the request, grants access, and flags it for review. Which model does this describe?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> Discretionary access control (DAC)</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> Rule-based access control (RuBAC)</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> Mandatory access control (MAC)</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> Risk-adaptable access control (RAdAC)</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> RAdAC computes the security risk of each request in real time and balances it against operational need, so it can allow access that normal policy would deny when the mission requires it, with extra logging. RuBAC applies the same fixed rules to everyone, MAC follows labels, and DAC follows the owner&rsquo;s wishes.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q8.</span>Network engineers need centralized authentication for router logins, with per-command authorization and the whole session payload encrypted. Which protocol BEST fits?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> RADIUS</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> TACACS+</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> SAML</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> LDAP without TLS</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> TACACS+ separates authentication, authorization, and accounting, supports per-command authorization, and encrypts the entire payload. RADIUS encrypts only the password and is aimed at network access.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson04.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 4: Communication and Network Security</span></a>
+    <a href="lesson06.html" class="next"><span class="pager-dir">Next &#8594;</span><span class="pager-name">Lesson 6: Security Assessment and Testing</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

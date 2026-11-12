@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A1 Think Like a Security Leader: Mindset and the ISC2 Code | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A1',
+  title: 'Think Like a Security Leader: Mindset and the ISC2 Code',
+  accent: 'Mindset and the ISC2 Code',
+  domain: 'All domains, Domain 1 (13.6%)',
+  time: '35 min',
+  level: 'Foundational',
+  lessonHref: 'lesson00.html#s6',
+  lessonLabel: 'Lesson 0, The Security Leader Mindset',
+  lede: 'The CISSP exam rewards the answer a senior security leader would give. Engineers reach for the fix, and auditors reach for the test. Practice the leader’s view: people first, governance before technology, advise rather than fix, and the ISC2 canons in the order that settles a conflict.',
+  concepts: [
+    { key: 'mindset', name: 'Whose answer it is', review: 'Lesson 0, The Security Leader Mindset' },
+    { key: 'process', name: 'Governance before technology', review: 'Lesson 0, The Security Leader Mindset (reading the qualifier)' },
+    { key: 'canons', name: 'The canons in priority order', review: 'Lesson 0, The ISC2 Code of Ethics' },
+    { key: 'ethics', name: 'Resolving ethics cases', review: 'Lesson 0, The ISC2 Code of Ethics' }
+  ],
+  stations: [
+    {
+      type: 'sort', short: 'Whose answer?', title: 'Leader, technician, or auditor?', concept: 'mindset',
+      instr: 'Each statement is something a capable security professional at Corrowmere Transit might say. Decide whose view it reflects: the <b>security leader</b>, the hands-on <b>technician</b>, or the <b>auditor</b>. Then select <b>Check answers</b>.',
+      hint: 'The leader puts people first, starts from the business need and the owner, advises, and fixes the process. The technician configures, patches, and blocks. The auditor samples, tests, compares evidence with criteria, and stays independent. Look at the verb.',
+      buckets: ['Security leader', 'Technician', 'Auditor'],
+      review: { href: 'lesson00.html#s6', label: 'Lesson 0, The Security Leader Mindset' },
+      items: [
+        { text: 'I will rebuild the infected fare server tonight and write up what I did next week.', answer: 1, why: 'Acting alone and documenting later is the technician’s reflex. The leader follows the incident and change process so evidence and approvals are not lost.' },
+        { text: 'Before we choose a product, tell me which business process this protects and who owns that risk.', answer: 0, why: 'Governance before technology. The leader starts with the business need and the accountable owner, then picks a control.' },
+        { text: 'I will pull 30 change tickets from the last quarter and test whether each one was approved before release.', answer: 2, why: 'Sampling to see whether a control operated is the auditor’s work. It produces assurance, not a running program.' },
+        { text: 'The route planning director decides whether to accept this residual risk. My job is to give her clear options and costs.', answer: 0, why: 'Advise, do not fix. The owner accepts risk, and the leader makes the decision an informed one.' },
+        { text: 'I can tune the IDS signature so this alert stops firing on the depot network.', answer: 1, why: 'Tuning a signature is useful technician work. It treats one alert, not the reason the alert exists.' },
+        { text: 'Is there evidence the control worked all year, or only on the day we tested it?', answer: 2, why: 'Asking for evidence over the whole period is the auditor’s discipline. Operating effectiveness needs proof across time.' },
+        { text: 'Only one depot missed the training. Fix the onboarding process so every new hire gets it, not just that depot.', answer: 0, why: 'Root cause over symptom. The leader changes the process so the gap cannot recur anywhere.' },
+        { text: 'I can push full-disk encryption to every laptop through the endpoint manager in about an hour.', answer: 1, why: 'The control may be right, but pushing it directly is the technician’s view. The leader checks ownership, change approval, and user impact first.' },
+        { text: 'My report will compare what the policy requires with what we observed, then rate the gap.', answer: 2, why: 'Criteria compared with condition is the structure of an audit finding. It is the auditor’s product.' },
+        { text: 'The smoke alarm is real. Get everyone out of the operations center before anyone touches a server.', answer: 0, why: 'People first. Human safety outranks data, systems, and money in every CISSP answer.' },
+        { text: 'We should buy the EDR agent with the highest detection score in the latest lab test.', answer: 1, why: 'Choosing on technical features is a technician view. The leader picks the option that treats the business risk at a justified cost.' },
+        { text: 'I helped design this access process, so someone independent should assess it.', answer: 2, why: 'Independence from the work being assessed is a core auditor principle. An assessor should not review their own design.' }
+      ]
+    },
+    {
+      type: 'order', short: 'Canons and process', title: 'The canons and the leader’s decision process',
+      instr: 'Put each list in order. In the first, rank the four ISC2 Code of Ethics canons from <b>highest</b> to <b>lowest</b> priority, the order you use when two duties conflict. In the second, order the steps a security leader follows when a new risk lands on the desk.',
+      hint: 'The canons move outward to inward: the public, then your own conduct, then the people who pay you, then the profession. For the process, ask what each step needs as its input. No one can decide before the options exist, and no one should implement before someone with authority decides.',
+      topLabel: 'Highest priority / first step',
+      bottomLabel: 'Lowest priority / last step',
+      review: { href: 'lesson00.html#s5', label: 'Lesson 0, The ISC2 Code of Ethics' },
+      groups: [
+        {
+          title: 'The ISC2 canons, highest priority first', concept: 'canons',
+          items: [
+            { text: 'Provide diligent and competent service to principals', rank: 2, why: 'Service to an employer or client is the third canon. It yields to society and to honorable, legal conduct.' },
+            { text: 'Protect society, the common good, necessary public trust and confidence, and the infrastructure', rank: 0, why: 'The first canon. When an employer’s request endangers the public, this duty wins.' },
+            { text: 'Advance and protect the profession', rank: 3, why: 'The fourth canon. It matters, but it never outranks the public, the law, or your principals.' },
+            { text: 'Act honorably, honestly, justly, responsibly, and legally', rank: 1, why: 'The second canon. You cannot serve a principal by lying or breaking the law.' }
+          ]
+        },
+        {
+          title: 'From a new risk to a managed one', concept: 'process', topLabel: 'First step', bottomLabel: 'Last step',
+          items: [
+            { text: 'Present options, costs, and a recommendation to the risk owner', rank: 2, why: 'The leader advises. Options come after the risk is understood in business terms.' },
+            { text: 'Monitor the result and report it through governance', rank: 5, why: 'A treatment is not finished until someone checks that it works and reports it.' },
+            { text: 'Understand the business need and the policy that applies', rank: 0, why: 'Governance before technology. Every sound answer starts with the mission and the rules already in place.' },
+            { text: 'Implement the chosen treatment through change management', rank: 4, why: 'Process over heroics. Approved changes go through the change process, not around it.' },
+            { text: 'Assess the risk in business terms: likelihood, impact, and the asset owner', rank: 1, why: 'Assess before you act. The owner and the impact frame every option that follows.' },
+            { text: 'The owner decides, and accepts any residual risk in writing', rank: 3, why: 'The owner, not the security team, accepts risk. Documenting the decision makes accountability clear.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Ethics cases', title: 'Ethics cases at Corrowmere Transit', concept: 'ethics',
+      instr: 'You are the security architect at Corrowmere Transit, a regional bus and light rail agency, and an ISC2 member. Each case puts two duties in tension. Choose the <b>BEST</b> answer, using the canons and the leader’s mindset.',
+      hint: 'When duties conflict, the earlier canon wins: society, then honor, then principals, then the profession. Act within your competence, tell the truth about what you found, and escalate through proper channels before going outside them.',
+      review: { href: 'lesson00.html#s5', label: 'Lesson 0, The ISC2 Code of Ethics' },
+      items: [
+        {
+          title: 'Case 1: The brake controller flaw', text: 'You find that the light rail brake controller firmware accepts unsigned updates over the maintenance network. An engineer shows it could disable braking. The operations VP asks you to keep it quiet until next fiscal year, when the budget resets.',
+          parts: [
+            { q: 'What should you do?', options: ['Keep quiet as instructed, because the employer is your principal', 'Document the risk, escalate to executive leadership in writing, and press for prompt mitigation', 'Post the details publicly today so riders are warned at once', 'Quietly patch the controllers yourself over the weekend'], answer: 1, why: 'Rider safety triggers the first canon, so silence is not an option. A leader escalates through proper channels with a written record and pushes for mitigation, rather than leaking details or making unapproved changes.' },
+            { q: 'Which canon decides this case?', concept: 'canons', options: ['Provide diligent and competent service to principals', 'Advance and protect the profession', 'Act honorably, honestly, justly, responsibly, and legally', 'Protect society, the common good, and the infrastructure'], answer: 3, why: 'Public safety and critical infrastructure fall under the first canon, which outranks the duty to an employer.' }
+          ]
+        },
+        {
+          title: 'Case 2: The clean report', text: 'A consultant hired by Corrowmere ran a two-day external scan and drafted a report that says the agency’s network is “fully secure.” The CIO loves it and wants it sent to the board.',
+          parts: [
+            { q: 'What is the BEST response?', options: ['Send it, since the scan found no critical issues', 'Add a few findings of your own so the report looks balanced', 'Revise it to state the scope and limits, and that a scan cannot show the network is fully secure', 'Hold the report until a full penetration test confirms the claim'], answer: 2, why: 'Overstating results misleads the board. The second canon requires honest, accurate statements, and a two-day external scan supports only a limited conclusion.' }
+          ]
+        },
+        {
+          title: 'Case 3: Outside your competence', text: 'After a suspected insider theft of fare revenue, legal asks you to image the suspect’s workstation and testify about it. You have never done forensic acquisition, and the case may go to court.',
+          parts: [
+            { q: 'What should you do FIRST?', options: ['Tell legal you lack forensic training, preserve the system untouched, and recommend a qualified examiner', 'Image the drive with a free tool, since any copy is better than none', 'Decline and leave the workstation in use until a decision is made', 'Watch a training video tonight and do the acquisition tomorrow'], answer: 0, why: 'Diligent and competent service means working within your competence. Preserving the evidence and bringing in a qualified examiner protects the case and the principal.' }
+          ]
+        },
+        {
+          title: 'Case 4: AI on the platform cameras', text: 'Corrowmere wants to deploy an AI model that flags “suspicious behavior” from station camera feeds and alerts transit police. In a pilot, the model flagged riders from two neighborhoods far more often than others, and no one can explain why.',
+          parts: [
+            { q: 'What should you recommend?', options: ['Deploy it, since police make the final call on every alert', 'Deploy it at night only, when fewer riders are affected', 'Retrain the model on more footage and deploy it next month', 'Pause the deployment until the bias is assessed, accountability is assigned, and human review and transparency are in place'], answer: 3, why: 'Ethics in AI asks for fairness, accountability, transparency, and human oversight. An unexplained disparate impact on the public is a first-canon concern that governance must resolve before deployment.' },
+            { q: 'Who should own the decision to deploy?', options: ['The vendor that built the model', 'The data science team that ran the pilot', 'Senior leadership, through the agency’s governance process, advised by security, legal, and privacy', 'Transit police, since they will act on the alerts'], answer: 2, why: 'Deploying AI that affects the public is a business risk decision. Senior leadership owns it through governance, and security advises.' }
+          ]
+        },
+        {
+          title: 'Case 5: The vendor’s invitation', text: 'While you chair the evaluation of three bids for a new radio dispatch system, one bidder invites you to an all-expenses-paid “customer summit” at a resort.',
+          parts: [
+            { q: 'What is the BEST response?', options: ['Accept, as long as you attend the product sessions', 'Decline, and disclose the offer to procurement under the gift and conflict of interest policy', 'Accept, but also ask the other bidders for similar trips', 'Ignore the offer and say nothing to anyone'], answer: 1, why: 'Acting honorably and justly means avoiding even the appearance of a conflict of interest. Declining and disclosing keeps the evaluation fair.' }
+          ]
+        },
+        {
+          title: 'Case 6: A complaint about a nonmember', text: 'A contractor at Corrowmere who holds no ISC2 certification shares a coworker’s password to finish a job faster. A colleague asks you to file an ISC2 ethics complaint against the contractor.',
+          parts: [
+            { q: 'What is accurate?', options: ['ISC2 can sanction anyone who works in security', 'ISC2 can sanction the contractor if two members file the complaint', 'Only Corrowmere’s ethics officer can file with ISC2', 'The ISC2 Code applies only to members, so handle it through Corrowmere’s own policy'], answer: 3, why: 'The ISC2 Code binds members and candidates who agreed to it. A nonmember’s conduct is handled under the organization’s code and acceptable use policy.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'shift', label: 'Think of a recent decision you made at work as a technician or instructor. How would the security leader have answered it differently, and why?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the next lesson, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

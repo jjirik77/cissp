@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A5 Networks by Layer | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A5',
+  title: 'Networks by Layer',
+  accent: 'by Layer',
+  domain: 'Domain 4 (12.8%)',
+  time: '35 min',
+  level: 'Foundational',
+  lessonHref: 'lesson04.html#s1',
+  lessonLabel: 'Lesson 4, Models and Addressing',
+  lede: 'The exam asks where things happen on the stack, which control stops which attack, and which secure channel fits a need. Practice placing protocols and devices on the OSI layers, matching attacks at a freight company to the defense that stops them, including software-defined security, and choosing between IPsec, TLS, SSH, and zero trust access.',
+  concepts: [
+    { key: 'layers', name: 'Protocols and devices by layer', review: 'Lesson 4, Models and Addressing' },
+    { key: 'attacks', name: 'Attacks and their defenses', review: 'Lesson 4, Secure Channels and Network Attacks' },
+    { key: 'sdsec', name: 'Segmentation and software-defined security', review: 'Lesson 4, Architecture and Segmentation' },
+    { key: 'channels', name: 'Choosing a secure channel', review: 'Lesson 4, Secure Channels and Network Attacks' }
+  ],
+  stations: [
+    {
+      type: 'sort', short: 'By layer', title: 'Place it on the OSI stack', concept: 'layers',
+      instr: 'Kestrelpoint Logistics runs warehouses, trucks, and a shipment tracking website. Sort each protocol, device, or unit by the OSI layer where it primarily operates. Then select <b>Check answers</b>.',
+      hint: 'Translate to the unit and the address. Bits and signals are layer 1. Frames and MAC addresses are layer 2. Packets and IP addresses are layer 3. Segments, datagrams, and ports are layer 4. Protocols users and applications speak directly are layer 7.',
+      buckets: ['1 Physical', '2 Data Link', '3 Network', '4 Transport', '7 Application'],
+      review: { href: 'lesson04.html#s1', label: 'Lesson 4, Models and Addressing' },
+      items: [
+        { text: 'The fiber run between the warehouse and the distribution center', answer: 0, why: 'Cabling and the signals on it are physical layer.' },
+        { text: 'An old hub in the loading dock office that repeats every signal to every port', answer: 0, why: 'A hub repeats bits without reading addresses, which is layer 1 behavior.' },
+        { text: 'The access switch that forwards frames by MAC address', answer: 1, why: 'Switching by MAC address is layer 2.' },
+        { text: 'ARP, which maps a known IP address to a MAC address on the local segment', answer: 1, why: 'ARP resolves addresses for framing on the local link, so it is treated as layer 2.' },
+        { text: '802.1Q tags that keep the scanner VLAN separate from the office VLAN', answer: 1, why: 'VLAN tags are inserted into Ethernet frames, which is layer 2.' },
+        { text: 'The router that forwards packets between the warehouse and headquarters subnets', answer: 2, why: 'Routing by IP address is layer 3.' },
+        { text: 'IPsec protecting the site-to-site link', answer: 2, why: 'IPsec protects IP packets, which places it at layer 3.' },
+        { text: 'ICMP echo requests used to check whether a truck gateway is reachable', answer: 2, why: 'ICMP is carried directly in IP and supports layer 3.' },
+        { text: 'TCP sessions with a three-way handshake to the tracking server', answer: 3, why: 'TCP segments, ports, and the handshake are layer 4.' },
+        { text: 'UDP datagrams carrying voice calls between dispatchers', answer: 3, why: 'UDP is a layer 4 transport protocol.' },
+        { text: 'DNS queries that resolve the tracking site’s name', answer: 4, why: 'DNS is an application layer protocol, even though it usually rides on UDP.' },
+        { text: 'A web application firewall inspecting HTTP requests to the tracking site', answer: 4, why: 'A WAF reads HTTP content, which is layer 7 inspection.' }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Attacks and defenses', title: 'Stop the attack at Kestrelpoint', concept: 'attacks',
+      instr: 'Each case describes an attack or weakness on Kestrelpoint’s network. Choose the control that <b>BEST</b> addresses it.',
+      hint: 'Match the defense to the layer and the mechanism. Half-open connections call for SYN cookies. Forged ARP replies call for dynamic ARP inspection. Forged DNS answers call for DNSSEC. East-west movement calls for microsegmentation, and drift across many hand-built devices calls for policy defined in software.',
+      review: { href: 'lesson04.html#s6', label: 'Lesson 4, Secure Channels and Network Attacks' },
+      items: [
+        {
+          title: 'Case 1: The tracking site slows down', text: 'During peak season, the tracking server’s connection table fills with thousands of half-open TCP connections from spoofed addresses, and real customers cannot connect.',
+          parts: [
+            { q: 'Which control BEST addresses this attack at the server?', options: ['Enable SYN cookies and rate limiting', 'Enable DNSSEC on the public zone', 'Turn on dynamic ARP inspection', 'Move the server to a new VLAN'], answer: 0, why: 'This is a SYN flood. SYN cookies let the server avoid holding state for half-open connections, and rate limiting reduces the load.' },
+            { q: 'Kestrelpoint’s own routers should also stop packets with forged source addresses from leaving its network. What is this control?', options: ['Certificate pinning', 'Egress filtering', 'Port security', 'Network address translation'], answer: 1, why: 'Egress filtering drops outbound packets whose source addresses do not belong to the organization, which keeps its network from being used in spoofing attacks.' }
+          ]
+        },
+        {
+          title: 'Case 2: The warehouse LAN', text: 'A laptop on the warehouse VLAN sends forged ARP replies so that handheld scanner traffic flows through it before reaching the gateway.',
+          parts: [
+            { q: 'Which control BEST stops this attack?', options: ['DNSSEC', 'SYN cookies', 'Dynamic ARP inspection on the switches', 'A web application firewall'], answer: 2, why: 'ARP poisoning is a layer 2 attack. Dynamic ARP inspection checks ARP replies against trusted bindings and drops forged ones.' }
+          ]
+        },
+        {
+          title: 'Case 3: The wrong address', text: 'Drivers report that the dispatch app sometimes reaches a look-alike server. The resolver cache has been fed forged answers for the dispatch hostname.',
+          parts: [
+            { q: 'Which control BEST prevents forged DNS answers from being accepted?', options: ['Ingress filtering', 'Changing the native VLAN', 'Port-based NAC', 'DNSSEC validation, with patched resolvers using randomized source ports'], answer: 3, why: 'DNSSEC lets resolvers verify that answers are signed by the zone owner. Randomized source ports make forged replies harder to land.' }
+          ]
+        },
+        {
+          title: 'Case 4: Hopping VLANs', text: 'A tester shows that a device on the guest Wi-Fi VLAN can reach the payroll VLAN by negotiating a trunk with the access switch.',
+          parts: [
+            { q: 'What is the BEST fix?', options: ['Disable trunk negotiation on access ports and change the native VLAN', 'Add more VLANs to spread out the traffic', 'Enable SYN cookies on the payroll server', 'Replace the switch with a hub'], answer: 0, why: 'Switch spoofing works when ports negotiate trunks. Disabling negotiation and moving the native VLAN off the default closes switch spoofing and double tagging.' }
+          ]
+        },
+        {
+          title: 'Case 5: Forty warehouses, forty firewalls', text: 'Each of Kestrelpoint’s 40 warehouses has a firewall configured by hand. An audit finds that 11 of them allow traffic the standard forbids, and no one can say when the rules changed. The company is also moving its routing optimizer to cloud workloads.',
+          parts: [
+            { q: 'Which approach BEST fixes the drift and scales to the cloud?', concept: 'sdsec', options: ['Hire more network engineers to review each firewall quarterly', 'Buy the same firewall model for every site', 'Define the policy once in software, keep it in version control, and push it through controllers and APIs to every enforcement point', 'Remove the warehouse firewalls and rely on the headquarters perimeter'], answer: 2, why: 'Software-defined security expresses policy in code and enforces it through controllers, cloud security groups, and host agents. Peer review and version control show who changed what, and drift is corrected automatically.' },
+            { q: 'Once the optimizer runs as many cloud workloads, attackers who compromise one workload could move to the others. Which control BEST limits that east-west movement?', concept: 'sdsec', options: ['A larger perimeter firewall at the internet edge', 'Microsegmentation with workload-level security policy', 'A content delivery network in front of the site', 'A separate VLAN for the whole cloud account'], answer: 1, why: 'Perimeter controls see north-south traffic. Microsegmentation applies policy between individual workloads, which is where lateral movement happens.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'sort', short: 'Secure channels', title: 'Choose the secure channel', concept: 'channels',
+      instr: 'Each item is a communication need at Kestrelpoint. Choose the secure channel that <b>BEST</b> fits: <b>IPsec</b>, <b>TLS</b>, <b>SSH</b>, or <b>zero trust network access (ZTNA)</b>.',
+      hint: 'IPsec protects traffic between networks or hosts at layer 3, so applications need no changes. TLS protects a specific application session, such as HTTPS or an API. SSH is for administrators and secure file transfer. ZTNA grants per-application access after checking identity and device posture, instead of putting a user on the network.',
+      buckets: ['IPsec', 'TLS', 'SSH', 'ZTNA'],
+      review: { href: 'lesson04.html#s6', label: 'Lesson 4, Secure Channels and Network Attacks' },
+      items: [
+        { text: 'A permanent link between two warehouse networks across the internet, protecting all traffic between the sites', answer: 0, why: 'A site-to-site IPsec tunnel protects every packet between two networks without changing any application.' },
+        { text: 'Connecting the headquarters subnets to the cloud VPC so whole networks can reach each other privately', answer: 0, why: 'Network-to-network connectivity is a classic IPsec tunnel use case.' },
+        { text: 'Customers checking shipment status in a web browser', answer: 1, why: 'HTTPS is HTTP over TLS, protecting each browser session.' },
+        { text: 'A retail partner’s system calling Kestrelpoint’s shipment API, with both sides presenting certificates', answer: 1, why: 'Mutual TLS authenticates both client and server for an application session.' },
+        { text: 'Mail servers relaying shipment notices to each other', answer: 1, why: 'Server-to-server mail uses TLS, usually started with STARTTLS.' },
+        { text: 'Network administrators managing core switches through a hardened jump host with MFA', answer: 2, why: 'SSH gives encrypted, authenticated command-line administration. Routing it through a bastion adds recording and control.' },
+        { text: 'An engineer copying configuration backups to a Linux server', answer: 2, why: 'SFTP and SCP run over SSH for secure file transfer.' },
+        { text: 'Remote dispatchers who need only the dispatch app, and only from managed devices that pass a posture check', answer: 3, why: 'ZTNA grants access to one application after checking identity and device posture, without placing the user on the network.' },
+        { text: 'A billing contractor who should reach one invoicing application and nothing else on the network', answer: 3, why: 'Per-application access for a third party is exactly what ZTNA is built for. A full VPN would grant far more than the task needs.' },
+        { text: 'Protecting traffic between two legacy hosts whose applications cannot encrypt anything themselves', answer: 0, why: 'IPsec transport mode encrypts at the network layer, so the applications need no changes.' }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'shift', label: 'Pick one attack from this activity. How would you show your students where it happens on the stack and why its defense works there?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the next lesson, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

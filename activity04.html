@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A4 Security Models and Cryptography | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A4',
+  title: 'Security Models and Cryptography',
+  accent: 'and Cryptography',
+  domain: 'Domain 3 (12.8%)',
+  time: '35 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson03.html#s2',
+  lessonLabel: 'Lesson 3, Security Models and Evaluation',
+  lede: 'Security models turn policy into rules a system can prove it enforces, and cryptography turns a security need into a specific primitive. Practice applying the four core models at an aerospace manufacturer, choosing the right cryptographic control, including post-quantum options, and doing the key count and key-length math the exam expects.',
+  concepts: [
+    { key: 'models', name: 'Applying security models', review: 'Lesson 3, Security Models and Evaluation' },
+    { key: 'crypto', name: 'Choosing the cryptographic control', review: 'Lesson 3, Cryptography Fundamentals' },
+    { key: 'pqc', name: 'Post-quantum cryptography', review: 'Lesson 3, Signatures, PKI, and Key Management' },
+    { key: 'keymath', name: 'Key count and key-length math', review: 'Lesson 3, Cryptography Fundamentals' }
+  ],
+  stations: [
+    {
+      type: 'scenario', short: 'Model cases', title: 'Which model, and which rule?', concept: 'models',
+      instr: 'Varnhollow Aerospace builds satellites for defense and commercial customers. For each case, choose the <b>BEST</b> answer about the security model or rule that applies.',
+      hint: 'Bell-LaPadula protects confidentiality: no read up, no write down. Biba protects integrity and flips both rules: no read down, no write up. Clark-Wilson forces access through well-formed transactions with separation of duties. Brewer-Nash builds a wall based on what you have already seen. Simple means read; star means write.',
+      review: { href: 'lesson03.html#s2', label: 'Lesson 3, Security Models and Evaluation' },
+      items: [
+        {
+          title: 'Case 1: The classified program', text: 'Varnhollow’s defense program uses Bell-LaPadula. Priya, an engineer cleared to Secret, works on the guidance system.',
+          parts: [
+            { q: 'Priya tries to open a Top Secret payload specification. What happens, and why?', options: ['Allowed, because she works on the same program', 'Denied by the star property: no write down', 'Denied by the simple security property: no read up', 'Allowed, if the payload owner approves it by email'], answer: 2, why: 'The simple security property means a subject cannot read an object at a higher level. Need to know does not override clearance.' },
+            { q: 'Priya tries to paste Secret test results into an Unclassified newsletter. What happens, and why?', options: ['Denied by the star property: no write down', 'Allowed, because she is the author of the results', 'Denied by the simple security property: no read up', 'Allowed, because writing is not restricted under Bell-LaPadula'], answer: 0, why: 'The star property stops a subject from writing to a lower level, which would leak Secret data down.' }
+          ]
+        },
+        {
+          title: 'Case 2: The flight software library', text: 'The verified flight software library is high integrity. A contractor’s experimental analysis tool and a public engineering forum are low integrity. The library follows Biba.',
+          parts: [
+            { q: 'The experimental tool tries to save its output into the verified library. What does Biba say?', options: ['Allowed, because writing down is the danger in Biba', 'Allowed, if the output is encrypted first', 'Denied by the simple integrity property: no read down', 'Denied by the star integrity property: no write up'], answer: 3, why: 'Biba’s star integrity property stops a lower-integrity subject from writing to a higher-integrity object, which would contaminate it.' },
+            { q: 'A verified build process wants to read sample code from the public forum. What does Biba say?', options: ['Allowed, since reading never changes the library', 'Denied by the simple integrity property: no read down', 'Denied by the star integrity property: no write up', 'Allowed, if the forum post has many votes'], answer: 1, why: 'Reading lower-integrity data could corrupt the decisions of a high-integrity process. Biba’s simple integrity property forbids it.' }
+          ]
+        },
+        {
+          title: 'Case 3: The parts inventory', text: 'Inventory clerks can change part counts only through the approved receiving application, which logs every change. A clerk who receives parts cannot also approve the vendor invoice.',
+          parts: [
+            { q: 'Which model does this design follow?', options: ['Brewer-Nash', 'Bell-LaPadula', 'Clark-Wilson', 'Take-Grant'], answer: 2, why: 'Clark-Wilson requires users to reach constrained data only through well-formed transformation procedures, with separation of duties and auditing.' },
+            { q: 'What does Clark-Wilson call the binding of clerk, receiving application, and inventory data?', options: ['The access triple', 'The security kernel', 'The reference monitor', 'The conflict class'], answer: 0, why: 'The access triple of user, program, and data is the core of Clark-Wilson enforcement.' }
+          ]
+        },
+        {
+          title: 'Case 4: The bid consultants', text: 'Varnhollow’s consulting arm advises two rival launch providers, Astrelle and Northbeam, on separate bids. A consultant has already opened Astrelle’s cost model.',
+          parts: [
+            { q: 'Which model governs what the consultant may open next?', options: ['Biba', 'Brewer-Nash', 'Clark-Wilson', 'State machine'], answer: 1, why: 'Brewer-Nash, also called the Chinese Wall model, decides access from what the subject has already accessed, to prevent conflicts of interest.' },
+            { q: 'May the consultant now open Northbeam’s cost model?', options: ['Yes, with a manager’s written approval', 'Yes, because the clearance is the same for both', 'Yes, after the Astrelle bid closes this quarter', 'No, because Northbeam is in the same conflict class as Astrelle'], answer: 3, why: 'Once a subject has seen one company in a conflict class, competitors in that class are walled off.' }
+          ]
+        },
+        {
+          title: 'Case 5: Proving the design', text: 'An evaluator argues that the satellite ground station is secure because it boots into a verified secure state and every allowed transition leads to another secure state.',
+          parts: [
+            { q: 'Which model is the evaluator relying on?', options: ['The state machine model', 'The Brewer-Nash model', 'The Take-Grant model', 'The Clark-Wilson model'], answer: 0, why: 'The state machine model defines a secure system as one that starts secure and stays secure through every transition. Bell-LaPadula and Biba build on it.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'sort', short: 'Pick the control', title: 'Match the need to the cryptographic control', concept: 'crypto',
+      instr: 'Each item is a security need at Varnhollow. Choose the control that <b>BEST</b> meets it: <b>AES-GCM</b> encryption, a <b>SHA-256 hash</b>, an <b>HMAC</b>, a <b>digital signature</b>, or <b>ML-KEM</b> post-quantum key establishment.',
+      hint: 'Encryption gives confidentiality, and GCM adds integrity. A hash proves integrity only if the hash itself is protected. An HMAC proves integrity and that the sender held a shared key, but not nonrepudiation. A signature gives authenticity and nonrepudiation. ML-KEM establishes keys that resist quantum attack.',
+      buckets: ['AES-GCM', 'SHA-256 hash', 'HMAC', 'Digital signature', 'ML-KEM'],
+      review: { href: 'lesson03.html#s5', label: 'Lesson 3, Cryptography Fundamentals' },
+      items: [
+        { text: 'Encrypt terabytes of telemetry at rest and detect any tampering with the ciphertext', answer: 0, why: 'AES-GCM is fast symmetric authenticated encryption, giving confidentiality and integrity for bulk data.' },
+        { text: 'Publish a checksum on the internal portal so engineers can confirm a large file downloaded intact', answer: 1, why: 'A hash posted on a trusted page detects accidental or malicious changes, as long as the page itself is protected.' },
+        { text: 'Two ground stations that share a secret key must confirm each command message came from the other and was not altered', answer: 2, why: 'An HMAC proves integrity and that the sender held the shared key. Nonrepudiation was not required.' },
+        { text: 'Prove to a customer that a firmware image came from Varnhollow, in a way Varnhollow cannot later deny', answer: 3, why: 'Only a digital signature made with Varnhollow’s private key gives nonrepudiation.' },
+        { text: 'Establish session keys for a satellite link whose traffic must stay secret for 25 years', answer: 4, why: 'Long-lived secrets face harvest now, decrypt later. ML-KEM (FIPS 203) establishes keys that resist a future quantum computer.' },
+        { text: 'Protect the confidentiality of engineering drawings sent to a supplier over a shared file service', answer: 0, why: 'Confidentiality of bulk files calls for symmetric encryption, with the key exchanged separately.' },
+        { text: 'Store a fingerprint of each golden configuration file so any later change can be detected by comparison', answer: 1, why: 'Comparing hashes of the current and baseline files detects change, with the baseline hashes kept protected.' },
+        { text: 'Let a partner’s API confirm each request came from Varnhollow’s server, using a secret both sides already hold', answer: 2, why: 'A keyed message authentication code is the standard choice when both sides share a secret.' },
+        { text: 'Let auditors verify that a signed contract has not been changed since the program manager approved it', answer: 3, why: 'A digital signature binds the signer to the exact document, giving integrity and nonrepudiation.' },
+        { text: 'Replace the RSA key exchange in a VPN as part of the quantum-readiness plan, run in hybrid mode with a classical algorithm', answer: 4, why: 'ML-KEM is the NIST post-quantum key encapsulation standard. Hybrid mode keeps security if either algorithm holds.', concept: 'pqc' },
+        { text: 'Encrypt a laptop’s disk so a stolen device reveals nothing', answer: 0, why: 'Disk encryption is bulk symmetric encryption. AES is the standard choice.' },
+        { text: 'A design document must show the CISO which quantum-resistant algorithm will establish keys for the next ground network', answer: 4, why: 'For key establishment the post-quantum choice is ML-KEM. ML-DSA and SLH-DSA are for signatures.', concept: 'pqc' }
+      ]
+    },
+    {
+      type: 'calc', short: 'Key math', title: 'Key count and key-length math', concept: 'keymath',
+      instr: 'Use the formulas from Lesson 3. Symmetric: <b>n(n − 1) / 2</b> keys so every pair shares one key. Asymmetric: <b>2n</b> keys, one pair per user. Each added key bit <b>doubles</b> the key space, so the difference in bits is the power of two. Grover’s algorithm roughly <b>halves</b> the effective strength of a symmetric key. Enter whole numbers.',
+      hint: 'For 20 people: 20 × 19 / 2. For “how many new keys when one person joins” compare the totals before and after, or note that the new person needs a key with each existing person. For key space, subtract the bit lengths: 128 − 56 = 72, so the space is 2 to the 72nd power times larger.',
+      review: { href: 'lesson03.html#s5', label: 'Lesson 3, Cryptography Fundamentals' },
+      items: [
+        { title: 'Payload team', label: '20 engineers, symmetric keys so every pair can talk privately', answer: 190, unit: 'keys', why: '20 × 19 / 2 = 190 keys.' },
+        { title: 'Payload team', label: 'The same 20 engineers using asymmetric key pairs', answer: 40, unit: 'keys', why: '2 × 20 = 40 keys: one public and one private key each.' },
+        { title: 'Payload team', label: 'New symmetric keys needed when a 21st engineer joins', answer: 20, unit: 'keys', why: 'The newcomer needs one key with each of the 20 existing engineers: 210 − 190 = 20.' },
+        { title: 'Supplier network', label: '100 suppliers and staff, symmetric keys for every pair', answer: 4950, unit: 'keys', why: '100 × 99 / 2 = 4,950 keys, which is why symmetric-only key distribution does not scale.' },
+        { title: 'Legacy upgrade', label: 'Moving from 56-bit DES to 128-bit AES makes the key space 2 to the power of', answer: 72, unit: '', why: '128 − 56 = 72. The space is 2^72 times larger, not twice as large.' },
+        { title: 'Legacy upgrade', label: 'AES-256 compared with AES-128: the key space is 2 to the power of', answer: 128, unit: '', why: '256 − 128 = 128 bits of difference, so 2^128 times larger.' },
+        { title: 'Quantum readiness', label: 'Approximate effective strength of AES-256 against Grover’s algorithm', answer: 128, unit: 'bits', why: 'Grover’s algorithm roughly halves symmetric strength: 256 / 2 = 128 bits, which is still strong.', concept: 'pqc' },
+        { title: 'Quantum readiness', label: 'Approximate effective strength of AES-128 against Grover’s algorithm', answer: 64, unit: 'bits', why: '128 / 2 = 64 bits, which is why long-lived data should move to AES-256.', concept: 'pqc' }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'shift', label: 'How would you explain the difference between Bell-LaPadula and Biba to a first-year student in two sentences?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the next lesson, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

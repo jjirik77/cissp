@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>A8 Operations, Incidents, and Recovery | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This activity needs JavaScript enabled.</p></noscript></div>
+
+<script>
+window.ACTIVITY = {
+  id: 'A8',
+  title: 'Operations, Incidents, and Recovery',
+  accent: 'Incidents, and Recovery',
+  domain: 'Domain 7 (12.8%)',
+  time: '35 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson07.html#s3',
+  lessonLabel: 'Lesson 7, Incident Management',
+  lede: 'Security operations is where plans meet a bad night. Practice the sequence that keeps an incident under control, the order that keeps evidence alive, and the recovery choices that decide how long the lights stay off. The setting is Halsey Creek Water Authority, a public utility whose treatment plants run on operational technology and whose billing runs in the cloud.',
+  concepts: [
+    { key: 'ir', name: 'Incident response phases', review: 'Lesson 7, Incident Management' },
+    { key: 'evidence', name: 'Evidence and order of volatility', review: 'Lesson 7, Investigations and Evidence' },
+    { key: 'recovery', name: 'Recovery sites and backups', review: 'Lesson 7, Recovery Strategies' },
+    { key: 'testing', name: 'DR tests and recovery metrics', review: 'Lesson 7, DR Testing, BC, and Safety' }
+  ],
+  stations: [
+    {
+      type: 'order', short: 'Phases and volatility', title: 'Response phases and the order of volatility', concept: 'ir',
+      instr: 'A SOAR playbook at Halsey Creek flagged a billing server beaconing to an unknown address. Use the arrows to put each list in order. In the first, order the incident response phases. In the second, order the evidence from <b>most</b> to <b>least</b> volatile, which is the order to collect it.',
+      hint: 'You cannot contain what you have not declared, and you should not restore until the attacker’s path is closed. For evidence, ask how long each source survives: what lives in the processor and memory disappears first, and archived media lasts for years.',
+      topLabel: 'First',
+      bottomLabel: 'Last',
+      review: { href: 'lesson07.html#s3', label: 'Lesson 7, Incident Management' },
+      groups: [
+        {
+          title: 'Incident response phases', concept: 'ir',
+          items: [
+            { text: 'Mitigation: isolate the billing server from the network while preserving its memory', rank: 2, why: 'Containment limits the damage without destroying evidence. It comes before any recovery work.' },
+            { text: 'Lessons learned: review the response and update the playbook, controls, and training', rank: 6, why: 'The review closes the incident and feeds improvements back into the program.' },
+            { text: 'Detection: an analyst confirms the beaconing alert and declares an incident', rank: 0, why: 'Response begins when monitoring finds a possible incident and the team confirms it.' },
+            { text: 'Recovery: rebuild the server from a known-good image and restore clean data', rank: 4, why: 'Systems return to normal from trusted sources once the attacker is contained.' },
+            { text: 'Response: activate the incident response team and start the evidence log', rank: 1, why: 'Declaring the incident activates the team and the plan, and evidence handling starts at once.' },
+            { text: 'Remediation: fix the exposed remote access service the attacker used', rank: 5, why: 'Remediation removes the root cause so the incident cannot repeat. Recovery alone would leave the door open.' },
+            { text: 'Reporting: brief management and notify the state regulator as required', rank: 3, why: 'Reporting is shown as one step but continues throughout. Legal deadlines can start the clock early.' }
+          ]
+        },
+        {
+          title: 'Evidence, most to least volatile', concept: 'evidence', topLabel: 'Collect first', bottomLabel: 'Collect last',
+          items: [
+            { text: 'Files on the server’s local disk', rank: 4, why: 'Disk contents survive a power loss, so imaging the disk follows the live collection.' },
+            { text: 'CPU registers and cache', rank: 0, why: 'Registers and cache change in nanoseconds. They are the most volatile source of all.' },
+            { text: 'Archived backup media in the offsite vault', rank: 6, why: 'Archives last for years and are the least volatile. They can be collected last.' },
+            { text: 'Contents of system memory (RAM)', rank: 2, accept: [1, 2], why: 'Memory holds running processes, keys, and injected code, and it is gone when the power is cut. Capture it before the disk.' },
+            { text: 'Logs already forwarded to the central SIEM', rank: 5, why: 'Remote logs live on another system and change slowly. They rank below the local disk.' },
+            { text: 'Routing table, ARP cache, and list of network connections', rank: 1, accept: [1, 2], why: 'Live network state changes in seconds to minutes. It sits with memory at the top of the list; either order of the two is accepted.' },
+            { text: 'Temporary files and swap space', rank: 3, why: 'Temporary files and swap change often but survive a reboot longer than memory. They come after RAM and before the disk.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'scenario', short: 'Recovery choices', title: 'Sites, backups, and tests', concept: 'recovery',
+      instr: 'You are Halsey Creek’s security operations manager, Imani Varga-Lindqvist. For each case, choose the <b>BEST</b> answer.',
+      hint: 'Hot sites recover in minutes to hours, warm sites in hours to days, and cold sites in days to weeks. RAID and replication copy damage instantly, so only backups protect against deletion and ransomware, and only immutable or offline copies survive an attacker with administrator rights. Tests climb from read-through to full interruption as risk rises.',
+      review: { href: 'lesson07.html#s5', label: 'Lesson 7, Recovery Strategies' },
+      items: [
+        {
+          title: 'Case 1: Ransomware reaches the backups', text: 'Attackers who gained domain administrator rights encrypted the billing servers and then deleted the online backup catalog and the snapshots on the backup appliance. The appliance used the same directory accounts as everything else.',
+          parts: [
+            { q: 'What design change BEST prevents a repeat?', options: ['Add a second backup appliance in the same data center', 'Keep at least one immutable or offline copy those credentials cannot reach', 'Move the backup schedule from nightly to every four hours', 'Mirror the billing servers with RAID 1 across two disks'], answer: 1, why: 'If domain administrator rights can delete every backup, the backups are part of the blast radius. Object lock or offline media that no credential can change until retention ends is the fix.' },
+            { q: 'The plant engineer suggests that disk mirroring already protects the billing data. Why is that wrong?', options: ['Mirroring is too slow to keep up with billing', 'Mirroring works only for operational technology', 'Mirroring writes the encrypted data to both disks at once', 'Mirroring needs a hot site to function at all'], answer: 2, why: 'RAID protects against hardware failure. It copies deletion, corruption, and ransomware instantly to every disk.' }
+          ]
+        },
+        {
+          title: 'Case 2: Choose the recovery site', text: 'The BIA gives customer billing an RTO of 72 hours and the plant control historian an RTO of 2 hours. The utility has a limited budget.',
+          parts: [
+            { q: 'Which site BEST fits customer billing?', options: ['A hot site with real-time replication', 'A reciprocal agreement with a nearby city', 'A mobile trailer data center on call', 'A warm site, or a cloud rebuild from templates'], answer: 3, why: 'A 72-hour RTO allows a warm site or a cloud rebuild, which costs far less than a hot site. A reciprocal agreement is cheap but hard to enforce.' },
+            { q: 'Which site BEST fits the control historian?', options: ['A hot site kept close to current', 'A cold site with power and cooling', 'A warm site restored from tape', 'A reciprocal agreement with a vendor'], answer: 0, why: 'A 2-hour RTO needs a fully equipped site that is ready in minutes to hours. Only a hot site, or active-active processing, meets it.' }
+          ]
+        },
+        {
+          title: 'Case 3: Restore day', text: 'Billing runs a full backup every Sunday night and a backup every other night of the week. A server fails Thursday at 10 a.m., before that night’s job.',
+          parts: [
+            { q: 'If the weeknight jobs are incremental, what must be restored?', options: ['The Sunday full and the Wednesday backup only', 'The Wednesday backup only', 'The Sunday full and the Monday, Tuesday, and Wednesday backups in order', 'The Sunday full only'], answer: 2, why: 'Each incremental holds only the changes since the previous backup. Every one since the last full is needed, in order.' },
+            { q: 'If the weeknight jobs are differential, what must be restored?', options: ['The Sunday full and the Wednesday backup', 'The Monday, Tuesday, and Wednesday backups', 'The Wednesday backup only', 'The Sunday full and the Monday backup'], answer: 0, why: 'Each differential holds all changes since the last full. The full plus the latest differential is enough.' }
+          ]
+        },
+        {
+          title: 'Case 4: Choose the test', text: 'Imani is planning this year’s disaster recovery exercises. Choose the test that BEST fits each goal.',
+          parts: [
+            { q: 'Department heads have each received the new plan and should report any errors in their sections.', concept: 'testing', options: ['Read-through (checklist)', 'Simulation', 'Parallel test', 'Full interruption'], answer: 0, why: 'Each person reviews the plan alone and reports problems. It is a read-through, with no disruption.' },
+            { q: 'Prove the recovery site can process real billing work while the main site keeps running.', concept: 'testing', options: ['Walkthrough (tabletop)', 'Full interruption', 'Parallel test', 'Read-through (checklist)'], answer: 2, why: 'A parallel test runs real work at the recovery site without shutting down production. It proves capability at low risk.' },
+            { q: 'Leaders want to rehearse decisions for a chemical feed failure at a plant, without touching any system.', concept: 'testing', options: ['Parallel test', 'Walkthrough (tabletop)', 'Full interruption', 'Simulation with failover'], answer: 1, why: 'A walkthrough, or tabletop, has the team talk through a scenario step by step. It tests decisions and communication with no operational risk.' }
+          ]
+        },
+        {
+          title: 'Case 5: Life safety first', text: 'During the ransomware incident, a chlorine sensor alarm sounds in a treatment plant control room where two analysts are collecting evidence.',
+          parts: [
+            { q: 'What should Imani do FIRST?', concept: 'ir', options: ['Finish the memory capture before anyone leaves', 'Ask the analysts to photograph the screens quickly', 'Shut down the control system to stop the attack', 'Evacuate the room and follow the plant safety plan'], answer: 3, why: 'Human safety always comes first. Evidence and systems can be recovered; people cannot.' }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'calc', short: 'Recovery math', title: 'Recovery metrics and data loss', concept: 'testing',
+      instr: 'Use Halsey Creek’s operations data to calculate each value. Round as noted.',
+      hint: 'MTBF is total operating time divided by the number of failures. MTTR is total repair time divided by the number of failures. Availability is uptime divided by total time. Data loss runs from the last good backup to the moment of failure.',
+      table: {
+        caption: 'Halsey Creek Water Authority: operations data for the year',
+        head: ['Measure', 'Value'],
+        rows: [
+          ['SCADA HMI servers in service', '4 servers, each running all year (8,760 hours)'],
+          ['Failures across those servers', '8'],
+          ['Total time to restore service across the 8 failures', '48 hours'],
+          ['Billing outages in a 30-day month (720 hours)', '2 hours, 3 hours, and 4 hours'],
+          ['Last good billing backup before the Thursday failure', 'Wednesday at 11:00 p.m.'],
+          ['Time of the Thursday failure', 'Thursday at 10:00 a.m.']
+        ]
+      },
+      review: { href: 'lesson07.html#s5', label: 'Lesson 7, Recovery Strategies' },
+      items: [
+        { label: 'MTBF of the SCADA HMI servers', answer: 4380, unit: 'hours', tol: 1, why: 'Four servers for 8,760 hours each is 35,040 operating hours. Divided by 8 failures, MTBF is 4,380 hours. A higher MTBF means more reliable equipment.' },
+        { label: 'MTTR for those failures', answer: 6, unit: 'hours', tol: 0.1, why: '48 hours divided by 8 failures is 6 hours. A falling MTTR shows that DR practice is paying off.' },
+        { label: 'Billing availability for the month, to two decimal places', answer: 98.75, unit: '%', tol: 0.01, why: 'Total downtime is 9 hours. 711 of 720 hours is 98.75 percent.' },
+        { label: 'Hours of billing data lost in the Thursday failure', answer: 11, unit: 'hours', concept: 'recovery', why: 'From 11:00 p.m. Wednesday to 10:00 a.m. Thursday is 11 hours. If the RPO is shorter than that, backups must run more often.' },
+        { label: 'With incrementals, how many backup sets must be restored for the Thursday failure?', answer: 4, unit: 'sets', concept: 'recovery', why: 'The Sunday full plus the Monday, Tuesday, and Wednesday incrementals makes 4 sets.' },
+        { label: 'With differentials, how many backup sets must be restored?', answer: 2, unit: 'sets', concept: 'recovery', why: 'The Sunday full plus the Wednesday differential makes 2 sets.' }
+      ]
+    },
+    {
+      type: 'reflect', short: 'Reflect', title: 'Reflect on your readiness',
+      instr: 'Rate your confidence on each concept, then answer the prompts. Your responses appear in the summary report.',
+      prompts: [
+        { key: 'backups', label: 'Think of a system you depend on. Could an attacker with administrator rights delete every copy of its data? How would you find out?' },
+        { key: 'next', label: 'Which concept from this activity will you review before the next lesson, and how?' }
+      ]
+    }
+  ]
+};
+</script>
+<script src="practice.js"></script>
+</body>
+</html>

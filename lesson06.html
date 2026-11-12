@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 6: Security Assessment and Testing | CISSP Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-seal">CISSP<br>PREP</div>
+    <span class="nav-title">5-Day Faculty Workshop</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#lessons">Lessons</a></li>
+      <li><a href="index.html#practice">Practice</a></li>
+      <li><a href="index.html#schedule">Schedule</a></li>
+      <li><a href="index.html#domains">Domains</a></li>
+      <li><a href="index.html#exam-prep">Exam Prep</a></li>
+      <li><a href="index.html#faculty-tools">Faculty Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="lesson-hero">
+  <div class="lesson-hero-inner">
+    <p class="breadcrumb"><a href="index.html">Workshop</a> &nbsp;&rsaquo;&nbsp; <a href="index.html#lessons">Lessons</a> &nbsp;&rsaquo;&nbsp; <span>Lesson 6</span></p>
+    <span class="lesson-badge-lg">Day 4, Morning &bull; Domain 6</span>
+    <h1>Security Assessment <span>and Testing</span></h1>
+    <p class="lesson-lede">A control that has never been tested is a hope, not a control. Domain 6 asks how you know your security works: which test fits which question, who should run it, what the results mean, and how leaders and outside parties gain assurance. The test is only half the work. The report and the follow-through are the rest.</p>
+    <div class="meta-chips">
+      <span class="meta-chip">Session: <strong>Day 4, 9:00 to 12:00</strong></span>
+      <span class="meta-chip">Duration: <strong>~3 hrs</strong></span>
+      <span class="meta-chip">Exam Weight: <strong>11.2%</strong></span>
+      <span class="meta-chip">Knowledge Check: <strong>8 Questions</strong></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <p class="eyebrow">Overview</p>
+    <h2 class="h2">Prove it, then report it</h2>
+    <div class="rule"></div>
+    <p class="lead">Assessment and testing turn assumptions into evidence. A vulnerability scan finds known weaknesses. A penetration test shows what an attacker could actually do. A code review finds flaws before they ship. An audit tells a third party whether controls are designed well and operate over time. Each answers a different question, so the first step is always to ask what you need to know.</p>
+    <p class="lead">This lesson covers assessment strategy, the main control testing techniques, the security process data that management reviews, how to analyze and report results, and how internal, external, and third-party audits work, including SOC reports.</p>
+    <div class="mindset"><span class="tip-label">&#129517; Think like a manager</span>Testing needs written authorization, a defined scope, and an owner for the results. When an answer jumps straight to running a tool, look for the option that first confirms approval and scope, or that routes findings to the people who can fix them.</div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Learning Objectives</p>
+    <h2 class="h2">By the end of this lesson you will be able to&hellip;</h2>
+    <div class="rule"></div>
+    <ul class="objectives">
+      <li><span><strong>Design</strong> an assessment strategy that names the scope, the assessor, and the location of the systems. <em class="bloom-tag">Bloom: Create</em></span></li>
+      <li><span><strong>Select</strong> the testing technique that best answers a stated question under real constraints. <em class="bloom-tag">Bloom: Evaluate</em></span></li>
+      <li><span><strong>Distinguish</strong> SAST, DAST, fuzzing, code review, vulnerability assessment, penetration testing, and attack simulations. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Interpret</strong> key performance and key risk indicators drawn from security process data. <em class="bloom-tag">Bloom: Analyze</em></span></li>
+      <li><span><strong>Compare</strong> SOC 1, SOC 2 Type I, SOC 2 Type II, and SOC 3 reports by audience and content. <em class="bloom-tag">Bloom: Understand</em></span></li>
+      <li><span><strong>Build</strong> a student assessment exercise that ends in a remediation report. <em class="bloom-tag">Bloom: Create</em></span></li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Key Terms</p>
+    <h2 class="h2">Vocabulary flashcards</h2>
+    <div class="rule"></div>
+    <p class="flip-hint-top">&#128072; Read the term, recall the definition, then click or press Enter to check yourself.</p>
+    <div class="vocab-grid">
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Vulnerability Assessment</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A broad search for known weaknesses, usually with automated scanners, that reports what may be exploitable without trying to exploit it.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Penetration Test</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">An authorized, scoped attempt to exploit weaknesses and show real impact, run under written rules of engagement.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">SAST</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Static application security testing: analyzing source code or binaries without running them. White-box and early in development.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">DAST</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Dynamic application security testing: probing a running application from the outside, like an attacker, without seeing the code.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Responsible Disclosure</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Reporting a vulnerability privately to the vendor and agreeing on a timeline for a fix before public release. Also called coordinated disclosure.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Attack Simulation</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">Safely reproducing known adversary techniques, often with automated tools, to confirm that controls still detect, block, and respond to them.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Synthetic Transaction</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A scripted transaction run against a live system on a schedule to confirm it works and performs as expected. Proactive, unlike real user monitoring.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Misuse Case</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A use case written from an attacker&rsquo;s point of view, describing how a feature could be abused, so tests can confirm the system resists it.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">Key Risk Indicator (KRI)</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">A forward-looking metric that signals rising risk, such as the number of critical vulnerabilities open past their deadline.</div></div>
+        </div>
+      </button>
+
+      <button type="button" class="flip-card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><span class="vocab-label">Term</span><div class="vocab-term">SOC 2 Type II</div><span class="flip-hint">&#8634; Definition</span></div>
+          <div class="flip-face flip-back"><span class="vocab-label">Definition</span><div class="vocab-def">An independent auditor&rsquo;s report on a service organization&rsquo;s security and related controls, covering both design and operating effectiveness over a period of time.</div></div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Lesson Content</p>
+    <h2 class="h2">Study the material</h2>
+    <div class="rule"></div>
+    <div class="lesson-content">
+      <nav class="toc" aria-label="On this page">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#s1">1. Assessment Strategy</a></li>
+          <li><a href="#s2">2. Vulnerability and Penetration Testing</a></li>
+          <li><a href="#s3">3. Testing Software and Interfaces</a></li>
+          <li><a href="#s4">4. Security Process Data</a></li>
+          <li><a href="#s5">5. Analysis, Reporting, and Audits</a></li>
+          <li><a href="#s6">6. Interactive: Test Strategy Selector</a></li>
+          <li><a href="#s7">7. Faculty Teaching Segment</a></li>
+        </ul>
+      </nav>
+      <div class="content-main">
+
+        <article class="content-section" id="s1">
+          <div class="cs-head"><span class="cs-num">1</span><h3>Assessment Strategy</h3></div>
+          <p>A strategy decides what to test, why, how often, and who does it. It starts from risk and requirements: a system that handles payment data or student records gets more frequent and deeper testing than a public brochure site. The strategy is then validated, which means confirming that the planned tests actually cover the risks and the requirements.</p>
+          <h4>Who performs the assessment</h4>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Assessor</th><th>Who it is</th><th>Strength</th><th>Limit</th></tr></thead>
+            <tbody>
+              <tr><td class="term">Internal</td><td>Staff within the organization&rsquo;s control</td><td>Knows the systems; low cost; frequent</td><td>Less independent; may share blind spots</td></tr>
+              <tr><td class="term">External</td><td>An outside firm hired by the organization</td><td>Independent view and specialist skill</td><td>Cost; needs time to learn the environment</td></tr>
+              <tr><td class="term">Third-party</td><td>An independent party outside the enterprise, often reporting to someone else, such as a customer or regulator</td><td>Highest independence; trusted by outsiders</td><td>Least control over scope and timing</td></tr>
+            </tbody>
+          </table></div>
+          <p><strong>Location</strong> matters as much as the assessor. On-premises systems can be tested directly. Cloud systems are governed by the provider&rsquo;s terms, and many providers limit or require notice for some tests. Hybrid environments need both, plus testing of the connections between them. In cloud services the customer often relies on the provider&rsquo;s third-party audit reports for the layers it cannot test.</p>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>Before testing a cloud-hosted system, check the provider&rsquo;s acceptable use and testing policy. Authorization from your own organization is necessary but not always sufficient, because the provider owns the underlying infrastructure.</div>
+        </article>
+
+        <article class="content-section" id="s2">
+          <div class="cs-head"><span class="cs-num">2</span><h3>Vulnerability and Penetration Testing</h3></div>
+          <p>A <strong>vulnerability assessment</strong> is wide and shallow. Scanners compare systems against databases of known weaknesses, such as CVE entries, and rate them, often with CVSS scores. Credentialed (authenticated) scans log in and see far more than uncredentialed scans, which see only what an outsider sees. Scanners also produce false positives, so results need validation.</p>
+          <p>A <strong>penetration test</strong> is narrow and deep. Testers try to exploit weaknesses and chain them together to show business impact. Typical phases are planning, discovery (reconnaissance and scanning), attack (gain access, escalate, move), and reporting. Written authorization and rules of engagement come first.</p>
+          <h4>Knowledge levels and exercise types</h4>
+          <ul class="detail">
+            <li><strong>Black box (zero knowledge):</strong> testers start with no inside information, as an outside attacker would. Realistic but slow.</li>
+            <li><strong>Gray box (partial knowledge):</strong> testers get some information, such as user credentials or a network map. A common balance of realism and efficiency.</li>
+            <li><strong>White box (full knowledge):</strong> testers get documentation and often code. The most thorough coverage for the time spent.</li>
+            <li><strong>Team exercises:</strong> a red team plays the adversary, a blue team defends, and a purple team exercise has both working together so every attack becomes a detection lesson. The labels are common in practice even where an exam item does not use them.</li>
+          </ul>
+          <h4>Attack simulations</h4>
+          <p>An <strong>attack simulation</strong> reproduces adversary behavior on purpose to see whether defenses hold. It differs from a penetration test in its question. A penetration test asks what an attacker could reach. An attack simulation asks whether our controls detect, block, and respond to a specific technique, and whether they still do after the last change.</p>
+          <ul class="detail">
+            <li><strong>Breach and attack simulation (BAS) tools:</strong> automated agents run safe versions of known techniques, often mapped to MITRE ATT&amp;CK, on a schedule. They report which steps were blocked, which were detected, and which went unseen.</li>
+            <li><strong>Adversary emulation:</strong> a team follows the documented playbook of a specific threat group from start to finish, so defenders practice against a realistic chain rather than isolated steps.</li>
+            <li><strong>Tabletop and scenario exercises:</strong> people walk through an attack narrative to test decisions, escalation, and communication when no tool is involved.</li>
+          </ul>
+          <p>Simulations need the same authorization and rules of engagement as any test. Safe payloads, change windows, and a stop condition keep a simulation from becoming an incident.</p>
+          <div class="compare-2col">
+            <div><b>Vulnerability assessment</b>Answers &ldquo;what known weaknesses exist?&rdquo; Automated, frequent, broad. Does not prove exploitability.</div>
+            <div><b>Penetration test</b>Answers &ldquo;what could an attacker actually do?&rdquo; Manual and tool-assisted, periodic, deep. Shows impact and attack paths.</div>
+          </div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>The most important document for a penetration test is written authorization from someone with the authority to grant it. Without it, the same activity can be a crime.</div>
+          <div class="resource-link">
+            <span class="rl-icon" aria-hidden="true">&#128373;&#65039;</span>
+            <div class="rl-body"><span class="rl-label">Explore with an eMate</span><span class="rl-text"><strong>Pen Testing</strong>: the phases of a penetration test and the decisions a tester makes along the way.</span></div>
+            <div class="rl-actions"><a class="btn secondary" href="https://d2hie3dpn9wvbb.cloudfront.net/pen_testing/pen_testing.html" target="_blank" rel="noopener noreferrer">Pen Testing <span class="ext">&#8599;</span></a></div>
+          </div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>&ldquo;Continuously verify that controls still detect a known technique&rdquo; points to an attack simulation. &ldquo;Show what an attacker could actually reach&rdquo; points to a penetration test. &ldquo;List known weaknesses&rdquo; points to a vulnerability scan.</div>
+        </article>
+
+        <article class="content-section" id="s3">
+          <div class="cs-head"><span class="cs-num">3</span><h3>Testing Software and Interfaces</h3></div>
+          <p>Code review and testing find flaws in software before attackers do. The exam expects you to know what each technique needs and what it finds.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Technique</th><th>Needs</th><th>Finds best</th></tr></thead>
+            <tbody>
+              <tr><td class="term">SAST</td><td>Source code or binaries; no running app</td><td>Coding flaws early, such as injection patterns and unsafe functions</td></tr>
+              <tr><td class="term">Manual code review</td><td>Source code and skilled reviewers</td><td>Logic and design flaws that tools miss; the slowest option</td></tr>
+              <tr><td class="term">DAST</td><td>A running application</td><td>Runtime and configuration flaws visible from outside</td></tr>
+              <tr><td class="term">Fuzzing</td><td>A running program or test harness</td><td>Crashes, memory errors, and input handling failures</td></tr>
+            </tbody>
+          </table></div>
+          <p>Some teams add instrumentation agents inside the running application so dynamic findings point to the exact line of code. Treat this as a refinement of dynamic testing. The core exam contrast is static versus dynamic: code at rest versus a system in motion.</p>
+          <ul class="detail">
+            <li><strong>Misuse case testing:</strong> write how a feature could be abused, then test that the system resists it.</li>
+            <li><strong>Coverage analysis:</strong> measures how much of the code or requirements the tests exercised, for example statement, branch, or condition coverage. High coverage does not prove security, but low coverage proves gaps.</li>
+            <li><strong>Interface testing:</strong> checks the points where components meet. User interfaces, network interfaces, and application programming interfaces (APIs) each need tests for authentication, input validation, and error handling.</li>
+            <li><strong>Synthetic transactions and benchmarks:</strong> scripted checks that a live service works and meets performance targets. Real user monitoring, by contrast, watches actual traffic passively.</li>
+            <li><strong>Log reviews:</strong> confirm that events are captured, protected, and actually examined.</li>
+            <li><strong>Compliance checks:</strong> compare configurations against a baseline or standard, such as a CIS Benchmark.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>&ldquo;Earliest in the life cycle&rdquo; and &ldquo;cheapest to fix&rdquo; point to SAST and code review. &ldquo;Running application&rdquo; and &ldquo;no source code&rdquo; point to DAST. &ldquo;Proves real impact&rdquo; points to a penetration test.</div>
+        </article>
+
+        <article class="content-section" id="s4">
+          <div class="cs-head"><span class="cs-num">4</span><h3>Security Process Data</h3></div>
+          <p>Tests are periodic. Process data is continuous. Domain 6 expects you to collect technical and administrative data that shows whether security processes work, and to present it to management in a form they can act on.</p>
+          <ul class="detail">
+            <li><strong>Account management:</strong> orphaned accounts, accounts not reviewed on schedule, and time to remove access after termination.</li>
+            <li><strong>Management review and approval:</strong> evidence that leaders review results, accept residual risk, and approve exceptions.</li>
+            <li><strong>Key performance indicators (KPIs):</strong> how well a process performs, such as percent of systems patched within 30 days.</li>
+            <li><strong>Key risk indicators (KRIs):</strong> early warning that risk is rising, such as the count of critical findings past due.</li>
+            <li><strong>Backup verification data:</strong> results of restore tests, not just successful backup jobs.</li>
+            <li><strong>Training and awareness:</strong> phishing simulation click and report rates.</li>
+            <li><strong>Disaster recovery and business continuity:</strong> test dates, results, and whether recovery met the RTO.</li>
+          </ul>
+          <div class="compare-2col">
+            <div><b>KPI: looks back</b>&ldquo;We patched 94% of critical vulnerabilities within 15 days last quarter.&rdquo; It measures performance against a target.</div>
+            <div><b>KRI: looks ahead</b>&ldquo;Twelve internet-facing servers run an operating system that loses vendor support in 60 days.&rdquo; It signals risk before an incident.</div>
+          </div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>A backup job that reports &ldquo;success&rdquo; proves only that data was written. A test restore proves it can be recovered. When asked for the BEST evidence of backup effectiveness, choose the restore test.</div>
+        </article>
+
+        <article class="content-section" id="s5">
+          <div class="cs-head"><span class="cs-num">5</span><h3>Analysis, Reporting, and Audits</h3></div>
+          <p>Raw test output is not a report. Analysis removes false positives, rates findings by risk to the business, and groups related issues by root cause. The report then goes to the right audiences: a short executive summary for leaders and detailed findings with steps to reproduce for technical teams.</p>
+          <ul class="detail">
+            <li><strong>Remediation:</strong> each finding gets an owner, a deadline based on severity, and a retest to confirm the fix.</li>
+            <li><strong>Exception handling:</strong> when a finding cannot be fixed, the risk owner documents a formal exception with compensating controls and an expiration date.</li>
+          </ul>
+          <h4>Responsible disclosure</h4>
+          <p>When a test, an audit, or plain curiosity uncovers a flaw in someone else&rsquo;s product, the finder owes a duty to the users of that product. <strong>Responsible disclosure</strong>, also called coordinated disclosure, balances two risks: telling attackers too soon, and leaving users exposed too long.</p>
+          <ul class="detail">
+            <li><strong>Report privately first:</strong> contact the vendor through its published security contact or vulnerability disclosure policy, with enough detail to reproduce the issue.</li>
+            <li><strong>Agree on a timeline:</strong> many programs use about 90 days before public release, shortened if the flaw is already being exploited and extended if a fix is in progress.</li>
+            <li><strong>Use a coordinator when needed:</strong> if the vendor does not respond, a coordinator such as CERT/CC can help. A CVE identifier is assigned through a CVE Numbering Authority so everyone tracks the same flaw.</li>
+            <li><strong>Bug bounty programs:</strong> some vendors invite testing within a published scope and pay for valid reports. The scope and safe harbor terms are the authorization; testing outside them is not covered.</li>
+            <li><strong>Receive reports well:</strong> an organization should publish its own disclosure policy and a contact, such as a security.txt file, so finders know how to reach it.</li>
+          </ul>
+          <h4>Analyzing audit output</h4>
+          <p>Reporting covers audit results as well as test results. An audit report lists control deficiencies and exceptions, each with a management response: the corrective action, the owner, and the date. Track those responses like test findings, and confirm the fix at the next audit. When you rely on a vendor&rsquo;s SOC report, read the exceptions and the complementary user entity controls, the controls the customer must operate for the vendor&rsquo;s controls to work.</p>
+          <h4>Audits and SOC reports</h4>
+          <p>An audit checks controls against a standard and gives assurance to someone who cannot check for themselves. Auditors must be independent of the area they audit. Service organizations commonly provide System and Organization Controls (SOC) reports, issued under the AICPA&rsquo;s SSAE 18 attestation standard. ISAE 3402 is the international counterpart for controls relevant to financial reporting.</p>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Report</th><th>Focus</th><th>Audience</th></tr></thead>
+            <tbody>
+              <tr><td class="term">SOC 1</td><td>Controls relevant to the customer&rsquo;s financial reporting</td><td>Customers&rsquo; auditors and finance; restricted use</td></tr>
+              <tr><td class="term">SOC 2 Type I</td><td>Security and related trust services criteria; design at a point in time</td><td>Customers and partners under NDA; restricted use</td></tr>
+              <tr><td class="term">SOC 2 Type II</td><td>Same criteria; design and operating effectiveness over a period, often 6 to 12 months</td><td>Customers and partners under NDA; restricted use</td></tr>
+              <tr><td class="term">SOC 3</td><td>A short summary of the SOC 2 opinion</td><td>General public; often posted on a website</td></tr>
+            </tbody>
+          </table></div>
+          <div class="tip"><span class="tip-label">&#128161; Exam Tip</span>To learn whether a cloud provider&rsquo;s security controls actually worked over the past year, ask for a SOC 2 Type II. A Type I shows only that controls were designed well on one day.</div>
+        </article>
+
+        <article class="content-section" id="s6">
+          <div class="cs-head"><span class="cs-num">6</span><h3>Interactive: Test Strategy Selector</h3></div>
+          <p>Describe the situation and the widget ranks eleven assessment techniques by how well they fit, with a reason for each score. Then switch to the challenge and pick the BEST technique for six short scenarios.</p>
+
+          <style>
+            #ts-root [hidden]{display:none !important;}
+            .ts-tabs{display:flex;gap:.5rem;margin-bottom:.8rem;flex-wrap:wrap;}
+            .ts-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:1rem;align-items:start;}
+            .ts-f{margin-bottom:.7rem;}
+            .ts-f > span{display:block;font-family:Arial,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.3rem;}
+            .ts-f select{width:100%;}
+            .ts-seg{display:flex;gap:.35rem;flex-wrap:wrap;}
+            .ts-chk{display:flex;gap:.45rem;align-items:center;font-size:.8rem;color:var(--text-secondary);margin:.25rem 0;cursor:pointer;}
+            .ts-chk input{accent-color:var(--gold);}
+            .ts-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem;}
+            .ts-row{border:1px solid var(--border);border-radius:5px;padding:.45rem .6rem;background:var(--card-bg);font-family:Arial,sans-serif;}
+            .ts-row.top{border-color:var(--jade);box-shadow:inset 4px 0 0 var(--jade);}
+            .ts-row.no{opacity:.65;}
+            .ts-head{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline;}
+            .ts-name{font-weight:700;font-size:.82rem;color:var(--text-primary);}
+            .ts-val{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;font-size:.85rem;color:var(--gold);font-variant-numeric:tabular-nums;}
+            .ts-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:.3rem 0;}
+            .ts-bar i{display:block;height:100%;background:var(--gold);transition:width .3s;}
+            .ts-row.top .ts-bar i{background:var(--jade);}
+            .ts-why{font-size:.74rem;color:var(--text-secondary);line-height:1.45;}
+            .ts-q{font-family:Arial,sans-serif;font-size:.88rem;color:var(--text-primary);line-height:1.55;margin:.2rem 0 .7rem;}
+            .ts-qn{font-family:'Arial Narrow',Arial,sans-serif;font-weight:900;color:var(--gold);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;}
+            .ts-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.4rem;margin-bottom:.6rem;}
+            .ts-opts button{font-family:Arial,sans-serif;font-size:.78rem;text-align:left;padding:.45rem .55rem;border:1px solid var(--border);border-radius:5px;background:var(--card-bg);color:var(--text-secondary);cursor:pointer;}
+            .ts-opts button:hover,.ts-opts button:focus-visible{border-color:var(--gold);outline:none;}
+            .ts-opts button.ok{border-color:var(--correct);background:var(--correct-bg);color:var(--text-primary);}
+            .ts-opts button.bad{border-color:var(--wrong);background:var(--wrong-bg);}
+            .ts-nav{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:.76rem;color:var(--text-muted);}
+            @media (max-width:760px){.ts-grid{grid-template-columns:1fr;}}
+          </style>
+
+          <div class="iw" id="ts-root">
+            <div class="iw-card">
+              <div class="iw-topbar">
+                <span class="iw-eyebrow">Interactive &middot; choose the right test</span>
+                <button type="button" class="iw-expand" aria-expanded="false" title="Open a larger view">&#10530; Expand</button>
+              </div>
+              <div class="ts-tabs" role="group" aria-label="Mode">
+                <button type="button" class="iw-btn" id="ts-m1" aria-pressed="true">Explore the selector</button>
+                <button type="button" class="iw-btn jade" id="ts-m2" aria-pressed="false">Challenge: 6 scenarios</button>
+              </div>
+
+              <div id="ts-explore" class="ts-grid">
+                <div class="iw-panel">
+                  <h5 class="iw-h5">Your situation</h5>
+                  <div class="ts-f"><span id="ts-gl">What do you need to know?</span>
+                    <select id="ts-goal" aria-labelledby="ts-gl">
+                      <option value="early">Find coding flaws early in development</option>
+                      <option value="runtime">Find flaws in a running application</option>
+                      <option value="exploit">Prove what an attacker could actually do</option>
+                      <option value="assure">Give customers assurance about our controls</option>
+                      <option value="logging">Verify that events are logged and examined</option>
+                      <option value="uptime">Confirm key services work and perform</option>
+                    </select></div>
+                  <div class="ts-f"><span>Source code available to testers?</span>
+                    <div class="ts-seg" role="group" aria-label="Source code available">
+                      <button type="button" class="iw-btn" data-code="1" aria-pressed="true">Yes</button>
+                      <button type="button" class="iw-btn" data-code="0" aria-pressed="false">No</button>
+                    </div></div>
+                  <div class="ts-f"><span id="ts-el">Where can you test?</span>
+                    <select id="ts-env" aria-labelledby="ts-el">
+                      <option value="test">A running test environment</option>
+                      <option value="prod">Production only</option>
+                      <option value="none">Nothing running yet (design and coding)</option>
+                    </select></div>
+                  <div class="ts-f"><span>Constraints</span>
+                    <label class="ts-chk"><input type="checkbox" id="ts-bud"> Tight budget</label>
+                    <label class="ts-chk"><input type="checkbox" id="ts-time"> Results needed this week</label>
+                  </div>
+                  <div class="iw-verdict" id="ts-verdict"><span class="iw-pill" id="ts-pill">Best fit</span><span id="ts-coach"></span></div>
+                </div>
+                <div class="iw-panel" aria-live="polite">
+                  <h5 class="iw-h5">Ranked techniques</h5>
+                  <ul class="ts-list" id="ts-list"></ul>
+                </div>
+              </div>
+
+              <div id="ts-challenge" class="iw-panel" hidden>
+                <p class="ts-qn" id="ts-qn">Scenario 1 of 5</p>
+                <p class="ts-q" id="ts-q"></p>
+                <div class="ts-opts" id="ts-opts"></div>
+                <div class="iw-verdict" id="ts-cv"><span class="iw-pill" id="ts-cp">Choose</span><span id="ts-cc">Pick the BEST technique for this scenario.</span></div>
+                <div class="ts-nav"><button type="button" class="iw-btn" id="ts-next" disabled>Next scenario</button><button type="button" class="iw-btn jade" id="ts-restart">Restart</button><span id="ts-cs">Score: 0 / 0</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="in-practice"><span class="ip-label">&#128270; In practice</span><p>Change one input at a time and watch the ranking move. Remove the source code and SAST drops out entirely. Restrict testing to production and fuzzing falls, because flooding a live system with malformed input can take it down. Ask for customer assurance and the only strong answer is an independent report, because customers trust a third party more than your own test results.</p></div>
+
+          <script>
+          (function(){
+            var root=document.getElementById('ts-root'); if(!root) return;
+            var $=function(id){return root.querySelector('#'+id);};
+            var T=[
+              {id:'sast',n:'SAST',code:1,run:0,pr:0,cost:1,time:1,f:{early:5,runtime:1,exploit:0,assure:0,logging:0,uptime:0},d:'Scans code without running it, so it works from the first commit.'},
+              {id:'review',n:'Manual code review',code:1,run:0,pr:0,cost:2,time:3,f:{early:5,runtime:1,exploit:1,assure:0,logging:1,uptime:0},d:'Finds logic and design flaws that tools miss, but is slow and needs skilled reviewers.'},
+              {id:'dast',n:'DAST',code:0,run:1,pr:1,cost:1,time:1,f:{early:1,runtime:5,exploit:2,assure:0,logging:1,uptime:0},d:'Probes the running app from outside, like an attacker, with no code needed.'},
+              {id:'iast',n:'Instrumented dynamic testing',code:0,run:1,pr:2,cost:2,time:1,f:{early:1,runtime:4,exploit:1,assure:0,logging:0,uptime:0},d:'A refinement of dynamic testing: an agent inside the running app points each finding to a line of code. Usually run in test.'},
+              {id:'fuzz',n:'Fuzzing',code:0,run:1,pr:2,cost:2,time:2,f:{early:2,runtime:4,exploit:2,assure:0,logging:0,uptime:0},d:'Floods inputs with malformed data to find crashes and memory errors.'},
+              {id:'scan',n:'Vulnerability scan',code:0,run:1,pr:1,cost:1,time:1,f:{early:0,runtime:3,exploit:1,assure:1,logging:1,uptime:0},d:'Broad and fast check for known weaknesses. Does not prove exploitability.'},
+              {id:'pen',n:'Penetration test',code:0,run:1,pr:1,cost:3,time:3,f:{early:0,runtime:3,exploit:5,assure:2,logging:3,uptime:0},d:'Exploits and chains weaknesses under rules of engagement to show real impact.'},
+              {id:'synth',n:'Synthetic transactions',code:0,run:1,pr:0,cost:1,time:1,f:{early:0,runtime:1,exploit:0,assure:0,logging:2,uptime:5},d:'Scripted checks run on a schedule against a live service to confirm it works and performs.'},
+              {id:'log',n:'Log review',code:0,run:1,pr:0,cost:1,time:2,f:{early:0,runtime:1,exploit:0,assure:1,logging:5,uptime:1},d:'Confirms events are captured, protected, and actually examined.'},
+              {id:'soc2',n:'SOC 2 Type II report',code:0,run:0,pr:0,cost:3,time:3,f:{early:0,runtime:0,exploit:0,assure:5,logging:1,uptime:0},d:'An independent auditor reports on design and operating effectiveness over months.'},
+              {id:'bas',n:'Attack simulation',code:0,run:1,pr:1,cost:2,time:1,f:{early:0,runtime:2,exploit:3,assure:1,logging:4,uptime:0},d:'Runs safe versions of known attack techniques to confirm controls still detect and block them.'}
+            ];
+            var GOALTXT={early:'find coding flaws early',runtime:'find runtime flaws',exploit:'prove real impact',assure:'assure customers',logging:'verify logging',uptime:'confirm services work'};
+            var st={code:1};
+            function score(t){
+              var goal=$('ts-goal').value, env=$('ts-env').value, why=[t.d];
+              if(t.code&&!st.code) return {s:0,no:1,why:'Not possible: it needs source code, and testers have none.'};
+              if(t.run&&env==='none') return {s:0,no:1,why:'Not possible yet: it needs a running system.'};
+              var s=t.f[goal]*20;
+              if(env==='prod'&&t.pr){ s-=t.pr*15; why.push(t.pr===2?'Risky on production: it can disrupt live service.':'Use care on production: schedule it and get approval.'); }
+              if($('ts-bud').checked&&t.cost>=3){ s-=15; why.push('Costly for a tight budget.'); }
+              if($('ts-time').checked&&t.time>=3){ s-=15; why.push('Hard to finish this week.'); }
+              if(t.f[goal]===0) why=[t.d,'It does not answer the question you asked.'];
+              return {s:Math.max(0,Math.min(100,s)),why:why.join(' ')};
+            }
+            function paint(){
+              var rows=T.map(function(t){var r=score(t);return {t:t,s:r.s,no:r.no,why:r.why};});
+              rows.sort(function(a,b){return b.s-a.s;});
+              $('ts-list').innerHTML=rows.map(function(r,i){
+                return '<li class="ts-row'+(i===0&&r.s>0?' top':'')+(r.no?' no':'')+'"><div class="ts-head"><span class="ts-name">'+(i+1)+'. '+r.t.n+'</span><span class="ts-val">'+(r.no?'n/a':r.s)+'</span></div><div class="ts-bar"><i style="width:'+r.s+'%"></i></div><div class="ts-why">'+r.why+'</div></li>';
+              }).join('');
+              var b=rows[0], v=$('ts-verdict'), p=$('ts-pill');
+              if(b.s>=60){v.className='iw-verdict good';p.className='iw-pill good';p.textContent='Best fit';$('ts-coach').textContent=b.t.n+' best answers your need to '+GOALTXT[$('ts-goal').value]+'.';}
+              else if($('ts-goal').value==='early'&&!st.code){v.className='iw-verdict warn';p.className='iw-pill warn';p.textContent='Weak fit';$('ts-coach').textContent='Finding coding flaws early needs the code. Without it, ask the supplier for its own SAST results, an SBOM, or an independent assessment, and test the running product once it exists.';}
+              else{v.className='iw-verdict warn';p.className='iw-pill warn';p.textContent='Weak fit';$('ts-coach').textContent='No technique fits well under these constraints. Revisit the constraints, or accept a partial answer and document the gap.';}
+            }
+            root.querySelectorAll('[data-code]').forEach(function(b){b.addEventListener('click',function(){st.code=+b.dataset.code;root.querySelectorAll('[data-code]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});paint();});});
+            ['ts-goal','ts-env','ts-bud','ts-time'].forEach(function(id){$(id).addEventListener('change',paint);});
+
+            var Q=[
+              {q:'A development team wants to catch injection flaws on every commit, before any build is deployed. Source code is in the repository.',a:'sast',w:'SAST runs on code without a running system, so it fits a commit pipeline. DAST and penetration tests need a deployed application.'},
+              {q:'A vendor sells the college a hosted web app and will not share source code. You may test their staging copy. What finds runtime flaws fastest?',a:'dast',w:'With no source code but a running staging copy, DAST tests from the outside. SAST and code review need code; a SOC report does not test the app.'},
+              {q:'The board asks whether an outsider could reach student records from the internet, and wants proof, not a list of possible weaknesses.',a:'pen',w:'Only a penetration test exploits and chains weaknesses to show real impact. A vulnerability scan lists possible weaknesses without proving them.'},
+              {q:'A partner university will not sign a data sharing agreement until it sees independent evidence that your cloud provider&rsquo;s controls operated effectively over the past year.',a:'soc2',w:'A SOC 2 Type II gives independent assurance of operating effectiveness over a period. Your own test results are not independent.'},
+              {q:'The help desk learns of portal outages from angry students. Leadership wants to know about failures first, around the clock.',a:'synth',w:'Synthetic transactions run scripted logins and checks on a schedule, so failures are detected before users report them.'},
+              {q:'After a firewall and EDR policy change, the SOC manager wants weekly proof that a known credential dumping technique is still detected and blocked.',a:'bas',w:'An attack simulation safely replays the technique on a schedule and reports whether it was blocked, detected, or missed. A penetration test is too infrequent, and a vulnerability scan does not test detection.'}
+            ];
+            var qi=0, right=0, done=0, answered=false;
+            function showQ(){
+              answered=false; $('ts-qn').textContent='Scenario '+(qi+1)+' of '+Q.length; $('ts-q').innerHTML=Q[qi].q;
+              $('ts-opts').innerHTML=T.map(function(t){return '<button type="button" data-t="'+t.id+'">'+t.n+'</button>';}).join('');
+              $('ts-cv').className='iw-verdict'; $('ts-cp').className='iw-pill'; $('ts-cp').textContent='Choose'; $('ts-cc').textContent='Pick the BEST technique for this scenario.';
+              $('ts-next').disabled=true;
+              $('ts-opts').querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){pick(b);});});
+            }
+            function pick(b){
+              if(answered) return; answered=true; done++;
+              var ok=b.dataset.t===Q[qi].a; if(ok) right++;
+              b.classList.add(ok?'ok':'bad');
+              $('ts-opts').querySelector('[data-t="'+Q[qi].a+'"]').classList.add('ok');
+              $('ts-cv').className='iw-verdict '+(ok?'good':'bad'); $('ts-cp').className='iw-pill '+(ok?'good':'bad'); $('ts-cp').textContent=ok?'Correct':'Not the best';
+              $('ts-cc').innerHTML=Q[qi].w; $('ts-cs').textContent='Score: '+right+' / '+done;
+              if(qi<Q.length-1){$('ts-next').disabled=false;} else {$('ts-cc').innerHTML=Q[qi].w+' <b>Challenge complete: '+right+' of '+Q.length+'.</b>';}
+            }
+            $('ts-next').addEventListener('click',function(){qi++;showQ();$('ts-opts').querySelector('button').focus();});
+            $('ts-restart').addEventListener('click',function(){qi=0;right=0;done=0;$('ts-cs').textContent='Score: 0 / 0';showQ();});
+            function mode(m){
+              $('ts-explore').hidden=m!==1; $('ts-challenge').hidden=m!==2;
+              $('ts-m1').setAttribute('aria-pressed',m===1?'true':'false'); $('ts-m2').setAttribute('aria-pressed',m===2?'true':'false');
+            }
+            $('ts-m1').addEventListener('click',function(){mode(1);});
+            $('ts-m2').addEventListener('click',function(){mode(2);});
+            paint(); showQ();
+          })();
+          </script>
+        </article>
+
+        <article class="content-section" id="s7">
+          <div class="cs-head"><span class="cs-num">7</span><h3>Faculty Teaching Segment</h3></div>
+          <p>Students often treat testing as running tools. Domain 6 teaches them that the question comes first and the report comes last, and that both matter as much as the scan.</p>
+          <ul class="detail">
+            <li><strong>Signature assignment:</strong> give teams a fictional college system, a scope statement, and simulated scan output with planted false positives. Teams write an assessment plan, validate the findings, and deliver a two-audience report: a one-page executive summary and a technical findings table with owners and deadlines.</li>
+            <li><strong>Rubric criteria:</strong> technique choices justified by the stated question, false positives correctly removed, findings ranked by business risk, remediation with owners and retest dates, and a clean executive summary with no jargon.</li>
+            <li><strong>Lab idea:</strong> run a credentialed and an uncredentialed scan of the same isolated lab host and compare the results. Then have students read a real, publicly posted SOC 3 report and list what it does and does not tell a customer.</li>
+            <li><strong>Course fit:</strong> this domain maps to vulnerability assessment, ethical hacking, and audit or compliance courses. It supports the CAE-CD Vulnerability Analysis (VLA) and IA Compliance (IAC) Knowledge Units.</li>
+          </ul>
+          <div class="tip"><span class="tip-label">&#127891; Teaching note</span>Use the challenge mode as a warm-up, then ask students to write a seventh scenario where the BEST answer is log review. Writing a good distractor forces them to understand why the other techniques do not fit.</div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="emates">
+    <p class="eyebrow">Explore with eMates</p>
+    <h2 class="h2">Interactive refreshers for this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Short, self-paced eMates from the myEMATES library. Each opens in a new tab. Concept refreshers support your own exam study. Student-ready modules also work as warm-ups in your own courses.</p>
+    <div class="em-grid">
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 2</span></div><h3>Pen Testing</h3><p>The phases of a penetration test, from planning and authorization through reporting.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/pen_testing/pen_testing.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Pen Testing (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 2</span></div><h3>Ethical Hacking Case</h3><p>A case-based check of ethical hacking decisions and the limits that authorization sets.</p><div class="em-foot"><span class="em-level">Concept refresher</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/EH_exam_1A/EH_exam_1A.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Ethical Hacking Case (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 2</span></div><h3>Open-source Intelligence</h3><p>How public information supports the discovery phase of an authorized assessment.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/OSINT/OSINT.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Open-source Intelligence (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 2</span></div><h3>OSINT Personal Data Challenge</h3><p>A challenge on how much personal data is exposed publicly, and why that matters for social engineering tests.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/osint-pd/OSINT_PD_Challenge.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: OSINT Personal Data Challenge (opens in a new tab)">Open &#8599;</a></div></article>
+      <article class="em-card"><div class="em-top"><span class="em-lib">Cybersecurity</span><span class="em-sec">Section 2</span></div><h3>Google Hacking</h3><p>Advanced search operators that reveal exposed files and portals during reconnaissance.</p><div class="em-foot"><span class="em-level student">Student-ready</span><a class="em-open" href="https://d2hie3dpn9wvbb.cloudfront.net/googlehacking/googlehacking.html" target="_blank" rel="noopener noreferrer" aria-label="Open eMate: Google Hacking (opens in a new tab)">Open &#8599;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="practice-this-lesson">
+    <p class="eyebrow">Practice</p>
+    <h2 class="h2">Practice this lesson</h2>
+    <div class="rule"></div>
+    <p class="lead">Self-checking practice for this lesson, ready to use with your own students. Each item ends with a report you can print or save as a PDF.</p>
+    <div class="pl-grid">
+      <article class="pl-card"><div class="pl-top"><span class="pl-type">CISSP Practice &middot; A7</span><span class="pl-time">&#9201; 35 min</span></div><h3><a href="activity07.html">Assessment and Testing Strategy</a></h3><p>Match test types to objectives, tell SOC 1, SOC 2, internal, and third-party audits apart, and sort KPIs from KRIs.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="activity07.html" aria-label="Open activity A7: Assessment and Testing Strategy">Open &#8594;</a></div></article>
+      <article class="pl-card pl-lab"><div class="pl-top"><span class="pl-type">CISSP Security Lab &middot; B6</span><span class="pl-time">&#9201; 60 min</span></div><h3><a href="lab06.html">Assessment Plan and Results Analysis</a></h3><p>Choose tests for a scope, read simulated scan and code review results, separate false positives, and compute coverage and remediation metrics.</p><div class="pl-foot"><span class="pl-level">Intermediate</span><a class="pl-open" href="lab06.html" aria-label="Open lab B6: Assessment Plan and Results Analysis">Open &#8594;</a></div></article>
+    </div>
+  </section>
+
+  <section class="block" id="knowledge-check">
+    <p class="eyebrow">Scored Knowledge Check</p>
+    <h2 class="h2">Test your understanding</h2>
+    <div class="rule"></div>
+    <p class="lead" style="margin-bottom:1.5rem">Select the best answer for each question, then submit for your score and the rationale for every item. Like the exam, several options may be true; choose the best one.</p>
+    <div class="quiz-card">
+      <form id="quiz">
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q1.</span>A college hires a firm to run a penetration test of its admissions portal. What must be in place BEFORE testing begins?</p>
+          <fieldset class="options">
+            <legend>Question 1 options</legend>
+            <label class="opt"><input type="radio" name="q1" value="A"><span><span class="opt-letter">A.</span> A completed vulnerability scan of the portal</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span><span class="opt-letter">B.</span> Written authorization and rules of engagement approved by someone with authority</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span><span class="opt-letter">C.</span> A SOC 2 Type II report from the firm</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span><span class="opt-letter">D.</span> Full source code for the portal</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Written authorization and agreed rules of engagement come first. They define scope, timing, and limits, and they separate a legal test from an attack. The other items may help, but none is required to start.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q2.</span>Testers receive user credentials and a network diagram, but no source code or design documents. What type of test is this?</p>
+          <fieldset class="options">
+            <legend>Question 2 options</legend>
+            <label class="opt"><input type="radio" name="q2" value="A"><span><span class="opt-letter">A.</span> Black box</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><span><span class="opt-letter">B.</span> White box</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><span><span class="opt-letter">C.</span> Double blind</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><span><span class="opt-letter">D.</span> Gray box</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> Partial knowledge is gray box. Black box gives no inside information, and white box gives full knowledge, often including code. Double blind describes whether the defenders know the test is happening.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q3.</span>A development team wants to find security flaws as early as possible, before any part of the application can run. Which technique is MOST appropriate?</p>
+          <fieldset class="options">
+            <legend>Question 3 options</legend>
+            <label class="opt"><input type="radio" name="q3" value="A"><span><span class="opt-letter">A.</span> Static application security testing</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><span><span class="opt-letter">B.</span> Dynamic application security testing</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><span><span class="opt-letter">C.</span> Synthetic transactions</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><span><span class="opt-letter">D.</span> Fuzzing</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> SAST analyzes code without executing it, so it works before anything runs. DAST, synthetic transactions, and fuzzing all need a running program.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q4.</span>A customer needs assurance that a payroll provider&rsquo;s security controls operated effectively over the last twelve months. Which report BEST meets the need?</p>
+          <fieldset class="options">
+            <legend>Question 4 options</legend>
+            <label class="opt"><input type="radio" name="q4" value="A"><span><span class="opt-letter">A.</span> SOC 2 Type I</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><span><span class="opt-letter">B.</span> SOC 3</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><span><span class="opt-letter">C.</span> SOC 2 Type II</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><span><span class="opt-letter">D.</span> The provider&rsquo;s internal vulnerability scan results</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> A SOC 2 Type II covers both design and operating effectiveness of security controls over a period. Type I covers design at a point in time, SOC 3 is a brief public summary, and internal scans are not independent.</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-stem"><span class="qn">Q5.</span>A security operations manager wants to confirm every week, without disrupting users, that the endpoint and email controls still detect and block a set of known ransomware techniques. Which approach BEST meets this goal?</p>
+          <fieldset class="options">
+            <legend>Question 5 options</legend>
+            <label class="opt"><input type="radio" name="q5" value="A"><span><span class="opt-letter">A.</span> An annual external penetration test</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><span><span class="opt-letter">B.</span> A weekly uncredentialed vulnerability scan</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><span><span class="opt-letter">C.</span> An automated attack simulation that safely runs the techniques on a schedule</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><span><span class="opt-letter">D.</span> The cloud email provider&rsquo;s SOC 2 Type II report</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: C.</b> Attack simulations replay known techniques safely and report whether controls blocked, detected, or missed each one, so they fit frequent control validation. A penetration test is too infrequent, a scan finds weaknesses rather than testing detection, and a SOC report describes the provider&rsquo;s controls, not yours.</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-stem"><span class="qn">Q6.</span>An administrator says backups are effective because every nightly job reported success for six months. What is the BEST evidence to request?</p>
+          <fieldset class="options">
+            <legend>Question 6 options</legend>
+            <label class="opt"><input type="radio" name="q6" value="A"><span><span class="opt-letter">A.</span> Results of periodic test restores</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><span><span class="opt-letter">B.</span> The backup software license</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><span><span class="opt-letter">C.</span> A copy of the backup policy</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><span><span class="opt-letter">D.</span> The job success logs for another six months</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: A.</b> Successful jobs show that data was written, not that it can be recovered. Test restores are the backup verification data that proves recoverability.</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-stem"><span class="qn">Q7.</span>A penetration test finds a flaw that the business owner cannot fix for nine months because of a vendor dependency. What is the MOST appropriate action?</p>
+          <fieldset class="options">
+            <legend>Question 7 options</legend>
+            <label class="opt"><input type="radio" name="q7" value="A"><span><span class="opt-letter">A.</span> Remove the finding from the report to avoid audit concerns</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span><span class="opt-letter">B.</span> Have the security team accept the risk on the owner&rsquo;s behalf</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span><span class="opt-letter">C.</span> Shut the system down until the vendor responds</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span><span class="opt-letter">D.</span> Document a formal exception approved by the risk owner, with compensating controls and an expiration date</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: D.</b> Exception handling records the risk, the compensating controls, the approving owner, and when the exception ends. Security staff advise but do not accept risk for the business, and hiding findings defeats the purpose of testing.</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-stem"><span class="qn">Q8.</span>A faculty member reported a serious flaw in a commercial learning platform to the vendor&rsquo;s security contact six weeks ago. The vendor has not replied. What is the BEST next step?</p>
+          <fieldset class="options">
+            <legend>Question 8 options</legend>
+            <label class="opt"><input type="radio" name="q8" value="A"><span><span class="opt-letter">A.</span> Publish full exploit details now so colleges can protect themselves</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><span><span class="opt-letter">B.</span> Escalate through a coordinator such as CERT/CC and keep to an agreed disclosure timeline</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><span><span class="opt-letter">C.</span> Confirm the flaw on other colleges&rsquo; instances to strengthen the report</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><span><span class="opt-letter">D.</span> Drop the matter, since the platform belongs to the vendor</span></label>
+          </fieldset>
+          <div class="rationale"><b>Correct: B.</b> Responsible, or coordinated, disclosure does not end when a vendor is silent. A coordinator can reach the vendor and set a public timeline that protects users without arming attackers early. Testing other colleges&rsquo; systems without authorization is illegal, and dropping the matter fails the duty to protect society in the ISC2 Code.</div>
+        </div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <button type="button" class="btn secondary" onclick="resetQuiz()">Reset</button>
+          <span class="score" id="score" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<nav class="pager" aria-label="Lesson navigation">
+  <div class="pager-inner">
+    <a href="lesson05.html" class="prev"><span class="pager-dir">&#8592; Previous</span><span class="pager-name">Lesson 5: Identity and Access Management</span></a>
+    <a href="lesson07.html" class="next"><span class="pager-dir">Next &#8594;</span><span class="pager-name">Lesson 7: Security Operations</span></a>
+  </div>
+</nav>
+
+<footer>
+  <div class="footer-logo">CISSP 5-DAY FACULTY WORKSHOP</div>
+  <p class="footer-disclaimer">This workshop is an independent educational resource. It is not affiliated with, endorsed by, or sponsored by ISC2. CISSP&#174; is a registered mark of ISC2, Inc. All lesson text, questions, and scenarios are original and do not reproduce the ISC2 Common Body of Knowledge. eMates are provided by the myEMATES library and open in a new tab. Always verify the current exam outline at isc2.org before registering.</p>
+</footer>
+
+<script src="cissp-lesson.js"></script>
+</body>
+</html>

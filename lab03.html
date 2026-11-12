@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>B3 Cryptography Workbench | CISSP 5-Day Faculty Workshop</title>
+<link rel="stylesheet" href="cissp-lesson.css">
+<link rel="stylesheet" href="practice.css">
+<style>
+/* B3: real Web Crypto workbench (light only) */
+.b3c-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+.b3c-col { flex: 1 1 260px; min-width: 0; }
+.b3c-col.wide { flex: 1.4 1 320px; }
+.b3c-f { display: flex; flex-direction: column; gap: .25rem; margin: 0 0 .7rem; font: 700 .72rem Arial, sans-serif; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); }
+.b3c-f input, .b3c-f textarea, .b3c-f select { font: .86rem 'Courier New', monospace; padding: .45rem .55rem; border: 1px solid var(--border); border-radius: 3px; background: #fff; color: var(--text-primary); text-transform: none; letter-spacing: 0; min-width: 0; width: 100%; box-sizing: border-box; }
+.b3c-f textarea { min-height: 70px; resize: vertical; }
+.b3c-f input:focus, .b3c-f textarea:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px var(--gold-pale); }
+.b3c-btns { display: flex; flex-wrap: wrap; gap: .45rem; margin: 0 0 .8rem; }
+.b3c-btns .btn { padding: .45rem .85rem; font-size: .8rem; }
+.b3c-out { border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 0 4px 4px 0; background: #f6f8fc; padding: .6rem .8rem; margin: 0 0 .7rem; font: .8rem/1.5 'Courier New', monospace; color: #0b2440; word-break: break-all; }
+.b3c-out b { font: 700 .68rem Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: .15rem; word-break: normal; }
+.b3c-out.ok { border-left-color: var(--correct); background: var(--correct-bg); }
+.b3c-out.bad { border-left-color: var(--wrong); background: var(--wrong-bg); }
+.b3c-out.warn { border-left-color: var(--amber); background: #fdf3e6; }
+.b3c-bits { display: flex; flex-wrap: wrap; gap: 1px; margin: .35rem 0 .2rem; }
+.b3c-bits i { width: 7px; height: 12px; background: #dfe7f7; display: block; }
+.b3c-bits i.d { background: var(--amber); }
+.b3c-note { font: .82rem/1.55 Arial, sans-serif; color: var(--text-secondary); margin: 0 0 .7rem; }
+.b3c-log { list-style: none; margin: 0; padding: 0; font: .8rem/1.45 Arial, sans-serif; color: var(--text-secondary); max-height: 220px; overflow: auto; }
+.b3c-log li { border-bottom: 1px solid var(--border); padding: .3rem 0; }
+.b3c-log li b { color: var(--text-primary); }
+.b3c-certs { display: flex; flex-wrap: wrap; gap: .8rem; }
+.b3c-cert { flex: 1 1 240px; min-width: 0; border: 1px solid var(--border); border-top: 4px solid var(--gold); border-radius: 4px; background: #fff; padding: .7rem .85rem; }
+.b3c-cert h5 { font: 700 .95rem Georgia, serif; color: var(--text-primary); margin: 0 0 .1rem; }
+.b3c-cert .tag { font: 700 .68rem Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+.b3c-cert dl { margin: .5rem 0 0; font: .78rem/1.45 Arial, sans-serif; }
+.b3c-cert dt { font-weight: 700; color: var(--text-primary); margin-top: .35rem; }
+.b3c-cert dd { margin: 0; color: var(--text-secondary); word-break: break-word; }
+.b3c-arrow { font: .8rem Arial, sans-serif; color: var(--text-muted); margin: .6rem 0; }
+.b3c-err { border: 1px solid var(--wrong); background: var(--wrong-bg); color: #7f1d1d; padding: .8rem 1rem; border-radius: 4px; font: .9rem Arial, sans-serif; }
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:2rem;font-family:Arial">This lab needs JavaScript enabled.</p></noscript></div>
+
+<script>
+(function () {
+var M1 = 'NBC-4471 Depot 07 to Hub: 12 parcels, seal 88213';
+var M2 = 'NBC-4471 Depot 07 to Hub: 13 parcels, seal 88213';
+var HKEY = 'depot07-route-key';
+window.B3C = { M1: M1, M2: M2, HKEY: HKEY };
+
+window.LAB = {
+  id: 'B3',
+  title: 'Cryptography Workbench',
+  accent: 'Workbench',
+  domain: 'Domain 3 (12.8%)',
+  time: '60 min',
+  level: 'Intermediate',
+  lessonHref: 'lesson03.html#s5',
+  lessonLabel: 'Lesson 3, Cryptography Fundamentals',
+  kus: ['Basic Cryptography (BCY)', 'Advanced Cryptography (ACR)'],
+  lede: 'Run real cryptography in the browser. Hash and HMAC a depot manifest, encrypt with AES-GCM and watch a one-byte change fail authentication, sign and verify with ECDSA, read a certificate chain, and choose the right control for each need at a regional courier.',
+  workbenchTitle: 'Crypto workbench',
+  ticket: {
+    number: 'ARCH-2027-031',
+    priority: 'Normal priority',
+    from: 'Imogen Achterberg, IT Director, Norrbridge Courier',
+    to: 'Security architect (you)',
+    subject: 'Manifests, customer addresses, delivery signatures, and the portal certificate',
+    due: 'Recommendations by Friday, June 18, 2027',
+    body: '<p>Norrbridge Courier runs 12 regional depots that send parcel manifests to the central hub every night. Last month a manifest arrived with a changed parcel count and nobody could say where the change happened. Separately, our customer portal started throwing certificate errors for some customers this week, and the board has asked whether we need to worry about quantum computers.</p>' +
+      '<p>I need an architect to work through four questions with real tools, not slides:</p>' +
+      '<ul><li><b>Manifests:</b> how do we prove a manifest was not changed, and that it came from the depot that claims to have sent it?</li>' +
+      '<li><b>Customer addresses:</b> we store them encrypted. What does authenticated encryption buy us, and what mistake would break it?</li>' +
+      '<li><b>Delivery confirmations:</b> drivers capture a signature on delivery. Which mechanism lets us prove later that a specific device signed it?</li>' +
+      '<li><b>The portal:</b> read the certificate chain the portal serves and tell me what is wrong. Today is <b>June 14, 2027</b>.</li></ul>' +
+      '<p>If we used one shared secret key for every pair of depots, how many keys would we manage? And when should we start the post-quantum work? Put your answers in the checklist and end with a short finding I can take to the change board.</p>'
+  },
+  howTo: 'Step 2 opens a workbench with five tabs. <b>Hash and HMAC</b>, <b>AES-GCM</b>, and <b>Signatures</b> run the browser&rsquo;s built-in Web Crypto API on your own device; nothing is sent over the network. Keys you generate exist only in this page and disappear when you reload it. <b>Certificate chain</b> shows a fictional, pre-parsed chain for the Norrbridge portal. <b>Crypto policy</b> holds the company standard and the post-quantum notes. Use the outputs to answer the checklist.',
+  workIntro: 'Each tool runs real cryptography in your browser. Defaults load the Depot 07 manifest so the checklist answers are reproducible. All company data is fictional.',
+  checklist: [
+    { id: 'hash', type: 'set', points: 8, short: 'SHA-256 digest', title: 'Hash the Depot 07 manifest',
+      task: 'In <b>Hash and HMAC</b>, compute the SHA-256 digest of the manifest line exactly as loaded: <code>' + M1 + '</code>. Enter the <b>first 8 hexadecimal characters</b> of the digest.',
+      label: 'First 8 hex characters', placeholder: 'e.g., 1a2b3c4d',
+      answer: ['E215EC3D'],
+      hint: 'Select <b>Compute SHA-256</b> with the default text. Any change to the text, even a trailing space, gives a completely different digest.',
+      debrief: '<p>The digest begins <code>e215ec3d</code>. SHA-256 always returns 256 bits (64 hex characters) no matter how long the input is, and the same input always gives the same digest. That is what makes a hash useful as a fingerprint for integrity checks: the hub can recompute it and compare.</p>',
+      reviewNote: 'A hash is a fixed-length, deterministic fingerprint of the input.' },
+    { id: 'aval', type: 'number', points: 8, short: 'Avalanche effect', title: 'Count the changed bits',
+      task: 'Use <b>Compare with</b> to hash the altered line, where 12 parcels became 13: <code>' + M2 + '</code>. How many of the 256 digest bits differ between the two digests?',
+      unit: 'bits',
+      answer: 125, tol: 0,
+      hint: 'Select <b>Compare digests</b>. The bit map below the outputs marks every differing bit, and the count appears above it.',
+      debrief: '<p>A one-character change flips 125 of 256 bits, close to the half you expect from a good hash. This is the avalanche effect. It means a tampered manifest cannot produce a digest that is close to the original, so the hub never has to judge how different the digests are, only whether they match.</p>',
+      reviewNote: 'The avalanche effect: a tiny input change flips about half the output bits.' },
+    { id: 'hmac', type: 'set', points: 8, short: 'HMAC-SHA-256', title: 'Compute the HMAC for the manifest',
+      task: 'Compute HMAC-SHA-256 of the same manifest line (<code>' + M1 + '</code>) with the shared key <code>' + HKEY + '</code>. Enter the <b>first 8 hexadecimal characters</b>.',
+      label: 'First 8 hex characters', placeholder: 'e.g., 1a2b3c4d',
+      answer: ['C8039F31'],
+      hint: 'The key field below the message is loaded with the Depot 07 key. Select <b>Compute HMAC</b>.',
+      debrief: '<p>The HMAC begins <code>c8039f31</code>. Unlike a plain hash, an HMAC depends on a secret key. Someone who changes the manifest cannot produce a matching HMAC without the key, so a valid HMAC shows both integrity and that the sender held the shared key.</p>',
+      reviewNote: 'An HMAC adds a secret key to the hash, giving integrity plus origin among key holders.' },
+    { id: 'samemail', type: 'choice', points: 10, short: 'Hash in the same channel', title: 'A hash that travels with the message',
+      task: 'Depot 07 emails the hub the manifest and its SHA-256 digest in the same message. The hub recomputes the digest and it matches. What does the match prove?',
+      options: ['The manifest came from Depot 07 and was not changed in transit', 'Only that the manifest and digest agree; anyone who changed one could recompute the other', 'That the manifest was encrypted in transit as well as protected from change', 'That Depot 07 cannot later deny sending the manifest'],
+      answer: 1,
+      hint: 'A hash function has no secret. Who else can compute SHA-256?',
+      debrief: '<p>A bare hash has no key, so an attacker who intercepts the email can change the manifest and replace the digest with a new, matching one. The match only proves the two parts agree. To detect tampering by someone in the path, the check value must depend on a secret: an HMAC with a shared key, or a digital signature with the depot&rsquo;s private key. Hashing gives no confidentiality and no nonrepudiation.</p>',
+      reviewNote: 'An unkeyed hash sent with the data does not stop an attacker from replacing both.' },
+    { id: 'tamper', type: 'choice', points: 10, short: 'GCM tamper result', title: 'What the failed decryption means',
+      task: 'In <b>AES-GCM</b>, encrypt the customer address, then select <b>Flip one byte and decrypt</b>. Decryption fails with an error and returns no plaintext. What does that failure tell you?',
+      options: ['The key was rotated between encryption and decryption', 'GCM decrypted most of the record but could not repair the changed byte', 'The browser blocked the operation because the page is not secure', 'The authentication tag did not match, so GCM rejected the whole record'],
+      answer: 3,
+      hint: 'GCM is an authenticated encryption mode. Look at the last 16 bytes of the ciphertext output.',
+      debrief: '<p>AES-GCM appends a 128-bit authentication tag computed over the ciphertext. On decryption it recomputes the tag first; if a single bit has changed, the tags differ and the operation fails with no plaintext released. That is the point of authenticated encryption (AEAD): confidentiality and integrity in one primitive. Older modes such as CBC without a MAC would decrypt the changed record into corrupted text and let the application use it.</p>',
+      reviewNote: 'Authenticated encryption (GCM) refuses to return plaintext when the tag check fails.' },
+    { id: 'nonce', type: 'choice', points: 10, short: 'Nonce reuse', title: 'Why the workbench flags a reused IV',
+      task: 'Select <b>Encrypt again, same IV</b>. The workbench flags nonce reuse. Why is reusing an IV (nonce) with the same AES-GCM key a serious flaw?',
+      options: ['It exposes the XOR of the two plaintexts and lets an attacker forge valid tags', 'It slows encryption, because GCM must recompute the key schedule', 'It only matters for ECB, since GCM randomizes each block internally', 'It shortens the effective key from 256 bits to 128 bits'],
+      answer: 0,
+      hint: 'GCM is built on counter mode. What happens when two messages share the same keystream?',
+      debrief: '<p>GCM turns AES into a stream cipher by encrypting a counter that starts from the IV. Two messages under the same key and IV get the same keystream, so XORing the ciphertexts cancels it and leaves the XOR of the plaintexts. Worse, nonce reuse leaks the authentication subkey, which lets an attacker forge tags. The rule: a 96-bit IV must never repeat under one key. Generate it randomly or from a counter, and rotate keys well before the limit.</p>',
+      reviewNote: 'Never reuse an IV with the same GCM key: it leaks plaintext relationships and enables forgery.' },
+    { id: 'nonrep', type: 'choice', points: 10, short: 'Nonrepudiation', title: 'Proving which device signed a delivery',
+      task: 'Norrbridge wants to prove later, to a third party, that a specific driver&rsquo;s handheld confirmed a delivery. After testing <b>Signatures</b>, which mechanism provides that nonrepudiation?',
+      options: ['An HMAC with a key shared between the handheld and the hub', 'AES-GCM encryption of the confirmation with a per-device key', 'An ECDSA signature made with a private key held only by that handheld', 'A SHA-256 digest of the confirmation stored in the hub database'],
+      answer: 2,
+      hint: 'Nonrepudiation needs a key that only one party holds. With a shared key, who else could have produced the value?',
+      debrief: '<p>Only an asymmetric signature gives nonrepudiation. The handheld signs with a private key that never leaves the device, and anyone can verify with the public key. With an HMAC or any shared symmetric key, the hub holds the same key and could have produced the value itself, so the proof fails in front of a third party. The tamper test shows the other half: change one character and verification fails.</p>',
+      reviewNote: 'Nonrepudiation requires a private key held by one party: a digital signature.' },
+    { id: 'keys', type: 'number', points: 8, short: 'Key count', title: 'Symmetric keys for 12 depots',
+      task: 'If every pair of Norrbridge&rsquo;s 12 depots shared its own secret key, how many symmetric keys would the company manage?',
+      unit: 'keys',
+      answer: 66, tol: 0,
+      hint: 'Each pair needs one key: n(n&minus;1)/2.',
+      debrief: '<p>12 &times; 11 / 2 = 66 keys. With asymmetric cryptography each depot needs one key pair, so 12 pairs or 24 keys, and adding a 13th depot adds one pair instead of 12 new shared keys. This is the key distribution problem that public key cryptography solves, and the reason real systems use asymmetric methods to establish symmetric session keys.</p>',
+      reviewNote: 'Symmetric keys: n(n-1)/2. Asymmetric: 2n keys (n pairs).' },
+    { id: 'cert', type: 'choice', points: 10, short: 'Certificate defect', title: 'What is wrong with the portal chain',
+      task: 'Read the <b>Certificate chain</b> the portal serves. Today is June 14, 2027. Which problem explains the certificate errors customers see?',
+      options: ['The leaf certificate does not list portal.norrbridge.example in its SAN', 'The intermediate certificate expired on May 31, 2027', 'The root certificate is self-signed, so browsers cannot trust it', 'The leaf certificate has basic constraints CA:FALSE'],
+      answer: 1,
+      hint: 'Check every validity period in the chain, not only the leaf. Then check the names and constraints.',
+      debrief: '<p>The leaf is fine: valid until November 2027, the SAN lists the portal name, CA:FALSE is correct for an end entity, and the key usage fits a TLS server. The root is self-signed, which is normal for a trust anchor. The intermediate, Norrbridge Issuing CA G2, expired on May 31, 2027, so path validation fails at that link for any client that builds the chain through it. The fix is to install the renewed intermediate from the CA and serve the full current chain, then add certificate expiry, including intermediates, to monitoring.</p>',
+      reviewNote: 'Path validation checks every certificate in the chain: dates, names, constraints, and signatures.' },
+    { id: 'pqc', type: 'choice', points: 10, short: 'Post-quantum first step', title: 'Where to start the post-quantum work',
+      task: 'Read the post-quantum notes in <b>Crypto policy</b>. Customer delivery records must stay confidential for ten years. Which first step should the architect recommend?',
+      options: ['Inventory where cryptography is used, then move key establishment for long-lived data to a hybrid exchange with ML-KEM', 'Double every AES key length now, since quantum attacks break symmetric ciphers outright', 'Wait until a large quantum computer is publicly demonstrated, then replace RSA', 'Replace TLS on the portal with a proprietary quantum-safe protocol'],
+      answer: 0,
+      hint: 'Think about harvest now, decrypt later. Which data is at risk today, and which algorithms does a quantum computer threaten most?',
+      debrief: '<p>Data encrypted today with RSA or elliptic curve key exchange can be recorded now and decrypted later by a capable quantum computer (harvest now, decrypt later). For data that must stay secret for ten years, the clock has already started. The first step is a cryptographic inventory for crypto agility, then a move of key establishment to a hybrid exchange that pairs a classical algorithm with ML-KEM (FIPS 203), with ML-DSA (FIPS 204) for signatures to follow. AES-256 is already considered strong against known quantum attacks, and proprietary protocols trade a known risk for an unknown one.</p>',
+      reviewNote: 'Post-quantum planning: inventory, crypto agility, and hybrid ML-KEM key establishment for long-lived data first.' },
+    { id: 'memo', type: 'text', points: 8, short: 'Change board finding', title: 'Write the finding for the change board',
+      task: 'Write a short finding Imogen can take to the change board. Cover the manifest integrity control, the portal certificate fix, and one risk to manage.',
+      fields: [
+        { key: 'rec', label: 'Recommendation (manifests and portal)', min: 60, placeholder: 'Sign each manifest at the depot with ECDSA... Install the renewed intermediate...' },
+        { key: 'why', label: 'Why it works', min: 40, placeholder: 'A signature depends on a private key only the depot holds...' },
+        { key: 'risk', label: 'Risk to manage', min: 30, placeholder: 'Key management: protect depot private keys in...' }
+      ],
+      hint: 'Name the property each control gives (integrity, authenticity, nonrepudiation) and the operational follow-up, such as key storage or certificate monitoring.',
+      debrief: '<p><b>Model finding.</b> Sign each nightly manifest at the depot with an ECDSA P-256 key held in the depot system&rsquo;s hardware-backed key store, and have the hub verify before import. A valid signature proves the manifest was not changed and came from that depot; an HMAC would prove integrity but not which key holder signed. Install the renewed Norrbridge Issuing CA G2 intermediate on the portal and serve the full chain today. <b>Risks to manage:</b> private key protection and revocation if a depot system is compromised, and expiry monitoring for every certificate in the chain, not only leaf certificates.</p>',
+      reviewNote: 'A good finding pairs each control with the property it gives and the key management it needs.' }
+  ],
+  workbench: function (root, api) {
+    var esc = api.esc;
+    var C = window.crypto && window.crypto.subtle;
+    if (!C) {
+      root.innerHTML = '<div class="lb-tool"><div class="lb-panel"><div class="b3c-err"><b>Web Crypto is not available here.</b> Browsers only expose <code>crypto.subtle</code> in a secure context, such as a page served over HTTPS or opened from your own computer. Open this lab from the course site over HTTPS, or download it and open the file locally. The certificate and policy questions still work from the ticket.</div></div></div>';
+      return;
+    }
+    var enc = new TextEncoder(), dec = new TextDecoder();
+    function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); }
+    function grp(h) { return h.replace(/(.{8})/g, '$1 ').trim(); }
+    function out(id, label, val, cls) { var el = document.getElementById(id); el.className = 'b3c-out' + (cls ? ' ' + cls : ''); el.innerHTML = '<b>' + esc(label) + '</b>' + val; el.hidden = false; }
+
+    root.innerHTML =
+      '<div class="lb-tool">' +
+      '<div class="lb-tabs" role="tablist" aria-label="Workbench tools">' +
+        '<button role="tab" id="tb-hash" aria-controls="pn-hash" aria-selected="true">Hash and HMAC</button>' +
+        '<button role="tab" id="tb-gcm" aria-controls="pn-gcm" aria-selected="false" tabindex="-1">AES-GCM</button>' +
+        '<button role="tab" id="tb-sig" aria-controls="pn-sig" aria-selected="false" tabindex="-1">Signatures</button>' +
+        '<button role="tab" id="tb-cert" aria-controls="pn-cert" aria-selected="false" tabindex="-1">Certificate chain</button>' +
+        '<button role="tab" id="tb-pol" aria-controls="pn-pol" aria-selected="false" tabindex="-1">Crypto policy</button></div>' +
+      /* hash */
+      '<div class="lb-panel" role="tabpanel" id="pn-hash" aria-labelledby="tb-hash">' +
+        '<p class="b3c-note">SHA-256 and HMAC-SHA-256 computed by <code>crypto.subtle.digest</code> and <code>crypto.subtle.sign</code>. Text is encoded as UTF-8.</p>' +
+        '<div class="b3c-row"><div class="b3c-col">' +
+          '<label class="b3c-f" for="h-m1">Message<textarea id="h-m1" spellcheck="false"></textarea></label>' +
+          '<label class="b3c-f" for="h-m2">Compare with<textarea id="h-m2" spellcheck="false"></textarea></label>' +
+          '<label class="b3c-f" for="h-key">HMAC key (shared secret)<input id="h-key" type="text" spellcheck="false"></label>' +
+          '<div class="b3c-btns"><button type="button" class="btn" id="h-go">Compute SHA-256</button><button type="button" class="btn secondary" id="h-cmp">Compare digests</button><button type="button" class="btn secondary" id="h-mac">Compute HMAC</button><button type="button" class="btn ghost" id="h-rst">Reload defaults</button></div>' +
+        '</div><div class="b3c-col wide" aria-live="polite">' +
+          '<div id="h-o1" class="b3c-out" hidden></div><div id="h-o2" class="b3c-out" hidden></div><div id="h-o3" class="b3c-out" hidden></div><div id="h-o4" class="b3c-out" hidden></div>' +
+        '</div></div></div>' +
+      /* gcm */
+      '<div class="lb-panel" role="tabpanel" id="pn-gcm" aria-labelledby="tb-gcm" hidden>' +
+        '<p class="b3c-note">AES-256-GCM with a key generated in this page and a random 96-bit IV. The ciphertext output ends with the 16-byte authentication tag.</p>' +
+        '<div class="b3c-row"><div class="b3c-col">' +
+          '<label class="b3c-f" for="g-pt">Customer address record<textarea id="g-pt" spellcheck="false">Customer 30-5521: R. Okonkwo-Lind, 418 Tamarack Lane, Unit 2, Fallbrook Ridge</textarea></label>' +
+          '<div class="b3c-btns"><button type="button" class="btn" id="g-key">Generate key</button><button type="button" class="btn" id="g-enc">Encrypt (new IV)</button><button type="button" class="btn secondary" id="g-reuse">Encrypt again, same IV</button></div>' +
+          '<div class="b3c-btns"><button type="button" class="btn secondary" id="g-dec">Decrypt</button><button type="button" class="btn secondary" id="g-flip">Flip one byte and decrypt</button></div>' +
+          '<p class="eyebrow" style="margin-top:.4rem">Event log</p><ul class="b3c-log" id="g-log"></ul>' +
+        '</div><div class="b3c-col wide" aria-live="polite">' +
+          '<div id="g-ok" class="b3c-out" hidden></div><div id="g-o1" class="b3c-out" hidden></div><div id="g-o2" class="b3c-out" hidden></div><div id="g-o3" class="b3c-out" hidden></div>' +
+        '</div></div></div>' +
+      /* sig */
+      '<div class="lb-panel" role="tabpanel" id="pn-sig" aria-labelledby="tb-sig" hidden>' +
+        '<p class="b3c-note">ECDSA on curve P-256 with SHA-256. The private key stays in this page as a non-extractable key; only the public key is shown.</p>' +
+        '<div class="b3c-row"><div class="b3c-col">' +
+          '<label class="b3c-f" for="s-msg">Delivery confirmation<textarea id="s-msg" spellcheck="false">Parcel NB-7730-2214 delivered 2027-06-14 15:42 to front desk, signed by recipient. Handheld HD-0719.</textarea></label>' +
+          '<div class="b3c-btns"><button type="button" class="btn" id="s-gen">Generate handheld key pair</button><button type="button" class="btn" id="s-sign">Sign</button></div>' +
+          '<div class="b3c-btns"><button type="button" class="btn secondary" id="s-ver">Verify</button><button type="button" class="btn secondary" id="s-tam">Change one character and verify</button><button type="button" class="btn secondary" id="s-wrong">Verify with another device&rsquo;s key</button></div>' +
+        '</div><div class="b3c-col wide" aria-live="polite">' +
+          '<div id="s-o1" class="b3c-out" hidden></div><div id="s-o2" class="b3c-out" hidden></div><div id="s-o3" class="b3c-out" hidden></div>' +
+        '</div></div></div>' +
+      /* cert */
+      '<div class="lb-panel" role="tabpanel" id="pn-cert" aria-labelledby="tb-cert" hidden>' +
+        '<p class="b3c-note">Chain served by <code>portal.norrbridge.example</code>, read on <b>June 14, 2027</b>. Fields are pre-parsed from the fictional certificates. Read each one in order from the leaf up to the trust anchor.</p>' +
+        '<div class="b3c-certs" id="c-list"></div>' +
+      '</div>' +
+      /* policy */
+      '<div class="lb-panel" role="tabpanel" id="pn-pol" aria-labelledby="tb-pol" hidden>' +
+        '<div class="lb-doc"><p class="eyebrow">Norrbridge Courier cryptography standard, version 3 (excerpt)</p><h4>Approved algorithms</h4><ul>' +
+          '<li><b>Hashing:</b> SHA-256 or stronger. MD5 and SHA-1 are not approved for any security purpose.</li>' +
+          '<li><b>Message authentication:</b> HMAC-SHA-256 with a key of at least 256 bits.</li>' +
+          '<li><b>Encryption at rest:</b> AES-256 in GCM mode. Each key-IV pair is used once; IVs are 96 bits from a random or counter source.</li>' +
+          '<li><b>Signatures:</b> ECDSA P-256 or RSA 3072 today; ML-DSA (FIPS 204) once vendors support it.</li>' +
+          '<li><b>Key storage:</b> private keys in a hardware security module (HSM) or a hardware-backed device key store; never in source code or scripts.</li></ul></div>' +
+        '<div class="lb-doc"><h4>Post-quantum notes from the architecture review</h4><ul>' +
+          '<li>A large quantum computer running Shor&rsquo;s algorithm would break RSA, Diffie-Hellman, and elliptic curve cryptography. Grover&rsquo;s algorithm only weakens symmetric ciphers, and AES-256 keeps a wide margin.</li>' +
+          '<li><b>Harvest now, decrypt later:</b> traffic recorded today can be decrypted once such a computer exists. The risk is highest for data that must stay confidential for many years.</li>' +
+          '<li>NIST published ML-KEM (FIPS 203) for key establishment and ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) for signatures in 2024.</li>' +
+          '<li>Early migrations use <b>hybrid</b> key exchange, which combines a classical algorithm and ML-KEM so the session stays safe if either one holds.</li>' +
+          '<li><b>Crypto agility:</b> keep an inventory of where each algorithm is used so it can be replaced without redesigning the system.</li></ul></div>' +
+      '</div>' +
+      '</div>';
+
+    /* tabs */
+    var tabs = [].slice.call(root.querySelectorAll('[role=tab]'));
+    function sel(t) { tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }); api.note('tab', t.id); }
+    tabs.forEach(function (t, i) { t.addEventListener('click', function () { sel(t); }); t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; sel(n); n.focus(); } }); });
+    if (api.note('tab')) { var tt = document.getElementById(api.note('tab')); if (tt) sel(tt); }
+
+    /* ---------- hash ---------- */
+    var m1 = document.getElementById('h-m1'), m2 = document.getElementById('h-m2'), hk = document.getElementById('h-key');
+    function defaults() { m1.value = window.B3C.M1; m2.value = window.B3C.M2; hk.value = window.B3C.HKEY; }
+    defaults();
+    function sha(s) { return C.digest('SHA-256', enc.encode(s)); }
+    document.getElementById('h-go').onclick = function () { sha(m1.value).then(function (d) { out('h-o1', 'SHA-256 of message (' + enc.encode(m1.value).length + ' bytes in, 32 bytes out)', grp(hex(d))); }); };
+    document.getElementById('h-cmp').onclick = function () {
+      Promise.all([sha(m1.value), sha(m2.value)]).then(function (r) {
+        var a = new Uint8Array(r[0]), b = new Uint8Array(r[1]), n = 0, bits = '';
+        for (var i = 0; i < 32; i++) for (var k = 7; k >= 0; k--) { var d = ((a[i] ^ b[i]) >> k) & 1; n += d; bits += '<i' + (d ? ' class="d"' : '') + '></i>'; }
+        out('h-o1', 'SHA-256 of message', grp(hex(r[0])));
+        out('h-o2', 'SHA-256 of compare text', grp(hex(r[1])));
+        out('h-o3', n ? 'Digests differ: ' + n + ' of 256 bits changed' : 'Digests match: 0 of 256 bits changed', '<div class="b3c-bits" role="img" aria-label="' + n + ' of 256 bits differ">' + bits + '</div>', n ? 'warn' : 'ok');
+      });
+    };
+    document.getElementById('h-mac').onclick = function () {
+      if (!hk.value) { out('h-o4', 'HMAC-SHA-256', 'Enter a key first.', 'bad'); return; }
+      C.importKey('raw', enc.encode(hk.value), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(function (k) { return C.sign('HMAC', k, enc.encode(m1.value)); })
+        .then(function (s) { out('h-o4', 'HMAC-SHA-256 of message with key "' + hk.value + '"', grp(hex(s))); });
+    };
+    document.getElementById('h-rst').onclick = function () { defaults(); ['h-o1', 'h-o2', 'h-o3', 'h-o4'].forEach(function (i) { document.getElementById(i).hidden = true; }); };
+
+    /* ---------- AES-GCM ---------- */
+    var G = { key: null, raw: '', iv: null, used: {}, ct: null, ctIv: null, n: 0 };
+    var glog = document.getElementById('g-log');
+    function log(msg) { var li = document.createElement('li'); li.innerHTML = msg; glog.insertBefore(li, glog.firstChild); }
+    function genKey() {
+      return C.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']).then(function (k) {
+        G.key = k; G.used = {}; G.ct = null; G.n++;
+        return C.exportKey('raw', k).then(function (r) { G.raw = hex(r); out('g-ok', 'AES-256 key #' + G.n + ' (shown for learning only; real keys stay in an HSM)', grp(G.raw)); log('<b>Key #' + G.n + '</b> generated. IV history cleared.'); });
+      });
+    }
+    function encrypt(reuse) {
+      var p = G.key ? Promise.resolve() : genKey();
+      return p.then(function () {
+        if (reuse && !G.iv) { out('g-o3', 'Nothing to reuse', 'Encrypt once first, then try to reuse that IV.', 'bad'); return; }
+        var iv = reuse ? G.iv : crypto.getRandomValues(new Uint8Array(12)), ivh = hex(iv);
+        var seen = G.used[ivh]; G.used[ivh] = (G.used[ivh] || 0) + 1; G.iv = iv;
+        return C.encrypt({ name: 'AES-GCM', iv: iv }, G.key, enc.encode(document.getElementById('g-pt').value)).then(function (ct) {
+          G.ct = new Uint8Array(ct); G.ctIv = iv;
+          var h = hex(ct), body = h.slice(0, -32), tag = h.slice(-32);
+          out('g-o1', 'IV (96 bits)', grp(ivh));
+          out('g-o2', 'Ciphertext (' + (G.ct.length - 16) + ' bytes) + tag (16 bytes)', grp(body) + '<br><span style="color:var(--jade-dark)">tag: ' + grp(tag) + '</span>');
+          if (seen) { out('g-o3', 'Nonce reuse detected', 'This IV was already used with key #' + G.n + '. Two messages now share one keystream: XOR the ciphertexts and the keystream cancels, and the authentication subkey can be recovered to forge tags. Policy violation.', 'bad'); log('<b>Warning:</b> IV ' + ivh.slice(0, 8) + '&hellip; reused with key #' + G.n + '.'); }
+          else { document.getElementById('g-o3').hidden = true; log('Encrypted with fresh IV ' + ivh.slice(0, 8) + '&hellip;'); }
+        });
+      });
+    }
+    function decrypt(flip) {
+      if (!G.ct) { out('g-o3', 'Nothing to decrypt', 'Encrypt the record first.', 'bad'); return; }
+      var c = new Uint8Array(G.ct), pos = 5;
+      if (flip) c[pos] ^= 0x01;
+      C.decrypt({ name: 'AES-GCM', iv: G.ctIv }, G.key, c).then(function (pt) {
+        out('g-o3', 'Decryption succeeded: tag verified', esc(dec.decode(pt)), 'ok'); log('Decrypted; tag verified.');
+      }, function (e) {
+        out('g-o3', 'Decryption failed: ' + (e && e.name ? e.name : 'error'), 'One bit of byte ' + (pos + 1) + ' was changed. The recomputed authentication tag did not match, so AES-GCM returned no plaintext at all.', 'bad'); log('<b>Tamper test:</b> byte ' + (pos + 1) + ' changed; decryption rejected (' + esc(e && e.name || 'error') + ').');
+      });
+    }
+    document.getElementById('g-key').onclick = function () { genKey(); };
+    document.getElementById('g-enc').onclick = function () { encrypt(false); };
+    document.getElementById('g-reuse').onclick = function () { encrypt(true); };
+    document.getElementById('g-dec').onclick = function () { decrypt(false); };
+    document.getElementById('g-flip').onclick = function () { decrypt(true); };
+
+    /* ---------- ECDSA ---------- */
+    var K = { pair: null, other: null, sig: null, signed: '' };
+    var smsg = document.getElementById('s-msg');
+    function gen() { return C.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']); }
+    function newPair() {
+      return gen().then(function (p) { K.pair = p; K.sig = null; return C.exportKey('jwk', p.publicKey); }).then(function (j) {
+        out('s-o1', 'Handheld HD-0719 public key (P-256, JWK)', 'x: ' + esc(j.x) + '<br>y: ' + esc(j.y) + '<br><span style="font-family:Arial">The private key is non-extractable: this page can use it to sign but cannot export it.</span>');
+        document.getElementById('s-o2').hidden = true; document.getElementById('s-o3').hidden = true;
+      });
+    }
+    function verify(text, key, label) {
+      if (!K.sig) { out('s-o3', 'Nothing to verify', 'Sign the confirmation first.', 'bad'); return; }
+      C.verify({ name: 'ECDSA', hash: 'SHA-256' }, key, K.sig, enc.encode(text)).then(function (ok) {
+        out('s-o3', label + ': ' + (ok ? 'signature valid' : 'signature INVALID'), ok ? 'The confirmation is unchanged and was signed by the holder of this handheld&rsquo;s private key.' : 'Verification failed. Either the message changed after signing or the key does not belong to the signer.', ok ? 'ok' : 'bad');
+      });
+    }
+    document.getElementById('s-gen').onclick = function () { newPair(); };
+    document.getElementById('s-sign').onclick = function () {
+      (K.pair ? Promise.resolve() : newPair()).then(function () {
+        K.signed = smsg.value;
+        return C.sign({ name: 'ECDSA', hash: 'SHA-256' }, K.pair.privateKey, enc.encode(K.signed));
+      }).then(function (s) { K.sig = s; out('s-o2', 'ECDSA signature (r || s, 64 bytes)', grp(hex(s)) + '<br><span style="font-family:Arial">ECDSA uses a random value per signature, so signing again gives a different, equally valid signature.</span>'); document.getElementById('s-o3').hidden = true; });
+    };
+    document.getElementById('s-ver').onclick = function () { if (K.pair) verify(smsg.value, K.pair.publicKey, 'Verify'); else verify('', null, ''); };
+    document.getElementById('s-tam').onclick = function () {
+      if (!K.sig) { verify('', null, ''); return; }
+      var t = K.signed.replace('15:42', '15:47'); if (t === K.signed) t = K.signed + '.';
+      verify(t, K.pair.publicKey, 'Tamper test (15:42 changed to 15:47)');
+    };
+    document.getElementById('s-wrong').onclick = function () {
+      if (!K.sig) { verify('', null, ''); return; }
+      (K.other ? Promise.resolve(K.other) : gen().then(function (p) { K.other = p; return p; })).then(function (p) { verify(K.signed, p.publicKey, 'Verify with handheld HD-0388’s public key'); });
+    };
+
+    /* ---------- cert chain ---------- */
+    var CERTS = [
+      { tag: 'Certificate 1 of 3, leaf', name: 'portal.norrbridge.example', f: [
+        ['Subject', 'CN=portal.norrbridge.example, O=Norrbridge Courier, C=US'], ['Issuer', 'CN=Norrbridge Issuing CA G2, O=Norrbridge Courier, C=US'],
+        ['Valid from', '2026-11-30 00:00 UTC'], ['Valid to', '2027-11-30 23:59 UTC'], ['Subject alternative names', 'DNS: portal.norrbridge.example, DNS: www.norrbridge.example'],
+        ['Public key', 'EC P-256'], ['Key usage', 'Digital signature'], ['Extended key usage', 'TLS web server authentication'], ['Basic constraints', 'CA:FALSE'], ['Signature algorithm', 'ecdsa-with-SHA384'] ] },
+      { tag: 'Certificate 2 of 3, intermediate', name: 'Norrbridge Issuing CA G2', f: [
+        ['Subject', 'CN=Norrbridge Issuing CA G2, O=Norrbridge Courier, C=US'], ['Issuer', 'CN=Kestrelmark Root CA R4, O=Kestrelmark Trust Services, C=US'],
+        ['Valid from', '2022-06-01 00:00 UTC'], ['Valid to', '2027-05-31 23:59 UTC'], ['Subject alternative names', '(none)'],
+        ['Public key', 'EC P-384'], ['Key usage', 'Certificate sign, CRL sign'], ['Extended key usage', '(none)'], ['Basic constraints', 'CA:TRUE, pathlen:0'], ['Signature algorithm', 'ecdsa-with-SHA384'] ] },
+      { tag: 'Certificate 3 of 3, root (trust anchor)', name: 'Kestrelmark Root CA R4', f: [
+        ['Subject', 'CN=Kestrelmark Root CA R4, O=Kestrelmark Trust Services, C=US'], ['Issuer', 'CN=Kestrelmark Root CA R4, O=Kestrelmark Trust Services, C=US (self-signed)'],
+        ['Valid from', '2018-03-01 00:00 UTC'], ['Valid to', '2043-02-28 23:59 UTC'], ['Subject alternative names', '(none)'],
+        ['Public key', 'EC P-384'], ['Key usage', 'Certificate sign, CRL sign'], ['Extended key usage', '(none)'], ['Basic constraints', 'CA:TRUE'], ['Signature algorithm', 'ecdsa-with-SHA384'] ] }
+    ];
+    document.getElementById('c-list').innerHTML = CERTS.map(function (c, i) {
+      return '<div class="b3c-cert"><span class="tag">' + esc(c.tag) + '</span><h5>' + esc(c.name) + '</h5><dl>' + c.f.map(function (f) { return '<dt>' + esc(f[0]) + '</dt><dd>' + esc(f[1]) + '</dd>'; }).join('') + '</dl></div>';
+    }).join('');
+  },
+  onReset: function () { }
+};
+})();
+</script>
+<script src="lab.js"></script>
+</body>
+</html>
